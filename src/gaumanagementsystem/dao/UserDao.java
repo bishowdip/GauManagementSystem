@@ -17,15 +17,14 @@ public class UserDao {
     MySqlConnection mySql = new MySqlConnection();
 
     public boolean register(UserData user) {
-        String query = "INSERT INTO users(name, username, email, gender, fpassword, cpassword) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO users(username, email, role, fpassword, cpassword) VALUES (?, ?, ?, ?, ?, ?)";
         Connection conn = mySql.openConnection();
 
         try {
             PreparedStatement stmnt = conn.prepareStatement(query);
-            stmnt.setString(1, user.getName());
             stmnt.setString(2, user.getUsername());
             stmnt.setString(3, user.getEmail());
-            stmnt.setString(4, user.getGender());
+            stmnt.setString(4, user.getRole());
             stmnt.setString(5, user.getPassword());
             stmnt.setString(6, user.getConfirmPassword());
 
@@ -54,10 +53,9 @@ public class UserDao {
 
             if (result.next()) {
                 String username = result.getString("username");
-                String name = result.getString("name");
                 String email = result.getString("email");
                 String password = result.getString("fpassword");
-                return new UserData(username, name, email, password);
+                return new UserData(username, email, password);
             } else {
                 return null;
             }

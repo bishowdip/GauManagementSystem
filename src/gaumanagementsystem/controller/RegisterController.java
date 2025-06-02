@@ -34,22 +34,19 @@ public class RegisterController {
 
         @Override
             public void actionPerformed(ActionEvent e) {
-                String name = view.getNameTextField().getText();
                 String username = view.getUsernameTextField().getText();
                 String email = view.getEmailTextField().getText();
-                String gender = view.getGenderTextField().getText();
+                String role = String.valueOf(view.get.getRadio());
                 String password = String.valueOf(view.getPasswordField().getPassword());
                 String confirmPassword = String.valueOf(view.getConfirmPasswordField().getPassword());
 
-                if (name.isEmpty() || username.isEmpty() || email.isEmpty() || gender.isEmpty() || 
+                if (username.isEmpty() || email.isEmpty() || role.isEmpty() || 
                         password.isEmpty() || confirmPassword.isEmpty()) {
                     JOptionPane.showMessageDialog(view, "Fill in all the fields");
-                } else if (!gender.equalsIgnoreCase("Male") && !gender.equalsIgnoreCase("Female")) {
-                    JOptionPane.showMessageDialog(view, "Gender must be either Male or Female");
-                } else if (!password.equals(confirmPassword)) {
+                }else if (!password.equals(confirmPassword)) {
                     JOptionPane.showMessageDialog(view,"Passwords do not match");
                 } else {
-                    UserData user = new UserData(name, username, email, gender, password);
+                    UserData user = new UserData(username, email, role, password);
                     UserDao userDao = new UserDao();
                     boolean result = userDao.register(user);
                     if (result) {
