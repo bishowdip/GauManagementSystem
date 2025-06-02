@@ -54,8 +54,10 @@ public class UserDao {
             if (result.next()) {
                 String username = result.getString("username");
                 String email = result.getString("email");
-                String password = result.getString("fpassword");
-                return new UserData(username, email, password);
+                String password = result.getString("fpassword");                
+                String role = result.getString("role");
+
+                return new UserData(username, email,role, password);
             } else {
                 return null;
             }

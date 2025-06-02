@@ -36,6 +36,9 @@ public class RegisterController {
             public void actionPerformed(ActionEvent e) {
                 String username = view.getUsernameTextField().getText();
                 String email = view.getEmailTextField().getText();
+                
+
+                //baki xa aajhai banauna
                 String role = String.valueOf(view.get.getRadio());
                 String password = String.valueOf(view.getPasswordField().getPassword());
                 String confirmPassword = String.valueOf(view.getConfirmPasswordField().getPassword());

@@ -9,7 +9,7 @@ import java.sql.*;
  *
  * @author bisho
  */
-public class Dbconnection {
+public interface Dbconnection {
     Connection openConnection();
     void closeConnection(Connection conn);
     

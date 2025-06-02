@@ -24,7 +24,7 @@ public class UserData {
     }
 
     // Constructor without confirmPassword (optional)
-    public UserData(String username, String name, String email, String role, String password) {
+    public UserData(String username,String email, String role, String password) {
         this.username = username;
         this.email = email;
         this.role = role;
