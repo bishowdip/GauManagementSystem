@@ -3,6 +3,7 @@
 * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
 */
 
+
 package gaumanagementsystem.dao;
 
 import gaumanagementsystem.database.MySqlConnection;
@@ -13,21 +14,25 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+
+/**
+ *
+ * @author wangel
+ */
+
 public class UserDao {
     MySqlConnection mySql = new MySqlConnection();
 
     public boolean register(UserData user) {
-        String query = "INSERT INTO users(username, email, role, fpassword, cpassword) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO users(username, email, role, fpassword) VALUES (?, ?, ?, ?)";
         Connection conn = mySql.openConnection();
 
         try {
             PreparedStatement stmnt = conn.prepareStatement(query);
-            stmnt.setString(2, user.getUsername());
-            stmnt.setString(3, user.getEmail());
-            stmnt.setString(4, user.getRole());
-            stmnt.setString(5, user.getPassword());
-            stmnt.setString(6, user.getConfirmPassword());
-
+            stmnt.setString(1, user.getUsername());
+            stmnt.setString(2, user.getEmail());
+            stmnt.setString(3, user.getRole());
+            stmnt.setString(4, user.getPassword());
 
             int result = stmnt.executeUpdate();
             return result > 0;
@@ -57,7 +62,7 @@ public class UserDao {
                 String password = result.getString("fpassword");                
                 String role = result.getString("role");
 
-                return new UserData(username, email,role, password);
+                return new UserData(username, email, role, password);
             } else {
                 return null;
             }

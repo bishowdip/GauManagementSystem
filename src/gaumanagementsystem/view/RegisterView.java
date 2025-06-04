@@ -2,9 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
+
 package gaumanagementsystem.view;
 
 import java.awt.event.ActionListener;
+import javax.swing.ButtonGroup;
 
 /**
  *
@@ -12,12 +14,15 @@ import java.awt.event.ActionListener;
  */
 public class RegisterView extends javax.swing.JFrame {
 
-    /**
-     * Creates new form RegistrationView
-     */
     public RegisterView() {
         initComponents();
+
+        // Group the radio buttons so only one can be selected
+        ButtonGroup roleGroup = new ButtonGroup();
+        roleGroup.add(role_Admin);
+        roleGroup.add(role_User);
     }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -28,6 +33,7 @@ public class RegisterView extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        ButtonGroup = new javax.swing.ButtonGroup();
         jLabel6 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
@@ -38,7 +44,7 @@ public class RegisterView extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         backtologin = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
-        gotologin = new javax.swing.JButton();
+        backtologin2 = new javax.swing.JButton();
         view_password = new javax.swing.JCheckBox();
         password = new javax.swing.JPasswordField();
         Passwordlabel = new javax.swing.JLabel();
@@ -103,7 +109,12 @@ public class RegisterView extends javax.swing.JFrame {
         jLabel10.setText("Email");
         jLabel10.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
 
-        gotologin.setText("Login");
+        backtologin2.setText("Login");
+        backtologin2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backtologin2ActionPerformed(evt);
+            }
+        });
 
         view_password.setText("View Password");
         view_password.addActionListener(new java.awt.event.ActionListener() {
@@ -132,6 +143,7 @@ public class RegisterView extends javax.swing.JFrame {
             }
         });
 
+        ButtonGroup.add(role_Admin);
         role_Admin.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         role_Admin.setText("Admin");
         role_Admin.addActionListener(new java.awt.event.ActionListener() {
@@ -140,6 +152,7 @@ public class RegisterView extends javax.swing.JFrame {
             }
         });
 
+        ButtonGroup.add(role_User);
         role_User.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         role_User.setText("User");
 
@@ -148,56 +161,53 @@ public class RegisterView extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(40, 40, 40)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(40, 40, 40)
+                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(280, 280, 280)
+                        .addComponent(Title, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(40, 40, 40)
                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(6, 6, 6)
                         .addComponent(username, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(Passwordlabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(view_password)
-                                .addComponent(confirmpassword)))
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(Passwordlabel, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(5, 5, 5)
-                            .addComponent(password, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(6, 6, 6))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGap(2, 2, 2)
-                                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(4, 4, 4)))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(email, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(role_Admin)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(role_User, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(112, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(280, 280, 280)
-                        .addComponent(Title, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(40, 40, 40)
+                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
+                        .addComponent(email, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(42, 42, 42)
+                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(4, 4, 4)
+                        .addComponent(role_Admin)
+                        .addGap(6, 6, 6)
+                        .addComponent(role_User, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(40, 40, 40)
+                        .addComponent(Passwordlabel, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(5, 5, 5)
+                        .addComponent(password, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(40, 40, 40)
+                        .addComponent(Passwordlabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
+                        .addComponent(confirmpassword, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(163, 163, 163)
+                        .addComponent(view_password))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(28, 28, 28)
                         .addComponent(backtologin)
                         .addGap(75, 75, 75)
                         .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(gotologin)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(6, 6, 6)
+                        .addComponent(backtologin2)
+                        .addGap(106, 106, 106)
                         .addComponent(registerButton)))
-                .addGap(46, 46, 46))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -218,29 +228,36 @@ public class RegisterView extends javax.swing.JFrame {
                         .addGap(3, 3, 3)
                         .addComponent(jLabel10))
                     .addComponent(email, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
+                .addGap(12, 12, 12)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addComponent(jLabel9))
                     .addComponent(role_Admin)
                     .addComponent(role_User))
                 .addGap(14, 14, 14)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(password, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Passwordlabel, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(12, 12, 12)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(confirmpassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Passwordlabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(view_password)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 71, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel6)
-                        .addComponent(gotologin))
+                    .addComponent(Passwordlabel, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(1, 1, 1)
+                        .addComponent(password, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(12, 12, 12)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(Passwordlabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(1, 1, 1)
+                        .addComponent(confirmpassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(6, 6, 6)
+                .addComponent(view_password)
+                .addGap(71, 71, 71)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(backtologin)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(jLabel6))
+                    .addComponent(backtologin2)
                     .addComponent(registerButton))
-                .addGap(44, 44, 44))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         pack();
@@ -258,10 +275,6 @@ public class RegisterView extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_registerButtonActionPerformed
 
-    private void backtologinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backtologinActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_backtologinActionPerformed
-
     private void view_passwordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_view_passwordActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_view_passwordActionPerformed
@@ -277,6 +290,20 @@ public class RegisterView extends javax.swing.JFrame {
     private void role_AdminActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_role_AdminActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_role_AdminActionPerformed
+
+    private void backtologin2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backtologin2ActionPerformed
+        // TODO add your handling code here:
+        LoginView login = new LoginView();  // Create an instance of LoginView
+        login.setVisible(true);             // Show the LoginView
+        this.dispose();                     // Close RegisterView (optional)
+    }//GEN-LAST:event_backtologin2ActionPerformed
+
+    private void backtologinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backtologinActionPerformed
+        // TODO add your handling code here:
+        LoginView login = new LoginView(); 
+        login.setVisible(true);           
+        this.dispose(); 
+    }//GEN-LAST:event_backtologinActionPerformed
 
     /**
      * @param args the command line arguments
@@ -315,13 +342,14 @@ public class RegisterView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup ButtonGroup;
     private javax.swing.JLabel Passwordlabel;
     private javax.swing.JLabel Passwordlabel1;
     private javax.swing.JLabel Title;
     private javax.swing.JButton backtologin;
+    private javax.swing.JButton backtologin2;
     private javax.swing.JPasswordField confirmpassword;
     private javax.swing.JTextField email;
-    private javax.swing.JButton gotologin;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel6;
@@ -343,13 +371,16 @@ public class RegisterView extends javax.swing.JFrame {
     return email;
     }
     
-    public void role_AdminActionPerformed(ActionListener listener) {                                            
-        role_Admin.setText("Admin");
-    }                                           
-    
-    public void role_UserActionPerformed(ActionListener listener) {                                            
-        role_User.setText("User");
-    }                                           
+    public String getRadioButton() {
+        if (role_Admin.isSelected()) {
+           return "Admin";
+        } else if (role_User.isSelected()) {
+            return "User";
+        } else {
+            return "";
+    }
+    }
+                                         
     
     public javax.swing.JPasswordField getPasswordField(){
     return password;

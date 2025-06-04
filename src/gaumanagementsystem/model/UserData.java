@@ -6,25 +6,32 @@
 
 package gaumanagementsystem.model;
 
+
+/**
+ *
+ * @author wangel
+ */
+
 public class UserData {
-    // private attributes
     private String username;
     private String email;
     private String role;
     private String password;
     private String confirmPassword;
 
-    // Full constructor
-    public UserData(String username, String name, String email,String role, String password, String confirmPassword) {
+    // Full constructor with confirmPassword
+    public UserData(String username, String email, String role, String password, String confirmPassword) {
         this.username = username;
         this.email = email;
         this.role = role;
         this.password = password;
         this.confirmPassword = confirmPassword;
     }
+    
+    
 
-    // Constructor without confirmPassword (optional)
-    public UserData(String username,String email, String role, String password) {
+    // Constructor without confirmPassword
+    public UserData(String username, String email, String role, String password) {
         this.username = username;
         this.email = email;
         this.role = role;
@@ -40,10 +47,10 @@ public class UserData {
         this.email = email;
     }
 
-    public void setRole(String role){
+    public void setRole(String role) {
         this.role = role;
     }
-    
+
     public void setPassword(String password) {
         this.password = password;
     }
@@ -61,10 +68,10 @@ public class UserData {
         return this.email;
     }
 
-    public String getRole(){
+    public String getRole() {
         return this.role;
     }
-    
+
     public String getPassword() {
         return this.password;
     }

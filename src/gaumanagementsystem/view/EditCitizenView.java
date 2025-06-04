@@ -8,12 +8,12 @@ package gaumanagementsystem.view;
  *
  * @author wange
  */
-public class CitizenView extends javax.swing.JFrame {
+public class EditCitizenView extends javax.swing.JFrame {
 
     /**
-     * Creates new form CitizenView
+     * Creates new form EditCitizenView
      */
-    public CitizenView() {
+    public EditCitizenView() {
         initComponents();
     }
 
@@ -29,8 +29,8 @@ public class CitizenView extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        edit_citizens = new javax.swing.JButton();
-        CitizentoDashboard = new javax.swing.JButton();
+        update = new javax.swing.JButton();
+        BacktoCitizens = new javax.swing.JButton();
         menu = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -68,17 +68,17 @@ public class CitizenView extends javax.swing.JFrame {
         jTable1.setShowGrid(true);
         jScrollPane1.setViewportView(jTable1);
 
-        edit_citizens.setText("Edit");
-        edit_citizens.addActionListener(new java.awt.event.ActionListener() {
+        update.setText("Update");
+        update.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                edit_citizensActionPerformed(evt);
+                updateActionPerformed(evt);
             }
         });
 
-        CitizentoDashboard.setText("Back");
-        CitizentoDashboard.addActionListener(new java.awt.event.ActionListener() {
+        BacktoCitizens.setText("Back");
+        BacktoCitizens.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CitizentoDashboardActionPerformed(evt);
+                BacktoCitizensActionPerformed(evt);
             }
         });
 
@@ -98,9 +98,9 @@ public class CitizenView extends javax.swing.JFrame {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 880, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(32, 32, 32)
-                        .addComponent(CitizentoDashboard)
+                        .addComponent(BacktoCitizens)
                         .addGap(688, 688, 688)
-                        .addComponent(edit_citizens))
+                        .addComponent(update))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(359, 359, 359)
                         .addComponent(jLabel1)
@@ -113,7 +113,7 @@ public class CitizenView extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(19, Short.MAX_VALUE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(9, 9, 9))
                     .addGroup(layout.createSequentialGroup()
@@ -123,27 +123,28 @@ public class CitizenView extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(10, 10, 10)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(CitizentoDashboard)
-                    .addComponent(edit_citizens))
-                .addGap(0, 9, Short.MAX_VALUE))
+                    .addComponent(BacktoCitizens)
+                    .addComponent(update))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void edit_citizensActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edit_citizensActionPerformed
+    private void updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateActionPerformed
         // TODO add your handling code here:
-        
-        EditCitizenView update = new EditCitizenView(); 
-        update.setVisible(true);
-    }//GEN-LAST:event_edit_citizensActionPerformed
 
-    private void CitizentoDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CitizentoDashboardActionPerformed
-        // TODO add your handling code here:
-        DashboardUser goingtodash = new DashboardUser(); 
-        goingtodash.setVisible(true);           
+        EditCitizenView goingtoedit = new EditCitizenView();
+        goingtoedit.setVisible(true);
         this.dispose();
-    }//GEN-LAST:event_CitizentoDashboardActionPerformed
+    }//GEN-LAST:event_updateActionPerformed
+
+    private void BacktoCitizensActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BacktoCitizensActionPerformed
+        // TODO add your handling code here:
+        CitizenView goingtocitizen = new CitizenView();
+        goingtocitizen.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_BacktoCitizensActionPerformed
 
     private void menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuActionPerformed
         // TODO add your handling code here:
@@ -166,30 +167,33 @@ public class CitizenView extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CitizenView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditCitizenView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CitizenView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditCitizenView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CitizenView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditCitizenView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CitizenView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditCitizenView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CitizenView().setVisible(true);
+                new EditCitizenView().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton CitizentoDashboard;
-    private javax.swing.JButton edit_citizens;
+    private javax.swing.JButton BacktoCitizens;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JButton menu;
+    private javax.swing.JButton update;
     // End of variables declaration//GEN-END:variables
+
+
+
 }
