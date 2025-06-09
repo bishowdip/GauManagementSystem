@@ -6,66 +6,82 @@
 package gaumanagementsystem.dao;
 
 import gaumanagementsystem.database.MySqlConnection;
-import gaumanagementsystem.model.LoginRequest;
-import gaumanagementsystem.model.UserData;
+import gaumanagementsystem.model.User;
+import java.sql.*;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+public class UserDAO {
+    private final MySqlConnection dbConnection;
 
-public class UserDao {
-    MySqlConnection mySql = new MySqlConnection();
+    public UserDAO() {
+        this.dbConnection = new MySqlConnection();
+    }
 
-    public boolean register(UserData user) {
-        String query = "INSERT INTO users(name, username, email, gender, fpassword, cpassword) VALUES (?, ?, ?, ?, ?, ?)";
-        Connection conn = mySql.openConnection();
-
+    public boolean checkUserExists(String username, String email) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
         try {
-            PreparedStatement stmnt = conn.prepareStatement(query);
-            stmnt.setString(1, user.getName());
-            stmnt.setString(2, user.getUsername());
-            stmnt.setString(3, user.getEmail());
-            stmnt.setString(4, user.getGender());
-            stmnt.setString(5, user.getPassword());
-            stmnt.setString(6, user.getConfirmPassword());
-
-
-            int result = stmnt.executeUpdate();
-            return result > 0;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+            conn = dbConnection.openConnection();
+            String query = "SELECT * FROM users WHERE username = ? OR email = ?";
+            stmt = conn.prepareStatement(query);
+            stmt.setString(1, username);
+            stmt.setString(2, email);
+            rs = stmt.executeQuery();
+            return rs.next();
         } finally {
-            mySql.closeConnection(conn);
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (conn != null) dbConnection.closeConnection(conn);
         }
     }
 
-    public UserData login(LoginRequest loginReq) {
-        String query = "SELECT * FROM users WHERE email = ? AND fpassword = ?";
-        Connection conn = mySql.openConnection();
-
+    public boolean registerUser(User user) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
         try {
-            PreparedStatement stmnt = conn.prepareStatement(query);
-            stmnt.setString(1, loginReq.getEmail());
-            stmnt.setString(2, loginReq.getPassword());
+            conn = dbConnection.openConnection();
+            String query = "INSERT INTO users (name, username, email, gender, fpassword) VALUES (?, ?, ?, ?, ?)";
+            stmt = conn.prepareStatement(query);
+            stmt.setString(1, user.getName());
+            stmt.setString(2, user.getUsername());
+            stmt.setString(3, user.getEmail());
+            stmt.setString(4, user.getGender());
+            stmt.setString(5, user.getPassword());
+            
+            int result = stmt.executeUpdate();
+            return result > 0;
+        } finally {
+            if (stmt != null) stmt.close();
+            if (conn != null) dbConnection.closeConnection(conn);
+        }
+    }
 
-            ResultSet result = stmnt.executeQuery();
-
-            if (result.next()) {
-                String username = result.getString("username");
-                String name = result.getString("name");
-                String email = result.getString("email");
-                String password = result.getString("fpassword");
-                return new UserData(username, name, email, password);
-            } else {
-                return null;
+    public User authenticateUser(String email, String password) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            conn = dbConnection.openConnection();
+            String query = "SELECT * FROM users WHERE email = ? AND fpassword = ?";
+            stmt = conn.prepareStatement(query);
+            stmt.setString(1, email);
+            stmt.setString(2, password);
+            rs = stmt.executeQuery();
+            
+            if (rs.next()) {
+                User user = new User();
+                user.setId(rs.getInt("id"));
+                user.setName(rs.getString("name"));
+                user.setUsername(rs.getString("username"));
+                user.setEmail(rs.getString("email"));
+                user.setGender(rs.getString("gender"));
+                return user;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
             return null;
         } finally {
-            mySql.closeConnection(conn);
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (conn != null) dbConnection.closeConnection(conn);
         }
     }
 }

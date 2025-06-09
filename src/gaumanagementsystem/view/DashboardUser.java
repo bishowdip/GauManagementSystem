@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package smartgaunpalikamanagementsystem.view;
+package gaumanagementsystem.view;
 
 /**
  *
@@ -370,7 +370,12 @@ public class DashboardUser extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
-        // TODO add your handling code here:
+        // Close the current dashboard window
+        this.dispose();
+        
+        // Open the login view
+        LoginView loginView = new LoginView();
+        loginView.setVisible(true);
     }//GEN-LAST:event_jButton14ActionPerformed
 
     /**
