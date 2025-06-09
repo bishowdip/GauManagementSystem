@@ -390,8 +390,6 @@ public class RegisterView extends javax.swing.JFrame {
     return confirmpassword;
     }
 
-    
-    //    to add action listener to the button
     public void registerUser(ActionListener listener){
         registerButton.addActionListener(listener);
     }
