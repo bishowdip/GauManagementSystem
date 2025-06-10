@@ -9,76 +9,77 @@ package gaumanagementsystem.controller;
  * @author wange
  */
 
-import gaumanagementsystem.view.ProfileView;
-
+import gaumanagementsystem.view.EditProfileView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Map;
 
-import javax.swing.JOptionPane;
-
 public class ProfileController {
 
-    private ProfileView view;
+    private EditProfileView view;
 
-    public ProfileController(ProfileView view) {
+    public ProfileController(EditProfileView view) {
         this.view = view;
         initController();
-        loadCitizenProfile(); // Automatically load profile at start (optional)
     }
 
     private void initController() {
+        // Load citizen data
+        String citizenId = view.getCitizenIdField().getText().trim();
+        loadCitizenProfile(citizenId);
+
+        // Button Actions
         view.getEditButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                updateProfile();
+                updateCitizenProfile();
             }
         });
 
         view.getBackButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                view.dispose(); // Close the profile window
+                view.dispose(); // Close profile view
             }
         });
+        
     }
 
-    private void loadCitizenProfile() {
-        String citizenNumber = view.getCitizenIdField().getText().trim();
-
-        if (!citizenNumber.isEmpty()) {
-            Map<String, String> data = CitizenController.getCitizenById(citizenNumber);
-            if (data != null && !data.isEmpty()) {
-                view.getNameField().setText(data.get("name"));
-                view.getPhoneField().setText(data.get("phone"));
-                view.getAddressField().setText(data.get("address"));
-                view.getGenderField().setText(data.get("gender"));
-                view.getEmailField().setText(data.get("email"));
-                view.getFatherNameField().setText(data.get("father_name"));
-                view.getMotherNameField().setText(data.get("mother_name"));
-            } else {
-                JOptionPane.showMessageDialog(view, "No citizen found with ID: " + citizenNumber);
-            }
+    private void loadCitizenProfile(String citizenNumber) {
+        Map<String, String> citizen = CitizenController.getCitizenById(citizenNumber);
+        if (!citizen.isEmpty()) {
+            view.getNameField().setText(citizen.get("name"));
+            view.getEmailField().setText(citizen.get("email"));
+            view.getAddressField().setText(citizen.get("address"));
+            view.getGenderField().setText(citizen.get("gender"));
+            view.getPhoneField().setText(citizen.get("phone"));
+            view.getFatherNameField().setText(citizen.get("father_name"));
+            view.getMotherNameField().setText(citizen.get("mother_name"));
+        } else {
+            System.out.println("Citizen not found.");
         }
     }
 
-    private void updateProfile() {
+    private void updateCitizenProfile() {
+        
+        
         String citizenNumber = view.getCitizenIdField().getText().trim();
         String name = view.getNameField().getText().trim();
-        String phone = view.getPhoneField().getText().trim();
+        String email = view.getEmailField().getText().trim();
         String address = view.getAddressField().getText().trim();
         String gender = view.getGenderField().getText().trim();
-        String email = view.getEmailField().getText().trim();
+        String phone = view.getPhoneField().getText().trim();
 
         boolean success = CitizenController.updateCitizen(
             citizenNumber, name, phone, address, gender, email
         );
 
         if (success) {
-            JOptionPane.showMessageDialog(view, "Profile updated successfully!");
+            System.out.println("Citizen updated successfully.");
         } else {
-            JOptionPane.showMessageDialog(view, "Failed to update profile.");
+            System.out.println("Failed to update citizen.");
         }
     }
+    
+    
 }
-

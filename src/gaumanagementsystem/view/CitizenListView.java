@@ -8,15 +8,24 @@ package gaumanagementsystem.view;
  *
  * @author wange
  */
+import gaumanagementsystem.controller.CitizenController;
+
+
 public class CitizenListView extends javax.swing.JFrame {
 
     /**
      * Creates new form CitizenView
      */
+    
     public CitizenListView() {
         initComponents();
+        loadCitizenData();
+        
     }
-
+    
+    private void loadCitizenData(){
+        jTable1.setModel(CitizenController.getAllCitizens());
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

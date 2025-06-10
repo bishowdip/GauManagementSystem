@@ -4,18 +4,30 @@
  */
 package gaumanagementsystem.view;
 
+import gaumanagementsystem.controller.ProfileController;
+import java.awt.Image;
+import java.io.File;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 /**
  *
  * @author wange
  */
-public class ProfileView extends javax.swing.JFrame {
+public class EditProfileView extends javax.swing.JFrame {
 
     /**
-     * Creates new form EditProfileView
+     * Creates new form ProfileView
      */
-    public ProfileView() {
+    public EditProfileView() {
         initComponents();
     }
+    
+
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -26,77 +38,67 @@ public class ProfileView extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jComboBox1 = new javax.swing.JComboBox<>();
+        profileImageLabel = new javax.swing.JLabel();
+        save = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
-        Email = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        name = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        father_name = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
-        mother_name = new javax.swing.JTextField();
         citizen_id = new javax.swing.JTextField();
         phone = new javax.swing.JTextField();
-        lbl_picture = new javax.swing.JLabel();
         gender = new javax.swing.JTextField();
-        edit_profile = new javax.swing.JButton();
         Address = new javax.swing.JTextField();
+        Email = new javax.swing.JTextField();
+        name = new javax.swing.JTextField();
+        jButton2 = new javax.swing.JButton();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        father_name = new javax.swing.JTextField();
+        mother_name = new javax.swing.JTextField();
+        uploadImageButton = new javax.swing.JButton();
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        profileImageLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        save.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        save.setText("Save");
+        save.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveActionPerformed(evt);
+            }
+        });
 
         jLabel4.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel4.setText("Citizen Id");
 
-        Email.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        Email.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                EmailActionPerformed(evt);
-            }
-        });
-
         jLabel5.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel5.setText("Name");
-
-        name.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
 
         jLabel6.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel6.setText("Email");
 
-        jButton2.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jButton2.setText("Back");
-
         jLabel7.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel7.setText("Address");
-
-        jLabel10.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jLabel10.setText("Mother's Name");
 
         jLabel8.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel8.setText("Gender");
 
-        jLabel11.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jLabel11.setText("Father's Name");
-
         jLabel9.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel9.setText("Phone");
-
-        father_name.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
 
         jLabel1.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         jLabel1.setText("Hamro Smart Gaun");
 
-        mother_name.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-
         citizen_id.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
 
         phone.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-
-        lbl_picture.setText("Picture");
 
         gender.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         gender.addActionListener(new java.awt.event.ActionListener() {
@@ -105,24 +107,55 @@ public class ProfileView extends javax.swing.JFrame {
             }
         });
 
-        edit_profile.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        edit_profile.setText(" Edit Profile");
-        edit_profile.addActionListener(new java.awt.event.ActionListener() {
+        Address.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+
+        Email.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        Email.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                edit_profileActionPerformed(evt);
+                EmailActionPerformed(evt);
             }
         });
 
-        Address.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        name.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+
+        jButton2.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jButton2.setText("Back");
+
+        jLabel10.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabel10.setText("Mother's Name");
+
+        jLabel11.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabel11.setText("Father's Name");
+
+        father_name.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+
+        mother_name.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+
+        uploadImageButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        uploadImageButton.setText("Upload Image");
+        uploadImageButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                uploadImageButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(40, 40, 40)
+                .addComponent(jButton2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(save)
+                .addGap(57, 57, 57))
+            .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(68, 68, 68)
+                        .addGap(203, 203, 203)
+                        .addComponent(jLabel1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(65, 65, 65)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel5)
                             .addComponent(jLabel4)
@@ -136,25 +169,20 @@ public class ProfileView extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(Address)
                             .addComponent(gender)
-                            .addComponent(name, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+                            .addComponent(name)
                             .addComponent(phone)
                             .addComponent(citizen_id)
                             .addComponent(Email)
                             .addComponent(father_name)
-                            .addComponent(mother_name)))
+                            .addComponent(mother_name, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(258, 258, 258)
-                        .addComponent(lbl_picture, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(203, 203, 203)
-                        .addComponent(jLabel1)))
-                .addContainerGap(166, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(40, 40, 40)
-                .addComponent(jButton2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(edit_profile)
-                .addGap(57, 57, 57))
+                        .addGap(233, 233, 233)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(uploadImageButton)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(9, 9, 9)
+                                .addComponent(profileImageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(120, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -162,8 +190,10 @@ public class ProfileView extends javax.swing.JFrame {
                 .addGap(31, 31, 31)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
-                .addComponent(lbl_picture, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
+                .addComponent(profileImageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(uploadImageButton)
+                .addGap(32, 32, 32)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(citizen_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -188,25 +218,26 @@ public class ProfileView extends javax.swing.JFrame {
                     .addComponent(phone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9))
                 .addGap(12, 12, 12)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(158, 158, 158)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(edit_profile)
-                            .addComponent(jButton2)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel11)
-                            .addComponent(father_name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel10)
-                            .addComponent(mother_name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11)
+                    .addComponent(father_name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(mother_name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(39, 39, 39)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(save)
+                    .addComponent(jButton2))
+                .addContainerGap(70, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_saveActionPerformed
 
     private void EmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EmailActionPerformed
         // TODO add your handling code here:
@@ -216,12 +247,28 @@ public class ProfileView extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_genderActionPerformed
 
-    private void edit_profileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edit_profileActionPerformed
+    private void uploadImageButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadImageButtonActionPerformed
         // TODO add your handling code here:
-        EditProfileView upload = new EditProfileView();
-        upload.setVisible(true);           
-        this.dispose();
-    }//GEN-LAST:event_edit_profileActionPerformed
+    JFileChooser fileChooser = new JFileChooser();
+    FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "jpg", "png", "jpeg");
+    fileChooser.setFileFilter(filter);
+
+    int result = fileChooser.showOpenDialog(this);
+    if (result == JFileChooser.APPROVE_OPTION) {
+        File selectedFile = fileChooser.getSelectedFile();
+        try {
+            ImageIcon imageIcon = new ImageIcon(selectedFile.getAbsolutePath());
+            Image image = imageIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+            profileImageLabel.setIcon(new ImageIcon(image));
+
+            // Save selected file path for controller (optional)
+            this.selectedImageFile = selectedFile;
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error loading image: " + e.getMessage());
+        }
+    }
+    }//GEN-LAST:event_uploadImageButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -240,22 +287,43 @@ public class ProfileView extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ProfileView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditProfileView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ProfileView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditProfileView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ProfileView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditProfileView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ProfileView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditProfileView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ProfileView().setVisible(true);
-            }
+        public void run() {
+            EditProfileView view = new EditProfileView();
+            view.setVisible(true);
+
+            // Pre-fill citizen ID here for demo (optional)
+            view.getCitizenIdField().setText("C123"); // Replace with real ID
+
+            // Start controller
+            new ProfileController(view);
+        }
         });
     }
 
@@ -263,10 +331,10 @@ public class ProfileView extends javax.swing.JFrame {
     private javax.swing.JTextField Address;
     private javax.swing.JTextField Email;
     private javax.swing.JTextField citizen_id;
-    private javax.swing.JButton edit_profile;
     private javax.swing.JTextField father_name;
     private javax.swing.JTextField gender;
     private javax.swing.JButton jButton2;
+    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -276,9 +344,59 @@ public class ProfileView extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JLabel lbl_picture;
     private javax.swing.JTextField mother_name;
     private javax.swing.JTextField name;
     private javax.swing.JTextField phone;
+    private javax.swing.JLabel profileImageLabel;
+    private javax.swing.JButton save;
+    private javax.swing.JButton uploadImageButton;
     // End of variables declaration//GEN-END:variables
+
+    // Getters for controller access
+    public javax.swing.JTextField getCitizenIdField() {
+        return citizen_id;
+    }
+
+    public javax.swing.JTextField getNameField() {
+        return name;
+    }
+
+    public javax.swing.JTextField getEmailField() {
+        return Email;
+    }
+
+    public javax.swing.JTextField getAddressField() {
+        return Address;
+    }
+
+    public javax.swing.JTextField getGenderField() {
+        return gender;
+    }
+
+    public javax.swing.JTextField getPhoneField() {
+        return phone;
+    }
+
+    public javax.swing.JTextField getFatherNameField() {
+        return father_name;
+    }
+
+    public javax.swing.JTextField getMotherNameField() {
+        return mother_name;
+    }
+
+    public javax.swing.JButton getEditButton() {
+        return save;
+    }
+
+    public javax.swing.JButton getBackButton() {
+        return jButton2;
+    }
+    
+    
+    private File selectedImageFile;
+    public File getSelectedImageFile() {
+    return selectedImageFile;
+    }
+
 }
