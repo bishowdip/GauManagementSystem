@@ -2,13 +2,18 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
+
 package gaumanagementsystem.view;
 
 import java.awt.event.ActionListener;
+<<<<<<< HEAD
 import gaumanagementsystem.controller.UserController;
 import javax.swing.*;
 import java.sql.*;
 import gaumanagementsystem.database.MySqlConnection;
+=======
+import javax.swing.ButtonGroup;
+>>>>>>> sambriddha
 
 /**
  *
@@ -16,6 +21,7 @@ import gaumanagementsystem.database.MySqlConnection;
  */
 public class RegisterView extends javax.swing.JFrame {
 
+<<<<<<< HEAD
     private MySqlConnection dbConnection;
 
     /**
@@ -39,7 +45,17 @@ public class RegisterView extends javax.swing.JFrame {
             loginView.setVisible(true);
             dispose();
         });
+=======
+    public RegisterView() {
+        initComponents();
+
+        // Group the radio buttons so only one can be selected
+        ButtonGroup roleGroup = new ButtonGroup();
+        roleGroup.add(role_Admin);
+        roleGroup.add(role_User);
+>>>>>>> sambriddha
     }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -50,25 +66,25 @@ public class RegisterView extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        ButtonGroup = new javax.swing.ButtonGroup();
         jLabel6 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         email = new javax.swing.JTextField();
         username = new javax.swing.JTextField();
         Title = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        name = new javax.swing.JTextField();
         registerButton = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
         backtologin = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
-        gotologin = new javax.swing.JButton();
+        backtologin2 = new javax.swing.JButton();
         view_password = new javax.swing.JCheckBox();
         password = new javax.swing.JPasswordField();
         Passwordlabel = new javax.swing.JLabel();
         Passwordlabel1 = new javax.swing.JLabel();
         confirmpassword = new javax.swing.JPasswordField();
-        gender = new javax.swing.JTextField();
+        role_Admin = new javax.swing.JRadioButton();
+        role_User = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -80,7 +96,7 @@ public class RegisterView extends javax.swing.JFrame {
 
         jLabel9.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel9.setText("Gender");
+        jLabel9.setText("Role");
 
         email.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         email.addActionListener(new java.awt.event.ActionListener() {
@@ -99,18 +115,6 @@ public class RegisterView extends javax.swing.JFrame {
         Title.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         Title.setForeground(new java.awt.Color(0, 0, 255));
         Title.setText("Sign up");
-
-        jLabel4.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel4.setText("Name");
-        jLabel4.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-
-        name.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        name.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nameActionPerformed(evt);
-            }
-        });
 
         registerButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         registerButton.setText("Register");
@@ -138,7 +142,12 @@ public class RegisterView extends javax.swing.JFrame {
         jLabel10.setText("Email");
         jLabel10.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
 
-        gotologin.setText("Login");
+        backtologin2.setText("Login");
+        backtologin2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backtologin2ActionPerformed(evt);
+            }
+        });
 
         view_password.setText("View Password");
         view_password.addActionListener(new java.awt.event.ActionListener() {
@@ -167,12 +176,18 @@ public class RegisterView extends javax.swing.JFrame {
             }
         });
 
-        gender.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        gender.addActionListener(new java.awt.event.ActionListener() {
+        ButtonGroup.add(role_Admin);
+        role_Admin.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        role_Admin.setText("Admin");
+        role_Admin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                genderActionPerformed(evt);
+                role_AdminActionPerformed(evt);
             }
         });
+
+        ButtonGroup.add(role_User);
+        role_User.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        role_User.setText("User");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -187,51 +202,45 @@ public class RegisterView extends javax.swing.JFrame {
                         .addGap(280, 280, 280)
                         .addComponent(Title, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(39, 39, 39)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(6, 6, 6)
-                        .addComponent(name, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(39, 39, 39)
+                        .addGap(40, 40, 40)
                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(6, 6, 6)
                         .addComponent(username, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(39, 39, 39)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(Passwordlabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(view_password)
-                                    .addComponent(confirmpassword)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(Passwordlabel, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(5, 5, 5)
-                                .addComponent(password, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(6, 6, 6))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(2, 2, 2)
-                                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(4, 4, 4)))
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(email, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(gender, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                .addContainerGap(113, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(28, 28, 28)
-                .addComponent(backtologin)
-                .addGap(98, 98, 98)
-                .addComponent(jLabel6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(gotologin)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(registerButton)
-                .addGap(46, 46, 46))
+                        .addGap(40, 40, 40)
+                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
+                        .addComponent(email, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(42, 42, 42)
+                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(4, 4, 4)
+                        .addComponent(role_Admin)
+                        .addGap(6, 6, 6)
+                        .addComponent(role_User, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(40, 40, 40)
+                        .addComponent(Passwordlabel, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(5, 5, 5)
+                        .addComponent(password, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(40, 40, 40)
+                        .addComponent(Passwordlabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
+                        .addComponent(confirmpassword, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(163, 163, 163)
+                        .addComponent(view_password))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(28, 28, 28)
+                        .addComponent(backtologin)
+                        .addGap(75, 75, 75)
+                        .addComponent(jLabel6)
+                        .addGap(6, 6, 6)
+                        .addComponent(backtologin2)
+                        .addGap(106, 106, 106)
+                        .addComponent(registerButton)))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -240,13 +249,7 @@ public class RegisterView extends javax.swing.JFrame {
                 .addComponent(jLabel11)
                 .addGap(28, 28, 28)
                 .addComponent(Title, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(3, 3, 3)
-                        .addComponent(jLabel4))
-                    .addComponent(name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(12, 12, 12)
+                .addGap(36, 36, 36)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(3, 3, 3)
@@ -258,28 +261,36 @@ public class RegisterView extends javax.swing.JFrame {
                         .addGap(3, 3, 3)
                         .addComponent(jLabel10))
                     .addComponent(email, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
-                    .addComponent(gender, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(13, 13, 13)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(password, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Passwordlabel, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(12, 12, 12)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(confirmpassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Passwordlabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addComponent(jLabel9))
+                    .addComponent(role_Admin)
+                    .addComponent(role_User))
+                .addGap(14, 14, 14)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(Passwordlabel, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(1, 1, 1)
+                        .addComponent(password, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(12, 12, 12)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(Passwordlabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(1, 1, 1)
+                        .addComponent(confirmpassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(6, 6, 6)
                 .addComponent(view_password)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
+                .addGap(71, 71, 71)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(backtologin)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel6)
-                        .addComponent(gotologin)
-                        .addComponent(registerButton)))
-                .addGap(44, 44, 44))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(jLabel6))
+                    .addComponent(backtologin2)
+                    .addComponent(registerButton))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         pack();
@@ -293,6 +304,7 @@ public class RegisterView extends javax.swing.JFrame {
         // No specific action needed
     }
 
+<<<<<<< HEAD
     private void nameActionPerformed(java.awt.event.ActionEvent evt) {
         // No specific action needed
     }
@@ -317,6 +329,15 @@ public class RegisterView extends javax.swing.JFrame {
             confirmpassword.setEchoChar('•');
         }
     }
+=======
+    private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_registerButtonActionPerformed
+
+    private void view_passwordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_view_passwordActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_view_passwordActionPerformed
+>>>>>>> sambriddha
 
     private void passwordActionPerformed(java.awt.event.ActionEvent evt) {
         // No specific action needed
@@ -326,9 +347,29 @@ public class RegisterView extends javax.swing.JFrame {
         // No specific action needed
     }
 
+<<<<<<< HEAD
     private void genderActionPerformed(java.awt.event.ActionEvent evt) {
         // No specific action needed
     }
+=======
+    private void role_AdminActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_role_AdminActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_role_AdminActionPerformed
+
+    private void backtologin2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backtologin2ActionPerformed
+        // TODO add your handling code here:
+        LoginView login = new LoginView();  // Create an instance of LoginView
+        login.setVisible(true);             // Show the LoginView
+        this.dispose();                     // Close RegisterView (optional)
+    }//GEN-LAST:event_backtologin2ActionPerformed
+
+    private void backtologinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backtologinActionPerformed
+        // TODO add your handling code here:
+        LoginView login = new LoginView(); 
+        login.setVisible(true);           
+        this.dispose(); 
+    }//GEN-LAST:event_backtologinActionPerformed
+>>>>>>> sambriddha
 
     /**
      * @param args the command line arguments
@@ -359,39 +400,46 @@ public class RegisterView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup ButtonGroup;
     private javax.swing.JLabel Passwordlabel;
     private javax.swing.JLabel Passwordlabel1;
     private javax.swing.JLabel Title;
     private javax.swing.JButton backtologin;
+    private javax.swing.JButton backtologin2;
     private javax.swing.JPasswordField confirmpassword;
     private javax.swing.JTextField email;
-    private javax.swing.JTextField gender;
-    private javax.swing.JButton gotologin;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JTextField name;
     private javax.swing.JPasswordField password;
     private javax.swing.JButton registerButton;
+    private javax.swing.JRadioButton role_Admin;
+    private javax.swing.JRadioButton role_User;
     private javax.swing.JTextField username;
     private javax.swing.JCheckBox view_password;
     // End of variables declaration//GEN-END:variables
 
-    public javax.swing.JTextField getNameTextField(){
-    return name;
-    }
     public javax.swing.JTextField getUsernameTextField(){
     return username;
     }
+    
     public javax.swing.JTextField getEmailTextField(){
     return email;
     }
-    public javax.swing.JTextField getGenderTextField(){
-    return gender;
+    
+    public String getRadioButton() {
+        if (role_Admin.isSelected()) {
+           return "Admin";
+        } else if (role_User.isSelected()) {
+            return "User";
+        } else {
+            return "";
     }
+    }
+                                         
+    
     public javax.swing.JPasswordField getPasswordField(){
     return password;
     }
