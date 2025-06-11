@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+
 public class UserDao {
     MySqlConnection mySql = new MySqlConnection();
 
@@ -54,10 +55,12 @@ public class UserDao {
 
             if (result.next()) {
                 String username = result.getString("username");
-                String name = result.getString("name");
+                String name = result.getString("name");                
+                String gender = result.getString("gender");
+
                 String email = result.getString("email");
                 String password = result.getString("fpassword");
-                return new UserData(username, name, email, password);
+                return new UserData(username, name, email,gender, password);
             } else {
                 return null;
             }
@@ -68,4 +71,10 @@ public class UserDao {
             mySql.closeConnection(conn);
         }
     }
+
+    public boolean forgotPassword(String email, String newPassword) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
+    
+   

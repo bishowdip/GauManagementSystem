@@ -29,6 +29,10 @@ public class LoginController {
     public void close(){
         view.dispose();
     }
+
+    private void dispose() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     class LoginUser implements ActionListener{
 
         @Override
@@ -51,4 +55,12 @@ public class LoginController {
         }
         
     }
+                       
 }
+
+
+      
+    
+
+
+
