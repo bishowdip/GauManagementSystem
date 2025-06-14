@@ -143,7 +143,7 @@ public class CitizenListView extends javax.swing.JFrame {
     private void edit_citizensActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edit_citizensActionPerformed
         // TODO add your handling code here:
         
-        CitizenView update = new CitizenView(); 
+        ProfileView update = new ProfileView(); 
         update.setVisible(true);
     }//GEN-LAST:event_edit_citizensActionPerformed
 

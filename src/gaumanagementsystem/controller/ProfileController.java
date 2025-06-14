@@ -8,78 +8,105 @@ package gaumanagementsystem.controller;
  *
  * @author wange
  */
-
+import gaumanagementsystem.dao.CitizenDao;
+import gaumanagementsystem.model.CitizenData;
 import gaumanagementsystem.view.EditProfileView;
+
+import javax.swing.*;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Map;
+import java.io.File;
+import java.sql.SQLException;
 
 public class ProfileController {
-
     private EditProfileView view;
+    private CitizenDao dao;
+    private String selectedImagePath;
 
     public ProfileController(EditProfileView view) {
         this.view = view;
-        initController();
-    }
 
-    private void initController() {
-        // Load citizen data
-        String citizenId = view.getCitizenIdField().getText().trim();
-        loadCitizenProfile(citizenId);
-
-        // Button Actions
-        view.getEditButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateCitizenProfile();
-            }
-        });
-
-        view.getBackButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                view.dispose(); // Close profile view
-            }
-        });
-        
-    }
-
-    private void loadCitizenProfile(String citizenNumber) {
-        Map<String, String> citizen = CitizenController.getCitizenById(citizenNumber);
-        if (!citizen.isEmpty()) {
-            view.getNameField().setText(citizen.get("name"));
-            view.getEmailField().setText(citizen.get("email"));
-            view.getAddressField().setText(citizen.get("address"));
-            view.getGenderField().setText(citizen.get("gender"));
-            view.getPhoneField().setText(citizen.get("phone"));
-            view.getFatherNameField().setText(citizen.get("father_name"));
-            view.getMotherNameField().setText(citizen.get("mother_name"));
-        } else {
-            System.out.println("Citizen not found.");
+        try {
+            dao = new CitizenDao(CitizenController.getConnection());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(view, "Database connection error.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
+
+        selectedImagePath = null;
+
+        view.getEditButton().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int confirm = JOptionPane.showConfirmDialog(
+                        view,
+                        "Are you sure you want to save the changes?",
+                        "Confirm Update",
+                        JOptionPane.YES_NO_OPTION
+                );
+
+                if (confirm == JOptionPane.YES_OPTION) {
+                    saveProfile();
+                }
+            }
+        });
+
+        view.getUploadButton().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                uploadImage();
+            }
+        });
     }
 
-    private void updateCitizenProfile() {
-        
-        
-        String citizenNumber = view.getCitizenIdField().getText().trim();
-        String name = view.getNameField().getText().trim();
-        String email = view.getEmailField().getText().trim();
-        String address = view.getAddressField().getText().trim();
-        String gender = view.getGenderField().getText().trim();
-        String phone = view.getPhoneField().getText().trim();
+    private void saveProfile() {
+        if (view.getNameField().getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(view, "Name cannot be empty.", "Validation Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-        boolean success = CitizenController.updateCitizen(
-            citizenNumber, name, phone, address, gender, email
+        CitizenData citizen = new CitizenData(
+                view.getCitizenIdField().getText(),
+                view.getNameField().getText(),
+                view.getEmailField().getText(),
+                view.getDateOfBirthField().getText(),
+                view.getAddressField().getText(),
+                view.getRadioButton(),
+                view.getPhoneField().getText(),
+                view.getFatherNameField().getText(),
+                view.getMotherNameField().getText(),
+                selectedImagePath
         );
 
+        boolean success = dao.updateCitizen(citizen);
+
         if (success) {
-            System.out.println("Citizen updated successfully.");
+            JOptionPane.showMessageDialog(view, "Profile updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
         } else {
-            System.out.println("Failed to update citizen.");
+            JOptionPane.showMessageDialog(view, "Failed to update profile. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
-    
+
+    private void uploadImage() {
+        JFileChooser fileChooser = new JFileChooser();
+        int option = fileChooser.showOpenDialog(view);
+
+        if (option == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+
+            int confirm = JOptionPane.showConfirmDialog(
+                    view,
+                    "Use this image as your profile picture?\n" + file.getName(),
+                    "Confirm Upload",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                selectedImagePath = file.getAbsolutePath();
+                ImageIcon icon = new ImageIcon(new ImageIcon(selectedImagePath).getImage().getScaledInstance(90, 90, Image.SCALE_SMOOTH));
+                view.getProfileImageLabel().setIcon(icon);
+            }
+        }
+    }
 }
+
