@@ -2,7 +2,6 @@ package gaumanagementsystem.view;
 
 
 
-import java.awt.event.ActionListener;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -29,6 +28,10 @@ public class ServiceRequest extends javax.swing.JFrame {
         setTableData();
         setLocationRelativeTo(null);
         setSize(900, 600);
+        // Wire up the buttons
+        jButton5.addActionListener(this::jButton5ActionPerformed);
+        jButton6.addActionListener(this::jButton6ActionPerformed);
+        jButton7.addActionListener(this::jButton7ActionPerformed);
     }
 
     /** This method is called from within the constructor to
@@ -46,6 +49,9 @@ public class ServiceRequest extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
+        jButton7 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -59,16 +65,16 @@ public class ServiceRequest extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Request ID", "Citizen", "Ward", "Requested Date", "Service Type", "Description", "Status"
+                "Citizen", "Ward", "Service Type", "Description", "Status"
             }
         ));
         jTable1.setColumnSelectionAllowed(true);
@@ -77,13 +83,25 @@ public class ServiceRequest extends javax.swing.JFrame {
 
         jButton1.setBackground(new java.awt.Color(0, 51, 204));
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/plus (1).png"))); // NOI18N
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gaumanagementsystem/view/plus (1).png"))); // NOI18N
         jButton1.setText("Requested Service");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
+
+        jButton5.setBackground(new java.awt.Color(0, 51, 204));
+        jButton5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jButton5.setText("DELETE");
+
+        jButton6.setBackground(new java.awt.Color(0, 51, 204));
+        jButton6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jButton6.setText("UPDATE");
+
+        jButton7.setBackground(new java.awt.Color(0, 51, 204));
+        jButton7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jButton7.setText("REFRESH");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -100,6 +118,13 @@ public class ServiceRequest extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton1)
                         .addGap(17, 17, 17))))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jButton5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton7)
+                .addGap(0, 0, Short.MAX_VALUE))
             .addComponent(jScrollPane1)
         );
         jPanel1Layout.setVerticalGroup(
@@ -111,8 +136,14 @@ public class ServiceRequest extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jButton1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 433, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(5, 5, 5)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton5)
+                    .addComponent(jButton6)
+                    .addComponent(jButton7))
+                .addGap(45, 45, 45))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -166,6 +197,9 @@ public class ServiceRequest extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
@@ -174,10 +208,8 @@ public class ServiceRequest extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
-        JTextField requestIdField = new JTextField();
         JTextField citizenField = new JTextField();
         JTextField wardField = new JTextField();
-        JTextField dateField = new JTextField();
         JTextField serviceTypeField = new JTextField();
         JTextField descriptionField = new JTextField();
         String[] statusOptions = {"Pending", "In Progress", "Completed"};
@@ -185,14 +217,10 @@ public class ServiceRequest extends javax.swing.JFrame {
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.add(new JLabel("Request ID:"));
-        panel.add(requestIdField);
         panel.add(new JLabel("Citizen:"));
         panel.add(citizenField);
         panel.add(new JLabel("Ward:"));
         panel.add(wardField);
-        panel.add(new JLabel("Requested Date (YYYY-MM-DD):"));
-        panel.add(dateField);
         panel.add(new JLabel("Service Type:"));
         panel.add(serviceTypeField);
         panel.add(new JLabel("Description:"));
@@ -211,10 +239,8 @@ public class ServiceRequest extends javax.swing.JFrame {
         if (result == JOptionPane.OK_OPTION) {
             DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
             model.addRow(new Object[]{
-                requestIdField.getText(),
                 citizenField.getText(),
                 wardField.getText(),
-                dateField.getText(),
                 serviceTypeField.getText(),
                 descriptionField.getText(),
                 statusBox.getSelectedItem()
@@ -224,16 +250,82 @@ public class ServiceRequest extends javax.swing.JFrame {
 
     private void setTableData() {
         Object[][] data = {
-            {"REQ001", "Ram Bahadur", "5", "2024-06-01", "Water Supply", "No water in tap", "Pending"},
-            {"REQ002", "Sita Kumari", "3", "2024-06-02", "Electricity", "Frequent power cuts", "In Progress"},
-            {"REQ003", "Hari Prasad", "2", "2024-06-03", "Road Repair", "Potholes in main road", "Completed"},
-            {"REQ004", "Gita Devi", "1", "2024-06-04", "Sanitation", "Garbage not collected", "Pending"}
+            {"Ram Bahadur", "5","Water Supply", "No water in tap", "Pending"},
+            {"Sita Kumari", "3","Electricity", "Frequent power cuts", "In Progress"},
+            {"Hari Prasad", "2","Road Repair", "Potholes in main road", "Completed"},
+            {"Gita Devi", "1","Sanitation", "Garbage not collected", "Pending"}
         };
         String[] columns = {
-            "Request ID", "Citizen", "Ward", "Requested Date", "Service Type", "Description", "Status"
+            "Citizen", "Ward","Service Type", "Description", "Status"
         };
         DefaultTableModel model = new DefaultTableModel(data, columns);
         jTable1.setModel(model);
+    }
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow != -1) {
+            int confirm = JOptionPane.showConfirmDialog(this, 
+                "Are you sure you want to delete this service request?", 
+                "Confirm Delete", 
+                JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+                model.removeRow(selectedRow);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select a row to delete.");
+        }
+    }
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow != -1) {
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            JTextField citizenField = new JTextField(model.getValueAt(selectedRow, 0).toString());
+            JTextField wardField = new JTextField(model.getValueAt(selectedRow, 1).toString());
+            JTextField serviceTypeField = new JTextField(model.getValueAt(selectedRow, 2).toString());
+            JTextField descriptionField = new JTextField(model.getValueAt(selectedRow, 3).toString());
+            String[] statusOptions = {"Pending", "In Progress", "Completed"};
+            JComboBox<String> statusBox = new JComboBox<>(statusOptions);
+            statusBox.setSelectedItem(model.getValueAt(selectedRow, 4));
+
+            JPanel panel = new JPanel();
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+            panel.add(new JLabel("Citizen:"));
+            panel.add(citizenField);
+            panel.add(new JLabel("Ward:"));
+            panel.add(wardField);
+            panel.add(new JLabel("Service Type:"));
+            panel.add(serviceTypeField);
+            panel.add(new JLabel("Description:"));
+            panel.add(descriptionField);
+            panel.add(new JLabel("Status:"));
+            panel.add(statusBox);
+
+            int result = JOptionPane.showConfirmDialog(
+                this,
+                panel,
+                "Update Service Request",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
+            );
+
+            if (result == JOptionPane.OK_OPTION) {
+                model.setValueAt(citizenField.getText(), selectedRow, 0);
+                model.setValueAt(wardField.getText(), selectedRow, 1);
+                model.setValueAt(serviceTypeField.getText(), selectedRow, 2);
+                model.setValueAt(descriptionField.getText(), selectedRow, 3);
+                model.setValueAt(statusBox.getSelectedItem(), selectedRow, 4);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select a row to update.");
+        }
+    }
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {
+        setTableData();
+        JOptionPane.showMessageDialog(this, "Table refreshed successfully!");
     }
 
 }

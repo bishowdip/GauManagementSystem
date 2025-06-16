@@ -9,38 +9,40 @@ package gaumanagementsystem.model;
  * @author ASUS
  */
 public class NewsAndNotice {
-    private String fiscalYear;
-    private String allocatedAmount;
-    private String usedAmount;
-    private String status;
-    private String remarks;
+    private String date;
+    private String audience;
+    private String subject;
+    private String description;
+    private String expiryDate;
 
-    public NewsAndNotice(String fiscalYear, String allocatedAmount, String usedAmount, String status, String remarks) {
-        this.fiscalYear = fiscalYear;
-        this.allocatedAmount = allocatedAmount;
-        this.usedAmount = usedAmount;
-        this.status = status;
-        this.remarks = remarks;
+    public NewsAndNotice( String date, String audience, String subject, String description, String expiryDate) {
+       
+        this.date = date;
+        this.audience = audience;
+        this.subject = subject;
+        this.description = description;
+        this.expiryDate = expiryDate;
     }
 
     // Getters and Setters
-    public String getFiscalYear() { return fiscalYear; }
-    public void setFiscalYear(String fiscalYear) { this.fiscalYear = fiscalYear; }
-
-    public String getAllocatedAmount() { return allocatedAmount; }
-    public void setAllocatedAmount(String allocatedAmount) { this.allocatedAmount = allocatedAmount; }
-
-    public String getUsedAmount() { return usedAmount; }
-    public void setUsedAmount(String usedAmount) { this.usedAmount = usedAmount; }
-
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-
-    public String getRemarks() { return remarks; }
-    public void setRemarks(String remarks) { this.remarks = remarks; }
-
    
+
+    public String getDate() { return date; }
+    public void setDate(String date) { this.date = date; }
+
+    public String getAudience() { return audience; }
+    public void setAudience(String audience) { this.audience = audience; }
+
+    public String getSubject() { return subject; }
+    public void setSubject(String subject) { this.subject = subject; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public String getExpiryDate() { return expiryDate; }
+    public void setExpiryDate(String expiryDate) { this.expiryDate = expiryDate; }
+
     public Object[] toObjectArray() {
-        return new Object[]{fiscalYear, allocatedAmount, usedAmount, status, remarks};
+        return new Object[]{date, audience, subject, description, expiryDate};
     }
 }

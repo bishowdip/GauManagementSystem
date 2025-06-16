@@ -4,8 +4,6 @@
  */
 package gaumanagementsystem.controller;
 import gaumanagementsystem.dao.UserDao;
-import gaumanagementsystem.view.ForgotPasswordView;
-
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

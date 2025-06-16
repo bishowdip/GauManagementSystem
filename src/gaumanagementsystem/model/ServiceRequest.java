@@ -10,35 +10,25 @@ package gaumanagementsystem.model;
  */
 public class ServiceRequest {
   
-    private String requestId;
+   
     private String citizen;
     private String ward;
-    private String requestedDate;
     private String ServiceType;
     private String description;
     private String status;
     private final String serviceType;
     
-    public ServiceRequest (String requestId, String citizen, String ward, 
-                              String requestedDate, String serviceType, 
+    public ServiceRequest ( String citizen, String ward, 
+                              String serviceType, 
                               String description, String status) {
-        this.requestId = requestId;
+        
         this.citizen = citizen;
         this.ward = ward;
-        this.requestedDate = requestedDate;
         this.serviceType = serviceType;
         this.description = description;
         this.status = status;
     }
-        
-    // Getter and Setter for Request ID
-    public String getRequestId() {
-        return requestId;
-    }
-    
-    public void setRequestId(String requestId) {
-        this.requestId = requestId;
-    }
+       
     
     // Getter and Setter for Citizen
     public String getCitizen() {
@@ -56,15 +46,6 @@ public class ServiceRequest {
     
     public void setWard(String ward) {
         this.ward = ward;
-    }
-    
-    // Getter and Setter for Requested Date
-    public String getRequestedDate() {
-        return requestedDate;
-    }
-    
-    public void setRequestedDate(String requestedDate) {
-        this.requestedDate = requestedDate;
     }
     
     // Getter and Setter for Service Type

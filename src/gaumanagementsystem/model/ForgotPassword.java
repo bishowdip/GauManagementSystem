@@ -12,7 +12,7 @@ public class ForgotPassword {
     
 
    private String username;
-    private String favoriteAnimal;
+    private String email;
     private String newPassword;
     private String repeatNewPassword;
     private boolean showPassword;
@@ -22,7 +22,7 @@ public class ForgotPassword {
     public ForgotPassword (String username, String favoriteAnimal, 
                               String newPassword, String repeatNewPassword) {
         this.username = username;
-        this.favoriteAnimal = favoriteAnimal;
+        this.email = email;
         this.newPassword = newPassword;
         this.repeatNewPassword = repeatNewPassword;
         this.showPassword = false;
@@ -40,11 +40,11 @@ public class ForgotPassword {
     
     // Getter and Setter for Favorite Animal (Security Question)
     public String getFavoriteAnimal() {
-        return favoriteAnimal;
+        return email;
     }
     
-    public void setFavoriteAnimal(String favoriteAnimal) {
-        this.favoriteAnimal = favoriteAnimal;
+    public void setEmail(String favoriteAnimal) {
+        this.email = favoriteAnimal;
     }
     
     // Getter and Setter for New Password
