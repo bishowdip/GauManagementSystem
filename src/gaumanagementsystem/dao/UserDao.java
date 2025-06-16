@@ -13,6 +13,7 @@ import gaumanagementsystem.model.UserData;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 
 /**
@@ -23,23 +24,51 @@ import java.sql.ResultSet;
 public class UserDao {
     MySqlConnection mySql = new MySqlConnection();
 
+    private boolean emailExists(String email) {
+        String query = "SELECT COUNT(*) FROM users WHERE email = ?";
+        Connection conn = mySql.openConnection();
+        
+        try {
+            PreparedStatement stmnt = conn.prepareStatement(query);
+            stmnt.setString(1, email);
+            ResultSet rs = stmnt.executeQuery();
+            
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            mySql.closeConnection(conn);
+        }
+    }
+
     public boolean register(UserData user) {
-        String query = "INSERT INTO users(username, email, role, fpassword) VALUES (?, ?, ?, ?)";
+        // First check if email already exists
+        if (emailExists(user.getEmail())) {
+            throw new IllegalArgumentException("Email already registered");
+        }
+
+        String query = "INSERT INTO users(email, role, password) VALUES (?, ?, ?)";
         Connection conn = mySql.openConnection();
 
         try {
             PreparedStatement stmnt = conn.prepareStatement(query);
-            stmnt.setString(1, user.getUsername());
-            stmnt.setString(2, user.getEmail());
-            stmnt.setString(3, user.getRole());
-            stmnt.setString(4, user.getPassword());
+            stmnt.setString(1, user.getEmail());
+            stmnt.setString(2, user.getRole());
+            stmnt.setString(3, user.getPassword());
 
             int result = stmnt.executeUpdate();
             return result > 0;
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
-            return false;
+            if (e.getMessage().contains("Duplicate entry")) {
+                throw new IllegalArgumentException("Email already registered");
+            }
+            throw new RuntimeException("Database error during registration", e);
         } finally {
             mySql.closeConnection(conn);
         }
@@ -57,12 +86,11 @@ public class UserDao {
             ResultSet result = stmnt.executeQuery();
 
             if (result.next()) {
-                String username = result.getString("username");
                 String email = result.getString("email");
                 String password = result.getString("fpassword");                
                 String role = result.getString("role");
 
-                return new UserData(username, email, role, password);
+                return new UserData(email, role, password);
             } else {
                 return null;
             }

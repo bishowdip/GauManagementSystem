@@ -38,10 +38,8 @@ public class RegisterView extends javax.swing.JFrame {
         jLabel11 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         email = new javax.swing.JTextField();
-        username = new javax.swing.JTextField();
         Title = new javax.swing.JLabel();
-        registerButton = new javax.swing.JButton();
-        jLabel8 = new javax.swing.JLabel();
+        RegisterUser = new javax.swing.JButton();
         backtologin = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
         backtologin2 = new javax.swing.JButton();
@@ -72,29 +70,17 @@ public class RegisterView extends javax.swing.JFrame {
             }
         });
 
-        username.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        username.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                usernameActionPerformed(evt);
-            }
-        });
-
         Title.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         Title.setForeground(new java.awt.Color(0, 0, 255));
         Title.setText("Sign up");
 
-        registerButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        registerButton.setText("Register");
-        registerButton.addActionListener(new java.awt.event.ActionListener() {
+        RegisterUser.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        RegisterUser.setText("Register");
+        RegisterUser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                registerButtonActionPerformed(evt);
+                RegisterUserActionPerformed(evt);
             }
         });
-
-        jLabel8.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel8.setText("Username");
-        jLabel8.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
 
         backtologin.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         backtologin.setText("Back");
@@ -170,11 +156,6 @@ public class RegisterView extends javax.swing.JFrame {
                         .addComponent(Title, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(40, 40, 40)
-                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(6, 6, 6)
-                        .addComponent(username, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(40, 40, 40)
                         .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(6, 6, 6)
                         .addComponent(email, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -199,15 +180,15 @@ public class RegisterView extends javax.swing.JFrame {
                         .addGap(163, 163, 163)
                         .addComponent(view_password))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(28, 28, 28)
+                        .addGap(24, 24, 24)
                         .addComponent(backtologin)
                         .addGap(75, 75, 75)
                         .addComponent(jLabel6)
                         .addGap(6, 6, 6)
                         .addComponent(backtologin2)
                         .addGap(106, 106, 106)
-                        .addComponent(registerButton)))
-                .addContainerGap(28, Short.MAX_VALUE))
+                        .addComponent(RegisterUser)))
+                .addContainerGap(32, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -216,13 +197,7 @@ public class RegisterView extends javax.swing.JFrame {
                 .addComponent(jLabel11)
                 .addGap(28, 28, 28)
                 .addComponent(Title, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(36, 36, 36)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(3, 3, 3)
-                        .addComponent(jLabel8))
-                    .addComponent(username, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(12, 12, 12)
+                .addGap(34, 34, 34)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(3, 3, 3)
@@ -249,15 +224,15 @@ public class RegisterView extends javax.swing.JFrame {
                         .addComponent(confirmpassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(6, 6, 6)
                 .addComponent(view_password)
-                .addGap(71, 71, 71)
+                .addGap(50, 50, 50)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(backtologin)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(3, 3, 3)
                         .addComponent(jLabel6))
                     .addComponent(backtologin2)
-                    .addComponent(registerButton))
-                .addContainerGap(15, Short.MAX_VALUE))
+                    .addComponent(RegisterUser))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
 
         pack();
@@ -267,16 +242,22 @@ public class RegisterView extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_emailActionPerformed
 
-    private void usernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_usernameActionPerformed
+    private void RegisterUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegisterUserActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_usernameActionPerformed
-
-    private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_registerButtonActionPerformed
+    }//GEN-LAST:event_RegisterUserActionPerformed
 
     private void view_passwordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_view_passwordActionPerformed
-        // TODO add your handling code here:
+        if (view_password.isSelected()) {
+            // Show passwords
+            password.setEchoChar('\u0000');  // Show password
+            confirmpassword.setEchoChar('\u0000');  // Show confirm password
+            view_password.setText("Hide Password");
+        } else {
+            // Hide passwords
+            password.setEchoChar('•');  // Hide password
+            confirmpassword.setEchoChar('•');  // Hide confirm password
+            view_password.setText("View Password");
+        }
     }//GEN-LAST:event_view_passwordActionPerformed
 
     private void passwordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordActionPerformed
@@ -345,6 +326,7 @@ public class RegisterView extends javax.swing.JFrame {
     private javax.swing.ButtonGroup ButtonGroup;
     private javax.swing.JLabel Passwordlabel;
     private javax.swing.JLabel Passwordlabel1;
+    private javax.swing.JButton RegisterUser;
     private javax.swing.JLabel Title;
     private javax.swing.JButton backtologin;
     private javax.swing.JButton backtologin2;
@@ -353,19 +335,13 @@ public class RegisterView extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPasswordField password;
-    private javax.swing.JButton registerButton;
     private javax.swing.JRadioButton role_Admin;
     private javax.swing.JRadioButton role_User;
-    private javax.swing.JTextField username;
     private javax.swing.JCheckBox view_password;
     // End of variables declaration//GEN-END:variables
 
-    public javax.swing.JTextField getUsernameTextField(){
-    return username;
-    }
     
     public javax.swing.JTextField getEmailTextField(){
     return email;
@@ -391,6 +367,6 @@ public class RegisterView extends javax.swing.JFrame {
     }
 
     public void registerUser(ActionListener listener){
-        registerButton.addActionListener(listener);
+        RegisterUser.addActionListener(listener);
     }
 }
