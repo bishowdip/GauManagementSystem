@@ -4,17 +4,17 @@
  */
 package gaumanagementsystem.controller;
 
-import gaumanagementsystem.model.UserData;
-import gaumanagementsystem.view.DashboardView;
+import gaumanagementsystem.model.User;
+import gaumanagementsystem.view.DashboardUser;
 
 /**
  *
  * @author bisho
  */
 public class DashboardController {
-    private DashboardView view;
-    private UserData user;
-    public DashboardController(DashboardView view, UserData user){
+    private DashboardUser view;
+    private User user;
+    public DashboardController(DashboardUser view, User user){
         this.view=view;
         this.user=user;
     }

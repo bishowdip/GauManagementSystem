@@ -75,6 +75,7 @@ public class UserData {
     public String getConfirmPassword() {
         return this.confirmPassword;
     }
+}
     
     
    

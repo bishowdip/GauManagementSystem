@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package gaumanagementsystem.controller;
-import gaumanagementsystem.dao.UserDao;
+import gaumanagementsystem.dao.UserDAO;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -70,7 +70,7 @@ public class ForgotPasswordController {
             return;
         }
 
-        UserDao dao = new UserDao();
+        UserDAO dao = new UserDAO();
         boolean success = dao.forgotPassword(email, newPassword);
 
         if (success) {

@@ -21,7 +21,7 @@ public class UserDAOTest {
     String correctEmail="testt@gmail.com";
     String correctName="Testt user";
     String password="passwordfortest";
-    UserDao dao = new UserDao()
+    UserDAO dao = new UserDAO()
     @Test
     public void registerWithNewDetails(){
         UserData user = new UserData(correctName,correctEmail,password);

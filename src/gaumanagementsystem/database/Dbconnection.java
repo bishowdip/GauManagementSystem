@@ -11,13 +11,6 @@ import java.sql.Connection;
  *
  * @author bisho
  */
-<<<<<<< HEAD
-public interface Dbconnection {
-    Connection openConnection();
-    void closeConnection(Connection conn);
-    
-}
-=======
     public interface Dbconnection {
     Connection openConnection();
     void closeConnection(Connection conn);
@@ -43,4 +36,3 @@ public class DatabaseConnection {
     
     
 
->>>>>>> Paridhi

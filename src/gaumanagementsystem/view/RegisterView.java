@@ -6,14 +6,7 @@
 package gaumanagementsystem.view;
 
 import java.awt.event.ActionListener;
-<<<<<<< HEAD
-import gaumanagementsystem.controller.UserController;
-import javax.swing.*;
-import java.sql.*;
-import gaumanagementsystem.database.MySqlConnection;
-=======
 import javax.swing.ButtonGroup;
->>>>>>> sambriddha
 
 /**
  *
@@ -21,31 +14,6 @@ import javax.swing.ButtonGroup;
  */
 public class RegisterView extends javax.swing.JFrame {
 
-<<<<<<< HEAD
-    private MySqlConnection dbConnection;
-
-    /**
-     * Creates new form RegistrationView
-     */
-    public RegisterView() {
-        initComponents();
-        dbConnection = new MySqlConnection();
-        setLocationRelativeTo(null);
-        setupInitialState();
-    }
-
-    private void setupInitialState() {
-        // Set up initial password field state
-        password.setEchoChar('•');
-        confirmpassword.setEchoChar('•');
-        
-        // Set up the gotologin button action
-        gotologin.addActionListener(e -> {
-            LoginView loginView = new LoginView();
-            loginView.setVisible(true);
-            dispose();
-        });
-=======
     public RegisterView() {
         initComponents();
 
@@ -53,7 +21,6 @@ public class RegisterView extends javax.swing.JFrame {
         ButtonGroup roleGroup = new ButtonGroup();
         roleGroup.add(role_Admin);
         roleGroup.add(role_User);
->>>>>>> sambriddha
     }
 
 
@@ -242,49 +209,13 @@ public class RegisterView extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void emailActionPerformed(java.awt.event.ActionEvent evt) {
-        // No specific action needed
-    }
-
-<<<<<<< HEAD
-    private void usernameActionPerformed(java.awt.event.ActionEvent evt) {
-        // No specific action needed
-    }
-
-<<<<<<< HEAD
-    private void nameActionPerformed(java.awt.event.ActionEvent evt) {
-        // No specific action needed
-    }
-
-    private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        UserController controller = new UserController();
-        controller.handleRegistration(this);
-    }
-
-    private void backtologinActionPerformed(java.awt.event.ActionEvent evt) {
-        LoginView loginView = new LoginView();
-        loginView.setVisible(true);
-        dispose();
-    }
-
-    private void view_passwordActionPerformed(java.awt.event.ActionEvent evt) {
-        if (view_password.isSelected()) {
-            password.setEchoChar((char) 0);
-            confirmpassword.setEchoChar((char) 0);
-        } else {
-            password.setEchoChar('•');
-            confirmpassword.setEchoChar('•');
-        }
-    }
-=======
-    private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerButtonActionPerformed
+    private void emailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emailActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_registerButtonActionPerformed
-=======
+    }//GEN-LAST:event_emailActionPerformed
+
     private void RegisterUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegisterUserActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_RegisterUserActionPerformed
->>>>>>> sambriddha
 
     private void view_passwordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_view_passwordActionPerformed
         if (view_password.isSelected()) {
@@ -299,21 +230,15 @@ public class RegisterView extends javax.swing.JFrame {
             view_password.setText("View Password");
         }
     }//GEN-LAST:event_view_passwordActionPerformed
->>>>>>> sambriddha
 
-    private void passwordActionPerformed(java.awt.event.ActionEvent evt) {
-        // No specific action needed
-    }
+    private void passwordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_passwordActionPerformed
 
-    private void confirmpasswordActionPerformed(java.awt.event.ActionEvent evt) {
-        // No specific action needed
-    }
+    private void confirmpasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmpasswordActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_confirmpasswordActionPerformed
 
-<<<<<<< HEAD
-    private void genderActionPerformed(java.awt.event.ActionEvent evt) {
-        // No specific action needed
-    }
-=======
     private void role_AdminActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_role_AdminActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_role_AdminActionPerformed
@@ -331,7 +256,6 @@ public class RegisterView extends javax.swing.JFrame {
         login.setVisible(true);           
         this.dispose(); 
     }//GEN-LAST:event_backtologinActionPerformed
->>>>>>> sambriddha
 
     /**
      * @param args the command line arguments
@@ -349,15 +273,23 @@ public class RegisterView extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(RegisterView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(RegisterView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(RegisterView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(RegisterView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            new RegisterView().setVisible(true);
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new RegisterView().setVisible(true);
+            }
         });
     }
 

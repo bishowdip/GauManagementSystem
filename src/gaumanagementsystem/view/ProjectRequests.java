@@ -4,17 +4,21 @@
  */
 package gaumanagementsystem.view;
 
+import javax.swing.*;
+
 /**
  *
  * @author SONIC
  */
-public class ProjectRequests extends javax.swing.JFrame {
+public class ProjectRequests extends JFrame {
 
     /**
      * Creates new form ProjectRequests
      */
     public ProjectRequests() {
-        initComponents();
+        setTitle("Project Requests");
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
     /**

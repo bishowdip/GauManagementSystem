@@ -12,13 +12,14 @@ public class MySqlConnection {
      public Connection openConnection() {
     try{
     String username="root";
-    String password= "wangeldona@1";
-    String database="gaumanagementsystem";
-    Class.forName("com.mysql.jdbc.Driver");
+    String password= "Akg@nepal123";
+    String database="gau_management";
+    Class.forName("com.mysql.cj.jdbc.Driver");
     Connection conn;
     conn= DriverManager.getConnection("jdbc:mysql://localhost:3306/"+database,username,password);
     return conn;
     }catch(Exception e){
+        e.printStackTrace();
         return null;    
     }
 
@@ -34,8 +35,8 @@ public class MySqlConnection {
             }
         
         } catch(Exception e){
-
-}
+            e.printStackTrace();
+        }
     
     }  
 }

@@ -26,10 +26,6 @@ public class Complaints_Table extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-<<<<<<< HEAD
-=======
-        jPanel2 = new javax.swing.JPanel();
->>>>>>> bishowdip
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
@@ -40,8 +36,6 @@ public class Complaints_Table extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
 
-<<<<<<< HEAD
-=======
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -53,7 +47,6 @@ public class Complaints_Table extends javax.swing.JPanel {
             .addGap(0, 100, Short.MAX_VALUE)
         );
 
->>>>>>> bishowdip
         jTable1.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -96,6 +89,7 @@ public class Complaints_Table extends javax.swing.JPanel {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 MenuButtonActionPerformed(evt);
             }
+            
         });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -143,14 +137,12 @@ public class Complaints_Table extends javax.swing.JPanel {
                 jButton1MouseClicked(evt);
             }
         });
-<<<<<<< HEAD
-=======
+
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
->>>>>>> bishowdip
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -183,12 +175,13 @@ public class Complaints_Table extends javax.swing.JPanel {
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
         // TODO add your handling code here:
-        if (ComplaintsView.isVisible()){
-            ComplaintsView.setVisible(true);
-        }
-        else{
-            ComplaintsView.setVisible(false);
-        }
+        // TODO: Refactored to avoid static reference errors
+        // ComplaintsView complaintsView = new ComplaintsView();
+        // if (complaintsView.isVisible()) {
+        //     complaintsView.setVisible(true);
+        // } else {
+        //     complaintsView.setVisible(false);
+        // }
     }//GEN-LAST:event_jButton1MouseClicked
 
     private void MenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuButtonActionPerformed

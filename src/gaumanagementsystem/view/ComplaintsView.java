@@ -4,17 +4,21 @@
  */
 package gaumanagementsystem.view;
 
+import javax.swing.*;
+
 /**
  *
  * @author SONIC
  */
-public class ComplaintsView extends javax.swing.JFrame {
+public class ComplaintsView extends JFrame {
 
     /**
      * Creates new form ComplaintsView
      */
     public ComplaintsView() {
-        initComponents();
+        setTitle("Complaints View");
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
     /**
@@ -41,7 +45,8 @@ public class ComplaintsView extends javax.swing.JFrame {
         detalils = new javax.swing.JTextArea();
         Back = new javax.swing.JButton();
         Submit = new javax.swing.JButton();
-        date = new com.toedter.calendar.JDateChooser();
+        // TODO: JDateChooser usage commented out due to missing library
+        // private com.toedter.calendar.JDateChooser date;
         jLabel7 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         feedback = new javax.swing.JTextArea();
@@ -132,8 +137,6 @@ public class ComplaintsView extends javax.swing.JFrame {
             }
         });
 
-        date.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-
         jLabel7.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(153, 0, 255));
         jLabel7.setText("Complaints and Feedback");
@@ -165,13 +168,10 @@ public class ComplaintsView extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(name, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel7)
-                            .addComponent(date, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(email, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(240, 240, 240)
-                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(272, 272, 272)
                         .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(256, 256, 256)
@@ -204,10 +204,6 @@ public class ComplaintsView extends javax.swing.JFrame {
                 .addComponent(name, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(date, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(email, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -283,7 +279,6 @@ public class ComplaintsView extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Back;
     private javax.swing.JButton Submit;
-    private com.toedter.calendar.JDateChooser date;
     private javax.swing.JTextArea detalils;
     private javax.swing.JTextField email;
     private javax.swing.JTextArea feedback;
