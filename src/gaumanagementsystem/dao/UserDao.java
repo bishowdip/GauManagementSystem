@@ -24,6 +24,7 @@ public class UserDAO {
  * @author wangel
  */
 
+
 public class UserDao {
     MySqlConnection mySql = new MySqlConnection();
 
@@ -113,11 +114,20 @@ public class UserDao {
 
             if (result.next()) {
                 String username = result.getString("username");
+<<<<<<< HEAD
                 String email = result.getString("email");
                 String password = result.getString("fpassword");                
                 String role = result.getString("role");
 
                 return new UserData(username, email, role, password);
+=======
+                String name = result.getString("name");                
+                String gender = result.getString("gender");
+
+                String email = result.getString("email");
+                String password = result.getString("fpassword");
+                return new UserData(username, name, email,gender, password);
+>>>>>>> Paridhi
             } else {
                 return null;
 >>>>>>> sambriddha
@@ -129,4 +139,12 @@ public class UserDao {
             if (conn != null) dbConnection.closeConnection(conn);
         }
     }
+
+    public boolean forgotPassword(String email, String newPassword) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
+    
+   
+
+

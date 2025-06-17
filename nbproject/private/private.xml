@@ -20,6 +20,7 @@
         <group/>
 =======
         <group>
+<<<<<<< HEAD
             <file>file:/D:/Projects/Gaupalika%20management/GauManagementSystem/src/gaumanagementsystem/view/CitizenView.java</file>
             <file>file:/D:/Projects/Gaupalika%20management/GauManagementSystem/src/gaumanagementsystem/controller/CitizenController.java</file>
             <file>file:/D:/Projects/Gaupalika%20management/GauManagementSystem/src/gaumanagementsystem/view/EditCitizenView.java</file>
@@ -27,6 +28,26 @@
             <file>file:/D:/Projects/Gaupalika%20management/GauManagementSystem/src/gaumanagementsystem/controller/RegisterController.java</file>
             <file>file:/D:/Projects/Gaupalika%20management/GauManagementSystem/src/gaumanagementsystem/view/DashboardUser.java</file>
             <file>file:/D:/Projects/Gaupalika%20management/GauManagementSystem/src/gaumanagementsystem/dao/UserDao.java</file>
+=======
+            <file>file:/C:/Users/ASUS/Documents/NetBeansProjects/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/controller/LoginController.java</file>
+            <file>file:/C:/Users/ASUS/Documents/NetBeansProjects/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/model/UserData.java</file>
+            <file>file:/C:/Users/ASUS/Documents/NetBeansProjects/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/LoginView.java</file>
+            <file>file:/C:/Users/ASUS/Documents/NetBeansProjects/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/ForgotPassword.java</file>
+            <file>file:/C:/Users/ASUS/Documents/NetBeansProjects/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/ServiceRequest.java</file>
+            <file>file:/C:/Users/ASUS/Documents/NetBeansProjects/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/model/ForgotPassword.java</file>
+            <file>file:/C:/Users/ASUS/Documents/NetBeansProjects/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/dao/UserDao.java</file>
+            <file>file:/C:/Users/ASUS/Documents/NetBeansProjects/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/controller/ForgotController.java</file>
+            <file>file:/C:/Users/ASUS/Documents/NetBeansProjects/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/controller/ServiceController.java</file>
+            <file>file:/C:/Users/ASUS/Documents/NetBeansProjects/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/GauManagementSystem.java</file>
+            <file>file:/C:/Users/ASUS/Documents/NetBeansProjects/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/ProjectRequest.java</file>
+            <file>file:/C:/Users/ASUS/Documents/NetBeansProjects/GauManagementSystem/GauManagementSystem/test/gaumanagementsystem/view/NewsAndNoticeNGTest.java</file>
+            <file>file:/C:/Users/ASUS/Documents/NetBeansProjects/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/NewsAndNotice.java</file>
+            <file>file:/C:/Users/ASUS/Documents/NetBeansProjects/GauManagementSystem/GauManagementSystem/test/gaumanagementsystem/dao/UserDaoNGTest.java</file>
+            <file>file:/C:/Users/ASUS/Documents/NetBeansProjects/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/database/MySqlConnection.java</file>
+            <file>file:/C:/Users/ASUS/Documents/NetBeansProjects/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/model/NewsAndNotice.java</file>
+            <file>file:/C:/Users/ASUS/Documents/NetBeansProjects/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/controller/NewsAndNoticeController.java</file>
+            <file>file:/C:/Users/ASUS/Documents/NetBeansProjects/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/model/ServiceRequest.java</file>
+>>>>>>> Paridhi
         </group>
 >>>>>>> sambriddha
     </open-files>

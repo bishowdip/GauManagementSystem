@@ -1,6 +1,15 @@
 package gaumanagementsystem.view;
 
 import gaumanagementsystem.database.MySqlConnection;
+<<<<<<< HEAD
+=======
+import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.JOptionPane;
+>>>>>>> Paridhi
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,6 +32,7 @@ public class LoginView extends javax.swing.JFrame {
     private javax.swing.JPasswordField jPasswordField1;
     private javax.swing.JTextField jTextField1;
 
+<<<<<<< HEAD
     public LoginView() {
         initComponents();
         dbConnection = new MySqlConnection();
@@ -129,4 +139,23 @@ public class LoginView extends javax.swing.JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new LoginView().setVisible(true));
     }
+=======
+       public javax.swing.JTextField getEmailTextField(){
+    return jTextField1;
+    }
+    public javax.swing.JPasswordField getPasswordField(){
+    return jPasswordField1;
+    }
+
+    
+   //    to add action listener to the button
+    public void loginUser(ActionListener listener){
+        jButton1.addActionListener(listener);
+    }
+    
+    
+
+   
+    
+>>>>>>> Paridhi
 }

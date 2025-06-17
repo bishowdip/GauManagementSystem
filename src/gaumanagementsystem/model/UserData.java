@@ -18,6 +18,13 @@ public class UserData {
     private String role;
     private String password;
     private String confirmPassword;
+    private String status;
+    private String description;
+    private String serviceType;
+    private String ward;
+    private String requestedDate;
+    private String citizen;
+    private String requestId;
 
     // Full constructor with confirmPassword
     public UserData(String username, String email, String role, String password, String confirmPassword) {
@@ -79,4 +86,6 @@ public class UserData {
     public String getConfirmPassword() {
         return this.confirmPassword;
     }
-}
+    
+    
+   
