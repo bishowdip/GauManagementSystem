@@ -70,10 +70,12 @@ public class Complaints_Tables extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
 
-        jPanel1.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel1.setBackground(new java.awt.Color(153, 102, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
+        jLabel1.setBackground(new java.awt.Color(255, 255, 255));
         jLabel1.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 24)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Hamro Smart Gaun");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -104,6 +106,7 @@ public class Complaints_Tables extends javax.swing.JFrame {
         jLabel3.setForeground(new java.awt.Color(153, 0, 255));
         jLabel3.setText(" Complaints and Feedback");
 
+        ComplaintTable1.setBackground(new java.awt.Color(204, 204, 255));
         ComplaintTable1.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         ComplaintTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -117,7 +120,7 @@ public class Complaints_Tables extends javax.swing.JFrame {
         ComplaintTable1.setShowGrid(true);
         jScrollPane2.setViewportView(ComplaintTable1);
 
-        Back1.setBackground(new java.awt.Color(255, 0, 0));
+        Back1.setBackground(new java.awt.Color(0, 0, 0));
         Back1.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         Back1.setForeground(new java.awt.Color(255, 255, 255));
         Back1.setText("Back");
