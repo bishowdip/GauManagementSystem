@@ -15,8 +15,7 @@ public class NewsAndNotice {
     private String description;
     private String expiryDate;
 
-    public NewsAndNotice( String date, String audience, String subject, String description, String expiryDate) {
-       
+    public NewsAndNotice(String date, String audience, String subject, String description, String expiryDate) {
         this.date = date;
         this.audience = audience;
         this.subject = subject;
@@ -24,25 +23,31 @@ public class NewsAndNotice {
         this.expiryDate = expiryDate;
     }
 
-    // Getters and Setters
-   
-
+    // Getters
     public String getDate() { return date; }
-    public void setDate(String date) { this.date = date; }
-
     public String getAudience() { return audience; }
-    public void setAudience(String audience) { this.audience = audience; }
-
     public String getSubject() { return subject; }
-    public void setSubject(String subject) { this.subject = subject; }
-
     public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-
     public String getExpiryDate() { return expiryDate; }
+
+    // Setters
+    public void setDate(String date) { this.date = date; }
+    public void setAudience(String audience) { this.audience = audience; }
+    public void setSubject(String subject) { this.subject = subject; }
+    public void setDescription(String description) { this.description = description; }
     public void setExpiryDate(String expiryDate) { this.expiryDate = expiryDate; }
 
-    public Object[] toObjectArray() {
+    // Convert to Object array for table display
+    public Object[] toTableRow() {
         return new Object[]{date, audience, subject, description, expiryDate};
+    }
+
+    private void filterTable(String search, String audience) {
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.setRowCount(0);
+        List<NewsAndNotice> filteredList = controller.search(search, audience);
+        for (NewsAndNotice notice : filteredList) {
+            model.addRow(notice.toTableRow());
+        }
     }
 }
