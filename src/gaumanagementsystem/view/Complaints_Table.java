@@ -197,13 +197,10 @@ public class Complaints_Table extends javax.swing.JPanel {
         //check if jpanel is visible or not if not then
     }//GEN-LAST:event_MenuButtonActionPerformed
 
-<<<<<<< HEAD
-=======
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
->>>>>>> bishowdip
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton MenuButton;
@@ -213,10 +210,7 @@ public class Complaints_Table extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
-<<<<<<< HEAD
-=======
     private javax.swing.JPanel jPanel2;
->>>>>>> bishowdip
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
