@@ -41,13 +41,4 @@ public class NewsAndNotice {
     public Object[] toTableRow() {
         return new Object[]{date, audience, subject, description, expiryDate};
     }
-
-    private void filterTable(String search, String audience) {
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        model.setRowCount(0);
-        List<NewsAndNotice> filteredList = controller.search(search, audience);
-        for (NewsAndNotice notice : filteredList) {
-            model.addRow(notice.toTableRow());
-        }
-    }
 }
