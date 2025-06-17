@@ -10,11 +10,24 @@ package gaumanagementsystem.view;
  */
 public class DashboardUser extends javax.swing.JFrame {
 
+    private String currentUserRole; // To store the role of the logged-in user
+
     /**
      * Creates new form Dashboard
      */
     public DashboardUser() {
         initComponents();
+        // Default role if not explicitly set (e.g., for testing or if no login system is fully integrated yet)
+        this.currentUserRole = "user"; 
+    }
+    
+    /**
+     * Creates new form Dashboard with a specific user role.
+     * @param userRole The role of the currently logged-in user (e.g., "admin", "user").
+     */
+    public DashboardUser(String userRole) {
+        initComponents();
+        this.currentUserRole = userRole;
     }
 
     /**
@@ -149,7 +162,20 @@ public class DashboardUser extends javax.swing.JFrame {
         jPanel3.setBackground(new java.awt.Color(102, 102, 102));
         jPanel3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
+<<<<<<< HEAD
         jLabel4.setBackground(new java.awt.Color(204, 204, 255));
+=======
+        jButton7.setBackground(new java.awt.Color(204, 204, 204));
+        jButton7.setFont(new java.awt.Font("Arial Black", 1, 12)); // NOI18N
+        jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/smartgaunpalikamanagementsystem/view/citizen small.png"))); // NOI18N
+        jButton7.setText("Citizens");
+        jButton7.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
+>>>>>>> sambriddha
 
         jButton3.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jButton3.setText("Dashboard");
@@ -527,9 +553,15 @@ public class DashboardUser extends javax.swing.JFrame {
 
     private void ProjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ProjectActionPerformed
         // TODO add your handling code here:
+<<<<<<< HEAD
         ProjectRequest proj = new ProjectRequest();
         proj.setVisible(true);
         
+=======
+        ProjectRequest project = new ProjectRequest();
+        project.setVisible(true);
+        this.dispose();
+>>>>>>> sambriddha
     }//GEN-LAST:event_ProjectActionPerformed
 
     private void MenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuButtonActionPerformed
@@ -548,6 +580,27 @@ public class DashboardUser extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
+<<<<<<< HEAD
+=======
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton8ActionPerformed
+
+    private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
+        // TODO add your handling code here:
+        LoginView login = new LoginView();
+        login.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButton14ActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        // Open the CitizenEdit form and pass the current user's role
+        CitizenEdit citizenEdit = new CitizenEdit(currentUserRole);
+        citizenEdit.setVisible(true);
+        this.dispose(); // Close the current DashboardUser form
+    }//GEN-LAST:event_jButton7ActionPerformed
+
+>>>>>>> sambriddha
     /**
      * @param args the command line arguments
      */
