@@ -14,7 +14,35 @@ public class ProfileView extends javax.swing.JFrame {
      */
     public ProfileView() {
         initComponents();
+        // Initialize the controller for viewing citizen data
+        new gaumanagementsystem.controller.ProfileViewController(this);
+    }
+
+    /**
+     * Creates new form CitizenView with citizen ID to load
+     */
+    public ProfileView(String citizenId) {
+        initComponents();
+        // Initialize the controller and load citizen data
+        gaumanagementsystem.controller.ProfileViewController controller = 
+            new gaumanagementsystem.controller.ProfileViewController(this);
+        controller.loadCitizenData(citizenId);
+    }
+
+    /**
+     * Creates new form CitizenView with a specific citizen ID and controls edit button visibility.
+     * @param citizenId The ID of the citizen to display.
+     * @param showEditButton True to show the edit button, false to hide it.
+     */
+    public ProfileView(String citizenId, boolean showEditButton) {
+        initComponents();
+        // Initialize the controller and load citizen data
+        gaumanagementsystem.controller.ProfileViewController controller = 
+            new gaumanagementsystem.controller.ProfileViewController(this);
+        controller.loadCitizenData(citizenId);
         
+        // Control the visibility of the edit button
+        getEditButton().setVisible(showEditButton);
     }
 
     /**
@@ -324,6 +352,109 @@ public class ProfileView extends javax.swing.JFrame {
     private javax.swing.JTextField phone;
     // End of variables declaration//GEN-END:variables
 
+    // Getter methods for form fields
+    public javax.swing.JTextField getCitizenIdField() {
+        return citizen_id;
+    }
     
+    public javax.swing.JTextField getNameField() {
+        return name;
+    }
+    
+    public javax.swing.JTextField getEmailField() {
+        return email;
+    }
+    
+    public javax.swing.JTextField getDateOfBirthField() {
+        return dateofbirth;
+    }
+    
+    public javax.swing.JTextField getAddressField() {
+        return address;
+    }
+    
+    public javax.swing.JTextField getPhoneField() {
+        return phone;
+    }
+    
+    public javax.swing.JTextField getFatherNameField() {
+        return father_name;
+    }
+    
+    public javax.swing.JTextField getMotherNameField() {
+        return mother_name;
+    }
+    
+    public javax.swing.JRadioButton getMaleRadioButton() {
+        return male;
+    }
+    
+    public javax.swing.JRadioButton getFemaleRadioButton() {
+        return female;
+    }
+    
+    public javax.swing.JLabel getProfileImageLabel() {
+        return ProfileImageLabel1;
+    }
+    
+    public javax.swing.JButton getEditButton() {
+        return edit;
+    }
+    
+    public javax.swing.JButton getBackButton() {
+        return CitizentoDashboard;
+    }
+    
+    public javax.swing.JButton getMenuButton() {
+        return menu;
+    }
+    
+    // Method to get selected gender
+    public String getSelectedGender() {
+        if (male.isSelected()) {
+            return "Male";
+        } else if (female.isSelected()) {
+            return "Female";
+        }
+        return "";
+    }
+    
+    // Method to set gender selection
+    public void setGenderSelection(String gender) {
+        if ("Male".equalsIgnoreCase(gender)) {
+            male.setSelected(true);
+        } else if ("Female".equalsIgnoreCase(gender)) {
+            female.setSelected(true);
+        }
+    }
+    
+    // Method to make all fields read-only
+    public void setFieldsReadOnly() {
+        citizen_id.setEditable(false);
+        name.setEditable(false);
+        email.setEditable(false);
+        dateofbirth.setEditable(false);
+        address.setEditable(false);
+        phone.setEditable(false);
+        father_name.setEditable(false);
+        mother_name.setEditable(false);
+        male.setEnabled(false);
+        female.setEnabled(false);
+    }
+    
+    // Method to clear all fields
+    public void clearAllFields() {
+        citizen_id.setText("");
+        name.setText("");
+        email.setText("");
+        dateofbirth.setText("");
+        address.setText("");
+        phone.setText("");
+        father_name.setText("");
+        mother_name.setText("");
+        male.setSelected(false);
+        female.setSelected(false);
+        ProfileImageLabel1.setIcon(null);
+    }
     
 }
