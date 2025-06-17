@@ -13,15 +13,13 @@ package gaumanagementsystem.model;
  */
 
 public class UserData {
-    private String username;
     private String email;
     private String role;
     private String password;
     private String confirmPassword;
 
     // Full constructor with confirmPassword
-    public UserData(String username, String email, String role, String password, String confirmPassword) {
-        this.username = username;
+    public UserData(String email, String role, String password, String confirmPassword) {
         this.email = email;
         this.role = role;
         this.password = password;
@@ -31,18 +29,13 @@ public class UserData {
     
 
     // Constructor without confirmPassword
-    public UserData(String username, String email, String role, String password) {
-        this.username = username;
+    public UserData(String email, String role, String password) {
         this.email = email;
         this.role = role;
         this.password = password;
     }
 
     // Setters
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public void setEmail(String email) {
         this.email = email;
     }
@@ -60,10 +53,6 @@ public class UserData {
     }
 
     // Getters
-    public String getUsername() {
-        return this.username;
-    }
-
     public String getEmail() {
         return this.email;
     }

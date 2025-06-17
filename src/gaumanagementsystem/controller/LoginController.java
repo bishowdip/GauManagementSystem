@@ -8,6 +8,7 @@ import gaumanagementsystem.dao.UserDao;
 import gaumanagementsystem.model.LoginRequest;
 import gaumanagementsystem.model.UserData;
 import gaumanagementsystem.view.LoginView;
+import gaumanagementsystem.view.DashboardUser;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
@@ -44,7 +45,10 @@ public class LoginController {
                 if (user==null){
                     JOptionPane.showMessageDialog(view, "Invalid credentials");
                 }else{
-                    
+                    String userRole = user.getRole();
+                    DashboardUser dashboard = new DashboardUser(userRole);
+                    dashboard.setVisible(true);
+                    view.dispose();
                 }
             }
         

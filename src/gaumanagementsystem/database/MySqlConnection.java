@@ -11,9 +11,9 @@ import java.sql.*;
 public class MySqlConnection {
      public Connection openConnection() {
     try{
-    String username="OOP";
-    String password= "Akg@nepal23";
-    String database="marks";
+    String username="root";
+    String password= "wangeldona@1";
+    String database="gaumanagementsystem";
     Class.forName("com.mysql.jdbc.Driver");
     Connection conn;
     conn= DriverManager.getConnection("jdbc:mysql://localhost:3306/"+database,username,password);

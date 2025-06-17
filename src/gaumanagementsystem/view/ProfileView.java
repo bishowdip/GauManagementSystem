@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package gaumanagementsystem.view;
-
 /**
  *
  * @author wange
@@ -11,10 +10,39 @@ package gaumanagementsystem.view;
 public class ProfileView extends javax.swing.JFrame {
 
     /**
-     * Creates new form ProfileView
+     * Creates new form CitizenView 
      */
     public ProfileView() {
         initComponents();
+        // Initialize the controller for viewing citizen data
+        new gaumanagementsystem.controller.ProfileViewController(this);
+    }
+
+    /**
+     * Creates new form CitizenView with citizen ID to load
+     */
+    public ProfileView(String citizenId) {
+        initComponents();
+        // Initialize the controller and load citizen data
+        gaumanagementsystem.controller.ProfileViewController controller = 
+            new gaumanagementsystem.controller.ProfileViewController(this);
+        controller.loadCitizenData(citizenId);
+    }
+
+    /**
+     * Creates new form CitizenView with a specific citizen ID and controls edit button visibility.
+     * @param citizenId The ID of the citizen to display.
+     * @param showEditButton True to show the edit button, false to hide it.
+     */
+    public ProfileView(String citizenId, boolean showEditButton) {
+        initComponents();
+        // Initialize the controller and load citizen data
+        gaumanagementsystem.controller.ProfileViewController controller = 
+            new gaumanagementsystem.controller.ProfileViewController(this);
+        controller.loadCitizenData(citizenId);
+        
+        // Control the visibility of the edit button
+        getEditButton().setVisible(showEditButton);
     }
 
     /**
@@ -26,175 +54,234 @@ public class ProfileView extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jLabel3 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        ProfileImageLabel = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        edit = new javax.swing.JButton();
+        CitizentoDashboard = new javax.swing.JButton();
+        menu = new javax.swing.JButton();
+        citizen_id = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        citizen_id = new javax.swing.JTextField();
-        phone = new javax.swing.JTextField();
-        gender = new javax.swing.JTextField();
-        Address = new javax.swing.JTextField();
-        Email = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
         name = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
+        address = new javax.swing.JTextField();
+        email = new javax.swing.JTextField();
+        father_name = new javax.swing.JTextField();
+        mother_name = new javax.swing.JTextField();
+        phone = new javax.swing.JTextField();
+        male = new javax.swing.JRadioButton();
+        female = new javax.swing.JRadioButton();
+        dateofbirth = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        ProfileImageLabel1 = new javax.swing.JLabel();
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        ProfileImageLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel3.setText("Picture");
+        jLabel1.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
+        jLabel1.setText("Hamro Smart Gaun");
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(206, 10, -1, 51));
 
-        jButton1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jButton1.setText(" Edit Profile");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        edit.setBackground(new java.awt.Color(102, 102, 255));
+        edit.setForeground(new java.awt.Color(255, 255, 255));
+        edit.setText("Edit");
+        edit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                editActionPerformed(evt);
             }
         });
+        getContentPane().add(edit, new org.netbeans.lib.awtextra.AbsoluteConstraints(524, 586, -1, -1));
+
+        CitizentoDashboard.setBackground(new java.awt.Color(102, 102, 255));
+        CitizentoDashboard.setForeground(new java.awt.Color(255, 255, 255));
+        CitizentoDashboard.setText("Back");
+        CitizentoDashboard.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CitizentoDashboardActionPerformed(evt);
+            }
+        });
+        getContentPane().add(CitizentoDashboard, new org.netbeans.lib.awtextra.AbsoluteConstraints(64, 586, -1, -1));
+
+        menu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuActionPerformed(evt);
+            }
+        });
+        getContentPane().add(menu, new org.netbeans.lib.awtextra.AbsoluteConstraints(566, 6, 54, 55));
+
+        citizen_id.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        getContentPane().add(citizen_id, new org.netbeans.lib.awtextra.AbsoluteConstraints(206, 204, 300, -1));
 
         jLabel4.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jLabel4.setText("Citizen Id");
+        jLabel4.setText("Citizenship Number");
+        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(64, 207, -1, -1));
 
         jLabel5.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel5.setText("Name");
+        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 242, -1, -1));
 
         jLabel6.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel6.setText("Email");
+        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(153, 340, -1, -1));
 
         jLabel7.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel7.setText("Address");
+        getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(136, 375, -1, -1));
 
         jLabel8.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel8.setText("Gender");
+        getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 409, -1, -1));
 
         jLabel9.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel9.setText("Phone");
+        getContentPane().add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(146, 444, -1, -1));
 
-        jLabel1.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        jLabel1.setText("Hamro Smart Gaun");
+        jLabel10.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabel10.setText("Mother's Name");
+        getContentPane().add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(92, 514, -1, -1));
 
-        citizen_id.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-
-        phone.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-
-        gender.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        gender.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                genderActionPerformed(evt);
-            }
-        });
-
-        Address.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-
-        Email.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        Email.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                EmailActionPerformed(evt);
-            }
-        });
+        jLabel11.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabel11.setText("Father's Name");
+        getContentPane().add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(95, 479, -1, -1));
 
         name.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        getContentPane().add(name, new org.netbeans.lib.awtextra.AbsoluteConstraints(206, 239, 300, -1));
 
-        jButton2.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jButton2.setText("Back");
+        address.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        getContentPane().add(address, new org.netbeans.lib.awtextra.AbsoluteConstraints(206, 372, 300, -1));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(213, 213, 213))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(40, 40, 40)
-                .addComponent(jButton2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addGap(50, 50, 50))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(106, 106, 106)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel9)
-                            .addComponent(jLabel8))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(citizen_id)
-                            .addComponent(phone)
-                            .addComponent(Email)
-                            .addComponent(Address)
-                            .addComponent(gender)
-                            .addComponent(name, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(157, 157, 157)))
-                .addContainerGap(116, Short.MAX_VALUE))
+        email.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        email.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                emailActionPerformed(evt);
+            }
+        });
+        getContentPane().add(email, new org.netbeans.lib.awtextra.AbsoluteConstraints(206, 337, 300, -1));
+
+        father_name.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        getContentPane().add(father_name, new org.netbeans.lib.awtextra.AbsoluteConstraints(206, 476, 300, -1));
+
+        mother_name.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        mother_name.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mother_nameActionPerformed(evt);
+            }
+        });
+        getContentPane().add(mother_name, new org.netbeans.lib.awtextra.AbsoluteConstraints(206, 511, 300, -1));
+
+        phone.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        getContentPane().add(phone, new org.netbeans.lib.awtextra.AbsoluteConstraints(206, 441, 300, -1));
+
+        male.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        male.setText("Male");
+        male.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                maleActionPerformed(evt);
+            }
+        });
+        getContentPane().add(male, new org.netbeans.lib.awtextra.AbsoluteConstraints(206, 407, -1, -1));
+
+        female.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        female.setText("Female");
+        getContentPane().add(female, new org.netbeans.lib.awtextra.AbsoluteConstraints(272, 407, -1, -1));
+
+        dateofbirth.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        dateofbirth.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dateofbirthActionPerformed(evt);
+            }
+        });
+        getContentPane().add(dateofbirth, new org.netbeans.lib.awtextra.AbsoluteConstraints(206, 274, 300, -1));
+
+        jLabel12.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabel12.setText("Date of Birth");
+        getContentPane().add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(108, 277, -1, -1));
+
+        jPanel1.setBackground(new java.awt.Color(153, 153, 255));
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 630, Short.MAX_VALUE)
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addComponent(jLabel1)
-                .addGap(27, 27, 27)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(32, 32, 32)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(citizen_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(9, 9, 9)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(Email, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(Address, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(gender, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8))
-                .addGap(15, 15, 15)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(phone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9))
-                .addGap(70, 70, 70)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
-                .addContainerGap(63, Short.MAX_VALUE))
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 70, Short.MAX_VALUE)
         );
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 0, 630, 70));
+
+        jPanel2.setBackground(new java.awt.Color(204, 204, 255));
+
+        ProfileImageLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(277, Short.MAX_VALUE)
+                .addComponent(ProfileImageLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(265, 265, 265))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(22, 22, 22)
+                .addComponent(ProfileImageLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(446, Short.MAX_VALUE))
+        );
+
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 70, 630, 560));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void editActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+        EditProfileView update= new EditProfileView();
+        update.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_editActionPerformed
 
-    private void EmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EmailActionPerformed
+    private void CitizentoDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CitizentoDashboardActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_EmailActionPerformed
+        DashboardUser goingtodash = new DashboardUser(); 
+        goingtodash.setVisible(true);           
+        this.dispose();
 
-    private void genderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genderActionPerformed
+    }//GEN-LAST:event_CitizentoDashboardActionPerformed
+
+    private void menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_genderActionPerformed
+    }//GEN-LAST:event_menuActionPerformed
+
+    private void emailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emailActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_emailActionPerformed
+
+    private void maleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maleActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_maleActionPerformed
+
+    private void mother_nameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mother_nameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_mother_nameActionPerformed
+
+    private void dateofbirthActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateofbirthActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dateofbirthActionPerformed
 
     /**
      * @param args the command line arguments
@@ -222,6 +309,9 @@ public class ProfileView extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(ProfileView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -232,46 +322,139 @@ public class ProfileView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField Address;
-    private javax.swing.JTextField Email;
+    private javax.swing.JButton CitizentoDashboard;
+    private javax.swing.JLabel ProfileImageLabel;
+    private javax.swing.JLabel ProfileImageLabel1;
+    private javax.swing.JTextField address;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JTextField citizen_id;
-    private javax.swing.JTextField gender;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JTextField dateofbirth;
+    private javax.swing.JButton edit;
+    private javax.swing.JTextField email;
+    private javax.swing.JTextField father_name;
+    private javax.swing.JRadioButton female;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JRadioButton male;
+    private javax.swing.JButton menu;
+    private javax.swing.JTextField mother_name;
     private javax.swing.JTextField name;
     private javax.swing.JTextField phone;
     // End of variables declaration//GEN-END:variables
 
-
-
-
+    // Getter methods for form fields
+    public javax.swing.JTextField getCitizenIdField() {
+        return citizen_id;
+    }
     
+    public javax.swing.JTextField getNameField() {
+        return name;
+    }
     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public javax.swing.JTextField getEmailField() {
+        return email;
+    }
+    
+    public javax.swing.JTextField getDateOfBirthField() {
+        return dateofbirth;
+    }
+    
+    public javax.swing.JTextField getAddressField() {
+        return address;
+    }
+    
+    public javax.swing.JTextField getPhoneField() {
+        return phone;
+    }
+    
+    public javax.swing.JTextField getFatherNameField() {
+        return father_name;
+    }
+    
+    public javax.swing.JTextField getMotherNameField() {
+        return mother_name;
+    }
+    
+    public javax.swing.JRadioButton getMaleRadioButton() {
+        return male;
+    }
+    
+    public javax.swing.JRadioButton getFemaleRadioButton() {
+        return female;
+    }
+    
+    public javax.swing.JLabel getProfileImageLabel() {
+        return ProfileImageLabel1;
+    }
+    
+    public javax.swing.JButton getEditButton() {
+        return edit;
+    }
+    
+    public javax.swing.JButton getBackButton() {
+        return CitizentoDashboard;
+    }
+    
+    public javax.swing.JButton getMenuButton() {
+        return menu;
+    }
+    
+    // Method to get selected gender
+    public String getSelectedGender() {
+        if (male.isSelected()) {
+            return "Male";
+        } else if (female.isSelected()) {
+            return "Female";
+        }
+        return "";
+    }
+    
+    // Method to set gender selection
+    public void setGenderSelection(String gender) {
+        if ("Male".equalsIgnoreCase(gender)) {
+            male.setSelected(true);
+        } else if ("Female".equalsIgnoreCase(gender)) {
+            female.setSelected(true);
+        }
+    }
+    
+    // Method to make all fields read-only
+    public void setFieldsReadOnly() {
+        citizen_id.setEditable(false);
+        name.setEditable(false);
+        email.setEditable(false);
+        dateofbirth.setEditable(false);
+        address.setEditable(false);
+        phone.setEditable(false);
+        father_name.setEditable(false);
+        mother_name.setEditable(false);
+        male.setEnabled(false);
+        female.setEnabled(false);
+    }
+    
+    // Method to clear all fields
+    public void clearAllFields() {
+        citizen_id.setText("");
+        name.setText("");
+        email.setText("");
+        dateofbirth.setText("");
+        address.setText("");
+        phone.setText("");
+        father_name.setText("");
+        mother_name.setText("");
+        male.setSelected(false);
+        female.setSelected(false);
+        ProfileImageLabel1.setIcon(null);
+    }
+    
 }

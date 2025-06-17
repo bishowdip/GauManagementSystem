@@ -7,7 +7,6 @@ package gaumanagementsystem.controller;
 
 import gaumanagementsystem.dao.UserDao;
 import gaumanagementsystem.model.UserData;
-import gaumanagementsystem.view.LoginView;
 import gaumanagementsystem.view.RegisterView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,31 +36,47 @@ public class RegisterController {
     class RegisterUser implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            String username = view.getUsernameTextField().getText();
-            String email = view.getEmailTextField().getText();
-            String role = view.getRadioButton(); // Fixed typo here
+            String email = view.getEmailTextField().getText().trim();
+            String role = view.getRadioButton();
             String password = String.valueOf(view.getPasswordField().getPassword());
             String confirmPassword = String.valueOf(view.getConfirmPasswordField().getPassword());
 
-            if (username.isEmpty() || email.isEmpty() || role.isEmpty() ||
-                    password.isEmpty() || confirmPassword.isEmpty()) {
-                JOptionPane.showMessageDialog(view, "Fill in all the fields");
-            } else if (!password.equals(confirmPassword)) {
-                JOptionPane.showMessageDialog(view, "Passwords do not match");
-            } else {
-                UserData user = new UserData(username, email, role, password, confirmPassword); // Use full constructor
+            // Input validation
+            if (email.isEmpty() || role.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+                JOptionPane.showMessageDialog(view, "Please fill in all the fields", "Validation Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+                JOptionPane.showMessageDialog(view, "Please enter a valid email address", "Validation Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (password.length() < 6) {
+                JOptionPane.showMessageDialog(view, "Password must be at least 6 characters long", "Validation Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (!password.equals(confirmPassword)) {
+                JOptionPane.showMessageDialog(view, "Passwords do not match", "Validation Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            try {
+                UserData user = new UserData(email, role, password, confirmPassword);
                 UserDao userDao = new UserDao();
                 boolean result = userDao.register(user);
 
                 if (result) {
-                    JOptionPane.showMessageDialog(view, "Registered Successfully");
-                    LoginView loginView = new LoginView();
-                    LoginController loginController = new LoginController(loginView);
-                    loginController.open();
+                    JOptionPane.showMessageDialog(view, "Registration Successful! Redirecting to Dashboard...", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    gaumanagementsystem.view.DashboardUser dashboard = new gaumanagementsystem.view.DashboardUser();
+                    dashboard.setVisible(true);
                     close();
-                } else {
-                    JOptionPane.showMessageDialog(view, "Failed to Register");
                 }
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(view, ex.getMessage(), "Registration Error", JOptionPane.ERROR_MESSAGE);
+            } catch (RuntimeException ex) {
+                JOptionPane.showMessageDialog(view, "An error occurred during registration. Please try again later.", "System Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }

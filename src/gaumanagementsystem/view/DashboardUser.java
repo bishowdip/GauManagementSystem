@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package smartgaunpalikamanagementsystem.view;
+package gaumanagementsystem.view;
 
 /**
  *
@@ -10,11 +10,24 @@ package smartgaunpalikamanagementsystem.view;
  */
 public class DashboardUser extends javax.swing.JFrame {
 
+    private String currentUserRole; // To store the role of the logged-in user
+
     /**
      * Creates new form Dashboard
      */
     public DashboardUser() {
         initComponents();
+        // Default role if not explicitly set (e.g., for testing or if no login system is fully integrated yet)
+        this.currentUserRole = "user"; 
+    }
+    
+    /**
+     * Creates new form Dashboard with a specific user role.
+     * @param userRole The role of the currently logged-in user (e.g., "admin", "user").
+     */
+    public DashboardUser(String userRole) {
+        initComponents();
+        this.currentUserRole = userRole;
     }
 
     /**
@@ -136,6 +149,11 @@ public class DashboardUser extends javax.swing.JFrame {
         jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/smartgaunpalikamanagementsystem/view/citizen small.png"))); // NOI18N
         jButton7.setText("Citizens");
         jButton7.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
 
         jButton9.setBackground(new java.awt.Color(204, 204, 204));
         jButton9.setFont(new java.awt.Font("Arial Black", 1, 12)); // NOI18N
@@ -344,9 +362,9 @@ public class DashboardUser extends javax.swing.JFrame {
 
     private void ProjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ProjectActionPerformed
         // TODO add your handling code here:
-        ProjectRequest Project = new ProjectRequest();
-        Project.setVisible(true);
-        
+        ProjectRequest project = new ProjectRequest();
+        project.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_ProjectActionPerformed
 
     private void MenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuButtonActionPerformed
@@ -371,7 +389,17 @@ public class DashboardUser extends javax.swing.JFrame {
 
     private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
         // TODO add your handling code here:
+        LoginView login = new LoginView();
+        login.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_jButton14ActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        // Open the CitizenEdit form and pass the current user's role
+        CitizenEdit citizenEdit = new CitizenEdit(currentUserRole);
+        citizenEdit.setVisible(true);
+        this.dispose(); // Close the current DashboardUser form
+    }//GEN-LAST:event_jButton7ActionPerformed
 
     /**
      * @param args the command line arguments
