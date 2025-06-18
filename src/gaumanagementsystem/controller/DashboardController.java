@@ -5,24 +5,38 @@
 package gaumanagementsystem.controller;
 
 import gaumanagementsystem.model.UserData;
-import gaumanagementsystem.view.DashboardView;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 
 /**
  *
  * @author bisho
  */
 public class DashboardController {
-    private DashboardView view;
-    private UserData user;
-    public DashboardController(DashboardView view, UserData user){
+    private final DashboardUser view;
+    public DashboardController(DashboardUser view, UserData user){
         this.view=view;
-        this.user=user;
     }
     public void  open(){
         view.setVisible(true);
-    }
+     
     public void close(){
         view.dispose();
     }
+    class DashboardUser implements ActionListener{
 
-}
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            
+        
+        }
+        
+        
+        }
+
+    }
+
+        
+
+
