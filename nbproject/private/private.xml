@@ -6,11 +6,28 @@
             <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/Service.java</file>
             <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/RegisterView.java</file>
             <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/LoginView.java</file>
+<<<<<<< HEAD
             <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/DashboardUser.java</file>
+=======
+            <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/ForgotPassword.java</file>
+            <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/ProjectRequests.java</file>
+            <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/Complaints_Tables.java</file>
+            <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/Complaints_Table.java</file>
+            <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/EditProfileView.java</file>
+            <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/ProfileView.java</file>
+            <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/DashboardUser.java</file>
+            <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/ComplaintsView.java</file>
+            <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/ServiceRequest.java</file>
+>>>>>>> b4a7a0ab7248bd4ed4c31f2d8b366167c4cdb1fd
             <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/database/Dbconnection.java</file>
             <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/model/UserData.java</file>
             <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/controller/DashboardController.java</file>
             <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/database/MySqlConnection.java</file>
+<<<<<<< HEAD
+=======
+            <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/controller/ProfileController.java</file>
+            <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/controller/NewsAndNoticeController.java</file>
+>>>>>>> b4a7a0ab7248bd4ed4c31f2d8b366167c4cdb1fd
             <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/model/LoginRequest.java</file>
             <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/controller/UserController.java</file>
         </group>

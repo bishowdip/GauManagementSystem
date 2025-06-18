@@ -11,14 +11,15 @@ import java.sql.*;
 public class MySqlConnection {
      public Connection openConnection() {
     try{
-    String username="OOP";
-    String password= "Akg@nepal23";
-    String database="marks";
-    Class.forName("com.mysql.jdbc.Driver");
+    String username="root";
+    String password= "Akg@nepal123";
+    String database="gau_management";
+    Class.forName("com.mysql.cj.jdbc.Driver");
     Connection conn;
     conn= DriverManager.getConnection("jdbc:mysql://localhost:3306/"+database,username,password);
     return conn;
     }catch(Exception e){
+        e.printStackTrace();
         return null;    
     }
 
@@ -34,8 +35,8 @@ public class MySqlConnection {
             }
         
         } catch(Exception e){
-
-}
+            e.printStackTrace();
+        }
     
     }  
 }

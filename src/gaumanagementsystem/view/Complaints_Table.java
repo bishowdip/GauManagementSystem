@@ -26,7 +26,6 @@ public class Complaints_Table extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
@@ -90,6 +89,7 @@ public class Complaints_Table extends javax.swing.JPanel {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 MenuButtonActionPerformed(evt);
             }
+            
         });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -137,6 +137,7 @@ public class Complaints_Table extends javax.swing.JPanel {
                 jButton1MouseClicked(evt);
             }
         });
+
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -174,12 +175,13 @@ public class Complaints_Table extends javax.swing.JPanel {
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
         // TODO add your handling code here:
-        if (ComplaintsView.isVisible()){
-            ComplaintsView.setVisible(true);
-        }
-        else{
-            ComplaintsView.setVisible(false);
-        }
+        // TODO: Refactored to avoid static reference errors
+        // ComplaintsView complaintsView = new ComplaintsView();
+        // if (complaintsView.isVisible()) {
+        //     complaintsView.setVisible(true);
+        // } else {
+        //     complaintsView.setVisible(false);
+        // }
     }//GEN-LAST:event_jButton1MouseClicked
 
     private void MenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuButtonActionPerformed

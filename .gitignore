@@ -1,0 +1,10 @@
+<<<<<<< HEAD
+*.class
+/build/
+=======
+/dist/
+>>>>>>> Paridhi
+*.class
+/build/
+*.class
+/build/

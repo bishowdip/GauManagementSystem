@@ -6,51 +6,51 @@
 
 package gaumanagementsystem.model;
 
+
+/**
+ *
+ * @author wangel
+ */
+
 public class UserData {
-    // private attributes
-    private String username;
-    private String name;
     private String email;
-    private String gender;
+    private String role;
     private String password;
     private String confirmPassword;
+    private String status;
+    private String description;
+    private String serviceType;
+    private String ward;
+    private String requestedDate;
+    private String citizen;
+    private String requestId;
 
-    // Full constructor
-    public UserData(String username, String name, String email,String gender, String password, String confirmPassword) {
-        this.username = username;
-        this.name = name;
+    // Full constructor with confirmPassword
+    public UserData(String email, String role, String password, String confirmPassword) {
         this.email = email;
-        this.gender = gender;
+        this.role = role;
         this.password = password;
         this.confirmPassword = confirmPassword;
     }
+    
+    
 
-    // Constructor without confirmPassword (optional)
-    public UserData(String username, String name, String email, String gender, String password) {
-        this.username = username;
-        this.name = name;
+    // Constructor without confirmPassword
+    public UserData(String email, String role, String password) {
         this.email = email;
-        this.gender = gender ;
+        this.role = role;
         this.password = password;
     }
 
     // Setters
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public void setGender(String gender){
-        this.gender = gender;
+    public void setRole(String role) {
+        this.role = role;
     }
-    
+
     public void setPassword(String password) {
         this.password = password;
     }
@@ -60,22 +60,14 @@ public class UserData {
     }
 
     // Getters
-    public String getUsername() {
-        return this.username;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
     public String getEmail() {
         return this.email;
     }
 
-    public String getGender(){
-        return this.gender;
+    public String getRole() {
+        return this.role;
     }
-    
+
     public String getPassword() {
         return this.password;
     }
@@ -84,3 +76,6 @@ public class UserData {
         return this.confirmPassword;
     }
 }
+    
+    
+   

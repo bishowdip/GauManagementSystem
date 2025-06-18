@@ -4,151 +4,92 @@
  */
 package gaumanagementsystem.controller;
 
-import gaumanagementsystem.view.Service;
-import gaumanagementsystem.view.AddServiceForm;
-import gaumanagementsystem.model.ServiceModel;
-import gaumanagementsystem.view.LoginView;
-import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
+import gaumanagementsystem.model.ServiceRequest;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  *
- * @author bisho
+ * @author ASUS
  */
 public class ServiceController {
-    private Service view;
-    private List<ServiceModel> services; // In a real app, this would be a DAO or a service layer
+ 
 
-    public ServiceController(Service view) {
-        this.view = view;
-        this.services = new ArrayList<>(); // Initialize with dummy data for now
-        loadDummyData();
-        initializeListeners();
-        updateServiceTable();
-    }
+    private final ServiceRequestView serviceView;
+    private final ServiceDao serviceDao;
 
-    private void initializeListeners() {
-        view.addMenuButtonListener(e -> toggleMenu());
-        view.addDeleteButtonListener(e -> deleteService());
-        view.addUpdateButtonListener(e -> updateService());
-        view.addRefreshButtonListener(e -> refreshServices());
-        view.addAddButtonListener(e -> addService());
-        view.addSearchTextFieldListener(new SearchServiceListener());
-    }
+    /**
+     *
+     * @param serviceView
+     */
+    public ServiceController(ServiceRequestView serviceView) {
+        this.serviceView = serviceView;
+        this.serviceDao = new ServiceDao();
 
-    private void loadDummyData() {
-        services.add(new ServiceModel("S001", "Water Supply", "Ram Bahadur", "Ward 1", "Installation of new water pipelines.", "Completed"));
-        services.add(new ServiceModel("S002", "Road Maintenance", "Sita Devi", "Ward 3", "Repair of potholes on main road.", "In Progress"));
-        services.add(new ServiceModel("S003", "Electricity Upgrade", "Hari Prasad", "Ward 2", "Replacing old electrical poles.", "Pending"));
-    }
+        // Load service requests into the table
+        loadServiceRequests();
 
-    private void updateServiceTable() {
-        DefaultTableModel model = (DefaultTableModel) view.getServiceTable().getModel();
-        model.setRowCount(0); // Clear existing data
-        for (ServiceModel service : services) {
-            model.addRow(new Object[]{
-                service.getServiceId(),
-                service.getServiceName(),
-                "N/A", // SubmittedAt - not in model, add if needed
-                service.getNameOfCitizen(),
-                service.getWard(),
-                service.getDescription(),
-                service.getStatus()
-            });
-        }
-    }
-
-    private void addService() {
-        AddServiceForm addServiceForm = new AddServiceForm();
-        new AddServiceController(addServiceForm).open(); // Open add service form
-        // After the addServiceForm is closed, you might want to refresh the table
-        addServiceForm.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent e) {
-                refreshServices(); // Refresh table when add form is closed
-            }
+        // Set up the "+ Requested Service" button action
+        this.serviceView.addNewServiceButtonListener((ActionEvent e) -> {
+            openNewServiceForm();
         });
     }
 
-    private void deleteService() {
-        int selectedRow = view.getServiceTable().getSelectedRow();
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(view, "Please select a service to delete.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        int confirm = JOptionPane.showConfirmDialog(view, "Are you sure you want to delete this service?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
-        if (confirm == JOptionPane.YES_OPTION) {
-            // In a real app, delete from database
-            services.remove(selectedRow);
-            updateServiceTable();
-            JOptionPane.showMessageDialog(view, "Service deleted successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
-        }
+    private void loadServiceRequests() {
+        List<ServiceRequest> requestList = serviceDao.getAllRequests();
+        serviceView.setServiceTableData(requestList);
     }
 
-    private void updateService() {
-        int selectedRow = view.getServiceTable().getSelectedRow();
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(view, "Please select a service to update.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        // For updating, you might open a similar form to AddServiceForm but pre-filled with data
-        JOptionPane.showMessageDialog(view, "Update functionality to be implemented. Selected Service: " + services.get(selectedRow).getServiceName());
+    private void openNewServiceForm() {
+        NewServiceFormView newServiceView = new NewServiceFormView();
+        newServiceView.setVisible(true);
+        newServiceView.setLocationRelativeTo(null); // center on screen
+
+        // Optionally pass this controller to update the table after adding new request
+        // Or use a callback mechanism
     }
 
-    private void refreshServices() {
-        // In a real app, reload data from database
-        // For now, re-populate with dummy data or existing data if not modified
-        updateServiceTable();
-        JOptionPane.showMessageDialog(view, "Service list refreshed.", "Info", JOptionPane.INFORMATION_MESSAGE);
-    }
+    private static class NewServiceFormView {
 
-    class SearchServiceListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            String query = view.getSearchQuery().toLowerCase();
-            List<ServiceModel> filteredServices = new ArrayList<>();
-            for (ServiceModel service : services) {
-                if (service.getServiceName().toLowerCase().contains(query) ||
-                    service.getNameOfCitizen().toLowerCase().contains(query) ||
-                    service.getWard().toLowerCase().contains(query) ||
-                    service.getDescription().toLowerCase().contains(query) ||
-                    service.getStatus().toLowerCase().contains(query) ||
-                    service.getServiceId().toLowerCase().contains(query)) {
-                    filteredServices.add(service);
-                }
-            }
-            updateServiceTable(filteredServices);
+        public NewServiceFormView() {
         }
 
-        private void updateServiceTable(List<ServiceModel> filteredServices) {
-            DefaultTableModel model = (DefaultTableModel) view.getServiceTable().getModel();
-            model.setRowCount(0); // Clear existing data
-            for (ServiceModel service : filteredServices) {
-                model.addRow(new Object[]{
-                    service.getServiceId(),
-                    service.getServiceName(),
-                    "N/A", // SubmittedAt
-                    service.getNameOfCitizen(),
-                    service.getWard(),
-                    service.getDescription(),
-                    service.getStatus()
-                });
-            }
+        private void setVisible(boolean b) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+        private void setLocationRelativeTo(Object object) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         }
     }
 
-    private void toggleMenu() {
-        JOptionPane.showMessageDialog(view, "Menu toggle functionality for Service View.");
-        // This would typically interact with a side menu panel in the view
+    private static class ServiceDao {
+
+        public ServiceDao() {
+        }
+
+        private List<ServiceRequest> getAllRequests() {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
     }
 
-    public void open() {
-        view.setVisible(true);
+    private static class ServiceRequestView {
+
+        public ServiceRequestView() {
+        }
+
+        private void setServiceTableData(List<ServiceRequest> requestList) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+        private void addNewServiceButtonListener(ActionListener actionListener) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
     }
 }
+
+     

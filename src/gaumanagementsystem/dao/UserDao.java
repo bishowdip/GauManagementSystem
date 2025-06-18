@@ -3,6 +3,7 @@
 * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
 */
 
+
 package gaumanagementsystem.dao;
 
 import gaumanagementsystem.database.MySqlConnection;
@@ -84,4 +85,12 @@ public class UserDAO {
             if (conn != null) dbConnection.closeConnection(conn);
         }
     }
+
+    public boolean forgotPassword(String email, String newPassword) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
+    
+   
+
+
