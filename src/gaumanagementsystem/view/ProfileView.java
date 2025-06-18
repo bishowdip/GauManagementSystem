@@ -250,7 +250,11 @@ public class ProfileView extends javax.swing.JFrame {
 
     private void editActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editActionPerformed
         // TODO add your handling code here:
-        EditProfileView update= new EditProfileView();
+        EditProfileView update = new EditProfileView();
+        
+        // Connect the view with its controller to ensure proper action listener integration
+        gaumanagementsystem.controller.ProfileController profileController = new gaumanagementsystem.controller.ProfileController(update);
+        
         update.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_editActionPerformed

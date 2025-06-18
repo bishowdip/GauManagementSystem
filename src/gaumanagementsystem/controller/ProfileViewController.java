@@ -156,8 +156,9 @@ public class ProfileViewController {
                 return;
             }
 
-            // Create EditProfileView and pass the current citizen ID
+            // Create EditProfileView and connect it with its controller
             EditProfileView editView = new EditProfileView();
+            gaumanagementsystem.controller.ProfileController profileController = new gaumanagementsystem.controller.ProfileController(editView);
             
             // You might need to modify EditProfileView to accept citizen ID in constructor
             // or create a method to load citizen data by ID

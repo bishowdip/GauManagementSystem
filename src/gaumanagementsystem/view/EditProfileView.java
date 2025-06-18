@@ -61,6 +61,7 @@ public class EditProfileView extends javax.swing.JFrame {
         backtoprofile = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
@@ -181,6 +182,11 @@ public class EditProfileView extends javax.swing.JFrame {
         upload.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         upload.setForeground(new java.awt.Color(255, 255, 255));
         upload.setText("Upload Picture");
+        upload.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                uploadActionPerformed(evt);
+            }
+        });
 
         ProfileImageLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -262,6 +268,10 @@ public class EditProfileView extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_addressActionPerformed
 
+    private void uploadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_uploadActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -292,7 +302,10 @@ public class EditProfileView extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new EditProfileView().setVisible(true);
+                EditProfileView editView = new EditProfileView();
+                // Connect the view with its controller to ensure proper action listener integration
+                gaumanagementsystem.controller.ProfileController profileController = new gaumanagementsystem.controller.ProfileController(editView);
+                editView.setVisible(true);
             }
         });
     }

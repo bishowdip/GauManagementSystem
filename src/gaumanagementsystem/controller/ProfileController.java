@@ -12,6 +12,7 @@ import gaumanagementsystem.dao.CitizenDao;
 import gaumanagementsystem.database.MySqlConnection;
 import gaumanagementsystem.model.CitizenData;
 import gaumanagementsystem.view.EditProfileView;
+import gaumanagementsystem.view.ProfileView;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -78,6 +79,16 @@ public class ProfileController {
         view.getUploadButton().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 uploadImage();
+            }
+        });
+
+        view.getBackButton().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Go back to the previous view (ProfileView)
+                view.dispose();
+                ProfileView profileView = new ProfileView();
+                gaumanagementsystem.controller.ProfileViewController profileViewController = new gaumanagementsystem.controller.ProfileViewController(profileView);
+                profileView.setVisible(true);
             }
         });
     }

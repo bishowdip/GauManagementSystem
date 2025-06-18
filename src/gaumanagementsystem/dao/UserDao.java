@@ -33,7 +33,7 @@ public class UserDao {
             throw new IllegalArgumentException("Email already registered");
         }
 
-        String query = "INSERT INTO users(email, role, password) VALUES (?, ?, ?)";
+        String query = "INSERT INTO users(email, role, fpassword) VALUES (?, ?, ?)";
         Connection conn = mySql.openConnection();
 
         try {

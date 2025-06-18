@@ -54,6 +54,7 @@ public class RegisterView extends javax.swing.JFrame {
         Title = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel6.setText("Already have an account?");
@@ -288,7 +289,9 @@ public class RegisterView extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new RegisterView().setVisible(true);
+                RegisterView view = new RegisterView();
+                gaumanagementsystem.controller.RegisterController controller = new gaumanagementsystem.controller.RegisterController(view);
+                controller.open();
             }
         });
     }
@@ -341,5 +344,22 @@ public class RegisterView extends javax.swing.JFrame {
 
     public void registerUser(ActionListener listener){
         RegisterUser.addActionListener(listener);
+    }
+    
+    // Getter methods for controller access
+    public javax.swing.JButton getRegisterUserButton() {
+        return RegisterUser;
+    }
+    
+    public javax.swing.JButton getBackToLoginButton() {
+        return backtologin;
+    }
+    
+    public javax.swing.JButton getLoginButton() {
+        return backtologin2;
+    }
+    
+    public javax.swing.JCheckBox getViewPasswordCheckBox() {
+        return view_password;
     }
 }
