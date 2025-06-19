@@ -5,6 +5,8 @@
 package gaumanagementsystem.view;
 
 import javax.swing.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  *
@@ -19,6 +21,8 @@ public class ProjectRequests extends JFrame {
         setTitle("Project Requests");
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        initComponents();
+        AddRequest.addActionListener(e -> showAddProjectDialog());
     }
 
     /**
@@ -191,10 +195,62 @@ public class ProjectRequests extends JFrame {
     }//GEN-LAST:event_AddRequestActionPerformed
 
     private void Back1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Back1ActionPerformed
-       DashboardUser dd = new DashboardUser();
+       DashboardView dd = new DashboardView();
         dd.setVisible(true);
         dispose();
     }//GEN-LAST:event_Back1ActionPerformed
+
+    private void showAddProjectDialog() {
+        JTextField requestIdField = new JTextField();
+        JTextField projectNameField = new JTextField();
+        JTextField startedDateField = new JTextField(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        startedDateField.setEditable(false);
+        JTextField wardField = new JTextField();
+        JTextField expectedEndField = new JTextField();
+        JTextField descriptionField = new JTextField();
+        JTextField statusField = new JTextField();
+        JTextField budgetField = new JTextField();
+
+        JPanel panel = new JPanel(new java.awt.GridLayout(0, 1));
+        panel.add(new JLabel("Request ID:"));
+        panel.add(requestIdField);
+        panel.add(new JLabel("Project Name:"));
+        panel.add(projectNameField);
+        panel.add(new JLabel("Started Date:"));
+        panel.add(startedDateField);
+        panel.add(new JLabel("Ward:"));
+        panel.add(wardField);
+        panel.add(new JLabel("Expected to End:"));
+        panel.add(expectedEndField);
+        panel.add(new JLabel("Description:"));
+        panel.add(descriptionField);
+        panel.add(new JLabel("Status:"));
+        panel.add(statusField);
+        panel.add(new JLabel("Budget:"));
+        panel.add(budgetField);
+
+        int result = JOptionPane.showConfirmDialog(this, panel, "Add Project", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            String[] row = new String[] {
+                requestIdField.getText(),
+                projectNameField.getText(),
+                startedDateField.getText(),
+                wardField.getText(),
+                expectedEndField.getText(),
+                descriptionField.getText(),
+                statusField.getText(),
+                budgetField.getText()
+            };
+            for (String s : row) {
+                if (s == null || s.trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "All fields are required.");
+                    return;
+                }
+            }
+            javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+            model.addRow(row);
+        }
+    }
 
     /**
      * @param args the command line arguments

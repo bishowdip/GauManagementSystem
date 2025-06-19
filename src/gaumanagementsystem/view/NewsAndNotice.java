@@ -11,6 +11,11 @@ import javax.swing.JButton;
 import javax.swing.table.DefaultTableModel;
 import java.util.List;
 import gaumanagementsystem.controller.NewsAndNoticeController;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.awt.BorderLayout;
+import javax.swing.JComboBox;
+import java.awt.Color;
 
 /**
  *
@@ -19,24 +24,145 @@ import gaumanagementsystem.controller.NewsAndNoticeController;
 public class NewsAndNotice extends javax.swing.JFrame {
 
     private final NewsAndNoticeController controller = new NewsAndNoticeController();
+    private String currentTypeFilter = "";
+    private JButton backButton;
 
     /**
      * Creates new form NewsAndNotice
      */
     public NewsAndNotice() {
+        this("admin"); // Default to admin for backward compatibility
+    }
+
+    public NewsAndNotice(String userRole) {
         initComponents();
+        setSize(900, 600); // Set preferred window size
+        setLocationRelativeTo(null); // Center the window
         loadTableData();
+
+        // Hide add, delete, update buttons for non-admin users
+        boolean isAdmin = "admin".equalsIgnoreCase(userRole);
+        jButton1.setVisible(isAdmin); // ADD
+        jButton2.setVisible(isAdmin); // DELETE
+        jButton3.setVisible(isAdmin); // UPDATE
+
+        // Make News and Notices labels clickable for filtering
+        jLabel2.setForeground(Color.BLUE);
+        jLabel2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                currentTypeFilter = "News";
+                filterTable(getSearchText(), currentTypeFilter);
+            }
+        });
+        jLabel3.setForeground(Color.BLUE);
+        jLabel3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                currentTypeFilter = "Notice";
+                filterTable(getSearchText(), currentTypeFilter);
+            }
+        });
+
+        // Create and style the back button
+        backButton = new JButton("Back");
+        backButton.setBackground(new Color(173, 216, 230));
+        backButton.setForeground(Color.BLACK);
+        backButton.addActionListener(e -> {
+            new DashboardView().setVisible(true);
+            this.dispose();
+        });
+        // Set panel2's layout to GroupLayout before using it
+        panel2.setLayout(new javax.swing.GroupLayout(panel2));
+        javax.swing.GroupLayout panel2Layout = (javax.swing.GroupLayout) panel2.getLayout();
+        panel2Layout.setHorizontalGroup(
+            panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panel2Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panel2Layout.createSequentialGroup()
+                            .addGap(192, 192, 192)
+                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(33, 33, 33)
+                            .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(26, 26, 26)
+                            .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(26, 26, 26)
+                            .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
+                            .addComponent(jLabel4)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(264, 264, 264))))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 784, Short.MAX_VALUE)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
+                    .addGap(30, 30, 30)
+                    .addComponent(jLabel5)
+                    .addGap(18, 18, 18)
+                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(39, 39, 39)
+                    .addComponent(jLabel6)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel2)
+                    .addGap(18, 18, 18)
+                    .addComponent(jLabel3)
+                    .addGap(18, 18, 18)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(18, 18, 18))
+        );
+        panel2Layout.setVerticalGroup(
+            panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panel2Layout.createSequentialGroup()
+                    .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(panel2Layout.createSequentialGroup()
+                            .addGap(24, 24, 24)
+                            .addComponent(jLabel4)))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButton1)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3))
+                        .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel6)
+                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 313, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(24, 24, 24)
+                    .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton4)
+                        .addComponent(jButton3)
+                        .addComponent(jButton2)
+                        .addComponent(backButton))
+                    .addContainerGap(67, Short.MAX_VALUE))
+        );
+
+        // Set button colors for visibility
+        Color lightBlue = new Color(173, 216, 230);
+        jButton1.setBackground(lightBlue); jButton1.setForeground(Color.BLACK);
+        jButton2.setBackground(lightBlue); jButton2.setForeground(Color.BLACK);
+        jButton3.setBackground(lightBlue); jButton3.setForeground(Color.BLACK);
+        jButton4.setBackground(lightBlue); jButton4.setForeground(Color.BLACK);
 
         // ADD button
         jButton1.addActionListener(e -> {
-            JTextField dateField = new JTextField();
+            JTextField dateField = new JTextField(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            dateField.setEditable(false);
             JTextField audienceField = new JTextField();
             JTextField subjectField = new JTextField();
             JTextField descriptionField = new JTextField();
             JTextField expiryDateField = new JTextField();
+            String[] types = {"News", "Notice"};
+            JComboBox<String> typeCombo = new JComboBox<>(types);
 
             JPanel panel = new JPanel(new java.awt.GridLayout(0, 1));
-            panel.add(new JLabel("Date (YYYY-MM-DD):"));
+            panel.add(new JLabel("Date (auto):"));
             panel.add(dateField);
             panel.add(new JLabel("Audience:"));
             panel.add(audienceField);
@@ -46,6 +172,8 @@ public class NewsAndNotice extends javax.swing.JFrame {
             panel.add(descriptionField);
             panel.add(new JLabel("Expiry Date (YYYY-MM-DD):"));
             panel.add(expiryDateField);
+            panel.add(new JLabel("Type:"));
+            panel.add(typeCombo);
 
             int result = JOptionPane.showConfirmDialog(this, panel, "Add News/Notice", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
             if (result == JOptionPane.OK_OPTION) {
@@ -54,11 +182,12 @@ public class NewsAndNotice extends javax.swing.JFrame {
                 String subject = subjectField.getText();
                 String description = descriptionField.getText();
                 String expiryDate = expiryDateField.getText();
-                if (date.isEmpty() || audience.isEmpty() || subject.isEmpty() || description.isEmpty() || expiryDate.isEmpty()) {
+                String type = (String) typeCombo.getSelectedItem();
+                if (date.isEmpty() || audience.isEmpty() || subject.isEmpty() || description.isEmpty() || expiryDate.isEmpty() || type.isEmpty()) {
                     JOptionPane.showMessageDialog(this, "All fields are required!");
                     return;
                 }
-                gaumanagementsystem.model.NewsAndNotice newNotice = new gaumanagementsystem.model.NewsAndNotice(date, audience, subject, description, expiryDate);
+                gaumanagementsystem.model.NewsAndNotice newNotice = new gaumanagementsystem.model.NewsAndNotice(date, audience, subject, description, expiryDate, type);
                 controller.add(newNotice);
                 addRowToTable(newNotice);
             }
@@ -86,24 +215,58 @@ public class NewsAndNotice extends javax.swing.JFrame {
             int selectedRow = jTable1.getSelectedRow();
             if (selectedRow != -1) {
                 DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-                String date = JOptionPane.showInputDialog(this, "Enter Date (YYYY-MM-DD):", model.getValueAt(selectedRow, 0));
-                if (date == null) return;
-                String audience = JOptionPane.showInputDialog(this, "Enter Audience:", model.getValueAt(selectedRow, 1));
-                if (audience == null) return;
-                String subject = JOptionPane.showInputDialog(this, "Enter Subject:", model.getValueAt(selectedRow, 2));
-                if (subject == null) return;
-                String description = JOptionPane.showInputDialog(this, "Enter Description:", model.getValueAt(selectedRow, 3));
-                if (description == null) return;
-                String expiryDate = JOptionPane.showInputDialog(this, "Enter Expiry Date (YYYY-MM-DD):", model.getValueAt(selectedRow, 4));
-                if (expiryDate == null) return;
+                String date = (String) model.getValueAt(selectedRow, 0);
+                String audience = (String) model.getValueAt(selectedRow, 1);
+                String subject = (String) model.getValueAt(selectedRow, 2);
+                String description = (String) model.getValueAt(selectedRow, 3);
+                String expiryDate = (String) model.getValueAt(selectedRow, 4);
+                String type = (String) model.getValueAt(selectedRow, 5);
 
-                gaumanagementsystem.model.NewsAndNotice updatedNotice = new gaumanagementsystem.model.NewsAndNotice(date, audience, subject, description, expiryDate);
-                controller.update(selectedRow, updatedNotice);
-                model.setValueAt(date, selectedRow, 0);
-                model.setValueAt(audience, selectedRow, 1);
-                model.setValueAt(subject, selectedRow, 2);
-                model.setValueAt(description, selectedRow, 3);
-                model.setValueAt(expiryDate, selectedRow, 4);
+                JTextField dateField = new JTextField(date);
+                dateField.setEditable(false);
+                JTextField audienceField = new JTextField(audience);
+                JTextField subjectField = new JTextField(subject);
+                JTextField descriptionField = new JTextField(description);
+                JTextField expiryDateField = new JTextField(expiryDate);
+                String[] types = {"News", "Notice"};
+                JComboBox<String> typeCombo = new JComboBox<>(types);
+                typeCombo.setSelectedItem(type);
+
+                JPanel panel = new JPanel(new java.awt.GridLayout(0, 1));
+                panel.add(new JLabel("Date (auto):"));
+                panel.add(dateField);
+                panel.add(new JLabel("Audience:"));
+                panel.add(audienceField);
+                panel.add(new JLabel("Subject:"));
+                panel.add(subjectField);
+                panel.add(new JLabel("Description:"));
+                panel.add(descriptionField);
+                panel.add(new JLabel("Expiry Date (YYYY-MM-DD):"));
+                panel.add(expiryDateField);
+                panel.add(new JLabel("Type:"));
+                panel.add(typeCombo);
+
+                int result = JOptionPane.showConfirmDialog(this, panel, "Update News/Notice", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                if (result == JOptionPane.OK_OPTION) {
+                    String newDate = dateField.getText();
+                    String newAudience = audienceField.getText();
+                    String newSubject = subjectField.getText();
+                    String newDescription = descriptionField.getText();
+                    String newExpiryDate = expiryDateField.getText();
+                    String newType = (String) typeCombo.getSelectedItem();
+                    if (newDate.isEmpty() || newAudience.isEmpty() || newSubject.isEmpty() || newDescription.isEmpty() || newExpiryDate.isEmpty() || newType.isEmpty()) {
+                        JOptionPane.showMessageDialog(this, "All fields are required!");
+                        return;
+                    }
+                    gaumanagementsystem.model.NewsAndNotice updatedNotice = new gaumanagementsystem.model.NewsAndNotice(newDate, newAudience, newSubject, newDescription, newExpiryDate, newType);
+                    controller.update(selectedRow, updatedNotice);
+                    model.setValueAt(newDate, selectedRow, 0);
+                    model.setValueAt(newAudience, selectedRow, 1);
+                    model.setValueAt(newSubject, selectedRow, 2);
+                    model.setValueAt(newDescription, selectedRow, 3);
+                    model.setValueAt(newExpiryDate, selectedRow, 4);
+                    model.setValueAt(newType, selectedRow, 5);
+                }
             } else {
                 JOptionPane.showMessageDialog(this, "Please select a row to update.");
             }
@@ -115,14 +278,22 @@ public class NewsAndNotice extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Table refreshed successfully!");
         });
 
-        // SEARCH and AUDIENCE filter
+        // SEARCH and AUDIENCE filter (fix logic)
         ActionListener filterListener = (ActionEvent e) -> {
-            String searchText = jTextField3.getText().trim().toLowerCase();
-            String audienceText = jTextField1.getText().trim();
-            filterTable(searchText, audienceText);
+            filterTable(getSearchText(), currentTypeFilter);
         };
         jTextField3.addActionListener(filterListener);
         jTextField1.addActionListener(filterListener);
+        jTextField3.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { filterTable(getSearchText(), currentTypeFilter); }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { filterTable(getSearchText(), currentTypeFilter); }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { filterTable(getSearchText(), currentTypeFilter); }
+        });
+        jTextField1.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { filterTable(getSearchText(), currentTypeFilter); }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { filterTable(getSearchText(), currentTypeFilter); }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { filterTable(getSearchText(), currentTypeFilter); }
+        });
     }
 
     private void loadTableData() {
@@ -138,13 +309,19 @@ public class NewsAndNotice extends javax.swing.JFrame {
         model.addRow(notice.toTableRow());
     }
 
-    private void filterTable(String search, String audience) {
+    private void filterTable(String search, String type) {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0);
-        List<gaumanagementsystem.model.NewsAndNotice> filteredList = controller.search(search, audience);
+        List<gaumanagementsystem.model.NewsAndNotice> filteredList = controller.search(search, type);
         for (gaumanagementsystem.model.NewsAndNotice notice : filteredList) {
             model.addRow(notice.toTableRow());
         }
+    }
+
+    private String getSearchText() {
+        String search = jTextField3.getText().trim();
+        String audience = jTextField1.getText().trim();
+        return (search + " " + audience).trim();
     }
 
     /**
@@ -217,13 +394,13 @@ public class NewsAndNotice extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "Date", "Audience", "Subject", "Description", "ExpiryDate"
+                "Date", "Audience", "Subject", "Description", "ExpiryDate", "Type"
             }
         ));
         jScrollPane1.setViewportView(jTable1);
@@ -250,73 +427,6 @@ public class NewsAndNotice extends javax.swing.JFrame {
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel6.setText("Audience");
-
-        javax.swing.GroupLayout panel2Layout = new javax.swing.GroupLayout(panel2);
-        panel2.setLayout(panel2Layout);
-        panel2Layout.setHorizontalGroup(
-            panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panel2Layout.createSequentialGroup()
-                        .addGap(192, 192, 192)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(33, 33, 33)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(26, 26, 26)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(264, 264, 264))))
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 784, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addComponent(jLabel5)
-                .addGap(18, 18, 18)
-                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(39, 39, 39)
-                .addComponent(jLabel6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel2)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel3)
-                .addGap(18, 18, 18)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18))
-        );
-        panel2Layout.setVerticalGroup(
-            panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panel2Layout.createSequentialGroup()
-                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(panel2Layout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addComponent(jLabel4)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton1)
-                        .addComponent(jLabel2)
-                        .addComponent(jLabel3))
-                    .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel5)
-                        .addComponent(jLabel6)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 313, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(24, 24, 24)
-                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton4)
-                    .addComponent(jButton3)
-                    .addComponent(jButton2))
-                .addContainerGap(67, Short.MAX_VALUE))
-        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

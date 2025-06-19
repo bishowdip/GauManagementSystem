@@ -544,7 +544,7 @@ public class CitizenEdit extends javax.swing.JFrame {
 
     private void CitizentoDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CitizentoDashboardActionPerformed
         // TODO add your handling code here:
-        DashboardUser goingtodash = new DashboardUser();
+        DashboardView goingtodash = new DashboardView();
         goingtodash.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_CitizentoDashboardActionPerformed

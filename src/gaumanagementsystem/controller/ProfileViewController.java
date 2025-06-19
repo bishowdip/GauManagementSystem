@@ -13,7 +13,7 @@ import gaumanagementsystem.database.MySqlConnection;
 import gaumanagementsystem.model.CitizenData;
 import gaumanagementsystem.view.ProfileView;
 import gaumanagementsystem.view.EditProfileView;
-import gaumanagementsystem.view.DashboardUser;
+import gaumanagementsystem.view.DashboardView;
 
 import javax.swing.*;
 import java.awt.Image;
@@ -174,7 +174,7 @@ public class ProfileViewController {
     // Go back to dashboard
     private void goBackToDashboard() {
         try {
-            DashboardUser dashboard = new DashboardUser();
+            DashboardView dashboard = new DashboardView();
             dashboard.setVisible(true);
             view.dispose();
         } catch (Exception e) {

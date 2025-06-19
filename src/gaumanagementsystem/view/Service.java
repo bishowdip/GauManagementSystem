@@ -4,8 +4,10 @@
  */
 package gaumanagementsystem.view;
 
-import gaumanagementsystem.view.AddServiceForm;
-import gaumanagementsystem.view.ProjectRequest;
+import java.awt.Color;
+import javax.swing.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  *
@@ -18,6 +20,190 @@ public class Service extends javax.swing.JFrame {
      */
     public Service() {
         initComponents();
+        setSize(900, 600);
+        setLocationRelativeTo(null);
+
+        // Style buttons
+        Color lightBlue = new Color(173, 216, 230);
+        jButton5.setBackground(lightBlue); jButton5.setForeground(Color.BLACK); // Add Service
+        jButton2.setBackground(lightBlue); jButton2.setForeground(Color.BLACK); // Delete
+        jButton3.setBackground(lightBlue); jButton3.setForeground(Color.BLACK); // Update
+        jButton4.setBackground(lightBlue); jButton4.setForeground(Color.BLACK); // Refresh
+
+        // Add Back button
+        JButton backButton = new JButton("Back");
+        backButton.setBackground(lightBlue);
+        backButton.setForeground(Color.BLACK);
+        backButton.addActionListener(e -> {
+            new DashboardView().setVisible(true);
+            this.dispose();
+        });
+        // Add back button to the layout (bottom right)
+        javax.swing.GroupLayout layout = (javax.swing.GroupLayout) getContentPane().getLayout();
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane1)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel5)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(128, 128, 128)
+                            .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(40, 40, 40))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(339, 339, 339)
+                            .addComponent(jButton2)
+                            .addGap(23, 23, 23)
+                            .addComponent(jButton3)
+                            .addGap(18, 18, 18)
+                            .addComponent(jButton4)
+                            .addGap(18, 18, 18)
+                            .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(0, 0, Short.MAX_VALUE)))
+                    .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(18, 18, 18)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel3)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(10, 10, 10)
+                            .addComponent(jButton5)))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(30, 30, 30)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton2)
+                        .addComponent(jButton3)
+                        .addComponent(jButton4)
+                        .addComponent(backButton))
+                    .addContainerGap(95, Short.MAX_VALUE))
+        );
+
+        // Add Service button logic
+        jButton5.addActionListener(e -> {
+            JTextField idField = new JTextField();
+            JTextField nameField = new JTextField();
+            JTextField submittedAtField = new JTextField(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            submittedAtField.setEditable(false);
+            JTextField citizenField = new JTextField();
+            JTextField wardField = new JTextField();
+            JTextField descField = new JTextField();
+            JTextField statusField = new JTextField();
+            JPanel panel = new JPanel(new java.awt.GridLayout(0, 1));
+            panel.add(new JLabel("Service ID:"));
+            panel.add(idField);
+            panel.add(new JLabel("Service Name:"));
+            panel.add(nameField);
+            panel.add(new JLabel("Submitted At (auto):"));
+            panel.add(submittedAtField);
+            panel.add(new JLabel("Name Of Citizen:"));
+            panel.add(citizenField);
+            panel.add(new JLabel("Ward:"));
+            panel.add(wardField);
+            panel.add(new JLabel("Description:"));
+            panel.add(descField);
+            panel.add(new JLabel("Status:"));
+            panel.add(statusField);
+            int result = JOptionPane.showConfirmDialog(this, panel, "Add Service", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            if (result == JOptionPane.OK_OPTION) {
+                String id = idField.getText();
+                String name = nameField.getText();
+                String submittedAt = submittedAtField.getText();
+                String citizen = citizenField.getText();
+                String ward = wardField.getText();
+                String desc = descField.getText();
+                String status = statusField.getText();
+                if (id.isEmpty() || name.isEmpty() || citizen.isEmpty() || ward.isEmpty() || desc.isEmpty() || status.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "All fields are required!");
+                    return;
+                }
+                javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+                model.addRow(new Object[]{id, name, submittedAt, citizen, ward, desc, status});
+            }
+        });
+
+        // Delete button logic
+        jButton2.addActionListener(e -> {
+            int selectedRow = jTable1.getSelectedRow();
+            if (selectedRow != -1) {
+                int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this service?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    ((javax.swing.table.DefaultTableModel) jTable1.getModel()).removeRow(selectedRow);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Please select a row to delete.");
+            }
+        });
+
+        // Update button logic
+        jButton3.addActionListener(e -> {
+            int selectedRow = jTable1.getSelectedRow();
+            if (selectedRow != -1) {
+                javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+                String id = (String) model.getValueAt(selectedRow, 0);
+                String name = (String) model.getValueAt(selectedRow, 1);
+                String submittedAt = (String) model.getValueAt(selectedRow, 2);
+                String citizen = (String) model.getValueAt(selectedRow, 3);
+                String ward = (String) model.getValueAt(selectedRow, 4);
+                String desc = (String) model.getValueAt(selectedRow, 5);
+                String status = (String) model.getValueAt(selectedRow, 6);
+                JTextField idField = new JTextField(id);
+                JTextField nameField = new JTextField(name);
+                JTextField submittedAtField = new JTextField(submittedAt);
+                submittedAtField.setEditable(false);
+                JTextField citizenField = new JTextField(citizen);
+                JTextField wardField = new JTextField(ward);
+                JTextField descField = new JTextField(desc);
+                JTextField statusField = new JTextField(status);
+                JPanel panel = new JPanel(new java.awt.GridLayout(0, 1));
+                panel.add(new JLabel("Service ID:"));
+                panel.add(idField);
+                panel.add(new JLabel("Service Name:"));
+                panel.add(nameField);
+                panel.add(new JLabel("Submitted At (auto):"));
+                panel.add(submittedAtField);
+                panel.add(new JLabel("Name Of Citizen:"));
+                panel.add(citizenField);
+                panel.add(new JLabel("Ward:"));
+                panel.add(wardField);
+                panel.add(new JLabel("Description:"));
+                panel.add(descField);
+                panel.add(new JLabel("Status:"));
+                panel.add(statusField);
+                int result = JOptionPane.showConfirmDialog(this, panel, "Update Service", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                if (result == JOptionPane.OK_OPTION) {
+                    model.setValueAt(idField.getText(), selectedRow, 0);
+                    model.setValueAt(nameField.getText(), selectedRow, 1);
+                    model.setValueAt(submittedAtField.getText(), selectedRow, 2);
+                    model.setValueAt(citizenField.getText(), selectedRow, 3);
+                    model.setValueAt(wardField.getText(), selectedRow, 4);
+                    model.setValueAt(descField.getText(), selectedRow, 5);
+                    model.setValueAt(statusField.getText(), selectedRow, 6);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Please select a row to update.");
+            }
+        });
+
+        // Refresh button logic
+        jButton4.addActionListener(e -> {
+            jTable1.repaint();
+        });
     }
 
     /**
@@ -40,7 +226,6 @@ public class Service extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
-        jLabel4 = new javax.swing.JLabel();
         jButton5 = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         jTextField2 = new javax.swing.JTextField();
@@ -56,14 +241,14 @@ public class Service extends javax.swing.JFrame {
         jLabel1.setText("Hamro Smart Gaun");
 
         MenuButton.setBackground(new java.awt.Color(204, 204, 204));
-        MenuButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/smartgaunpalikamanagementsystem/view/menu_icon-icons.com_72311.png"))); // NOI18N
+        MenuButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gaumanagementsystem/view/plus (1).png")));
         MenuButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 MenuButtonActionPerformed(evt);
             }
         });
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/smartgaunpalikamanagementsystem/view/village_icon_180434.png"))); // NOI18N
+        jLabel2.setIcon(null);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -146,13 +331,15 @@ public class Service extends javax.swing.JFrame {
             }
         });
 
-        jLabel4.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(102, 51, 255));
-        jLabel4.setText("ADMIN");
-
+        jButton5.setBackground(new java.awt.Color(51, 51, 255));
         jButton5.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
-        jButton5.setText("Add");
+        jButton5.setText("+ Add Service");
         jButton5.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         jLabel5.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(102, 51, 255));
@@ -173,46 +360,49 @@ public class Service extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(30, 30, 30)
-                        .addComponent(jButton2)
-                        .addGap(23, 23, 23)
-                        .addComponent(jButton3)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton4))
+                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(289, 289, 289))
-                    .addComponent(jScrollPane1))
+                        .addGap(128, 128, 128)
+                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(40, 40, 40))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(339, 339, 339)
+                        .addComponent(jButton2)
+                        .addGap(23, 23, 23)
+                        .addComponent(jButton3)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton4)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel5)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel5)
+                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(jButton5)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2)
                     .addComponent(jButton3)
-                    .addComponent(jButton4)
-                    .addComponent(jLabel4)
-                    .addComponent(jButton5))
-                .addGap(7, 7, 7))
+                    .addComponent(jButton4))
+                .addContainerGap(95, Short.MAX_VALUE))
         );
 
         pack();
@@ -240,10 +430,10 @@ public class Service extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {
-        AddServiceForm addForm = new AddServiceForm();
-        addForm.setVisible(true);
-    }
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton5ActionPerformed
+
 
     /**
      * @param args the command line arguments
@@ -262,13 +452,13 @@ public class Service extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ProjectRequest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ProjectRequests.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ProjectRequest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ProjectRequests.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ProjectRequest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ProjectRequests.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ProjectRequest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ProjectRequests.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -276,7 +466,7 @@ public class Service extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new ProjectRequest().setVisible(true);
+                new ProjectRequests().setVisible(true);
             }
         });
     }
@@ -290,7 +480,6 @@ public class Service extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JPanel jPanel1;

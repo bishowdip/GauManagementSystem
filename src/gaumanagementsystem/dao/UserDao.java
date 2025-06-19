@@ -17,16 +17,15 @@ public class UserDAO {
         this.dbConnection = new MySqlConnection();
     }
 
-    public boolean checkUserExists(String username, String email) throws SQLException {
+    public boolean checkUserExists(String email) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try {
             conn = dbConnection.openConnection();
-            String query = "SELECT * FROM users WHERE username = ? OR email = ?";
+            String query = "SELECT * FROM users WHERE email = ?";
             stmt = conn.prepareStatement(query);
-            stmt.setString(1, username);
-            stmt.setString(2, email);
+            stmt.setString(1, email);
             rs = stmt.executeQuery();
             return rs.next();
         } finally {
@@ -36,19 +35,16 @@ public class UserDAO {
         }
     }
 
-    public boolean registerUser(User user) throws SQLException {
+    public boolean registerUser(User user, String role) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
         try {
             conn = dbConnection.openConnection();
-            String query = "INSERT INTO users (name, username, email, gender, fpassword) VALUES (?, ?, ?, ?, ?)";
+            String query = "INSERT INTO users (email, fpassword, role) VALUES (?, ?, ?)";
             stmt = conn.prepareStatement(query);
-            stmt.setString(1, user.getName());
-            stmt.setString(2, user.getUsername());
-            stmt.setString(3, user.getEmail());
-            stmt.setString(4, user.getGender());
-            stmt.setString(5, user.getPassword());
-            
+            stmt.setString(1, user.getEmail());
+            stmt.setString(2, user.getPassword());
+            stmt.setString(3, role);
             int result = stmt.executeUpdate();
             return result > 0;
         } finally {
@@ -68,14 +64,12 @@ public class UserDAO {
             stmt.setString(1, email);
             stmt.setString(2, password);
             rs = stmt.executeQuery();
-            
             if (rs.next()) {
                 User user = new User();
                 user.setId(rs.getInt("id"));
-                user.setName(rs.getString("name"));
-                user.setUsername(rs.getString("username"));
                 user.setEmail(rs.getString("email"));
-                user.setGender(rs.getString("gender"));
+                user.setPassword(rs.getString("fpassword"));
+                // Optionally set role if you add it to User model
                 return user;
             }
             return null;

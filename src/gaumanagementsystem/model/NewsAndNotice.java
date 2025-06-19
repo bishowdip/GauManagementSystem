@@ -14,13 +14,15 @@ public class NewsAndNotice {
     private String subject;
     private String description;
     private String expiryDate;
+    private String type;
 
-    public NewsAndNotice(String date, String audience, String subject, String description, String expiryDate) {
+    public NewsAndNotice(String date, String audience, String subject, String description, String expiryDate, String type) {
         this.date = date;
         this.audience = audience;
         this.subject = subject;
         this.description = description;
         this.expiryDate = expiryDate;
+        this.type = type;
     }
 
     // Getters
@@ -29,6 +31,7 @@ public class NewsAndNotice {
     public String getSubject() { return subject; }
     public String getDescription() { return description; }
     public String getExpiryDate() { return expiryDate; }
+    public String getType() { return type; }
 
     // Setters
     public void setDate(String date) { this.date = date; }
@@ -36,9 +39,10 @@ public class NewsAndNotice {
     public void setSubject(String subject) { this.subject = subject; }
     public void setDescription(String description) { this.description = description; }
     public void setExpiryDate(String expiryDate) { this.expiryDate = expiryDate; }
+    public void setType(String type) { this.type = type; }
 
     // Convert to Object array for table display
     public Object[] toTableRow() {
-        return new Object[]{date, audience, subject, description, expiryDate};
+        return new Object[]{date, audience, subject, description, expiryDate, type};
     }
 }

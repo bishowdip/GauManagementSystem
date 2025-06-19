@@ -5,6 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+
 public class LoginView extends javax.swing.JFrame {
     private javax.swing.JButton loginButton;
     private javax.swing.JButton showButton;
@@ -53,6 +54,10 @@ public class LoginView extends javax.swing.JFrame {
         registerLabel.setForeground(new java.awt.Color(51, 153, 255));
         registerLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
+        // Styling forgot password label
+        forgotLabel.setForeground(new java.awt.Color(51, 153, 255));
+        forgotLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
         // Action Listeners
         loginButton.addActionListener(this::loginAction);
         showButton.addActionListener(this::togglePasswordVisibility);
@@ -60,6 +65,13 @@ public class LoginView extends javax.swing.JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 new RegisterView().setVisible(true);
+                dispose();
+            }
+        });
+        forgotLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                new ForgotPassword().setVisible(true);
                 dispose();
             }
         });
