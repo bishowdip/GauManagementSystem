@@ -45,6 +45,9 @@ public class ProjectRequests extends JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         Back1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
 
         jRadioButtonMenuItem1.setSelected(true);
         jRadioButtonMenuItem1.setText("jRadioButtonMenuItem1");
@@ -102,7 +105,7 @@ public class ProjectRequests extends JFrame {
         AddRequest.setBackground(new java.awt.Color(153, 51, 255));
         AddRequest.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         AddRequest.setForeground(new java.awt.Color(255, 255, 255));
-        AddRequest.setText("+ New Service");
+        AddRequest.setText("+ New project");
         AddRequest.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         AddRequest.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -121,9 +124,17 @@ public class ProjectRequests extends JFrame {
 
             },
             new String [] {
-                "Request_ID", "Projects_Name", "Started_Date", "Ward", "Expected to End", "Description", "Status", "Budget"
+                "Request_ID", "Projects_Name", "Started_Date", "Ward", "Category", "Expected to End", "Description", "Status", "Amount"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
         jTable1.setGridColor(new java.awt.Color(102, 51, 255));
         jTable1.setSelectionBackground(new java.awt.Color(255, 255, 255));
         jTable1.setShowGrid(true);
@@ -138,6 +149,33 @@ public class ProjectRequests extends JFrame {
             }
         });
 
+        jButton2.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jButton2.setText("Delete");
+        jButton2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jButton3.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jButton3.setText("Update");
+        jButton3.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        jButton4.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jButton4.setText("Refesh");
+        jButton4.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -146,7 +184,6 @@ public class ProjectRequests extends JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 178, Short.MAX_VALUE)
@@ -155,9 +192,19 @@ public class ProjectRequests extends JFrame {
                         .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(64, 64, 64)
                         .addComponent(AddRequest, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(Back1)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 821, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(312, 312, 312)
+                                .addComponent(jButton2)
+                                .addGap(29, 29, 29)
+                                .addComponent(jButton3)
+                                .addGap(32, 32, 32)
+                                .addComponent(jButton4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(Back1)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -166,15 +213,20 @@ public class ProjectRequests extends JFrame {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(AddRequest)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel3)
-                        .addComponent(jTextField1)
-                        .addComponent(jLabel5)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(jTextField1)
+                            .addComponent(jLabel5))
+                        .addGap(10, 10, 10))
+                    .addComponent(AddRequest))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(Back1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Back1)
+                    .addComponent(jButton2)
+                    .addComponent(jButton3)
+                    .addComponent(jButton4))
                 .addContainerGap())
         );
 
@@ -200,13 +252,42 @@ public class ProjectRequests extends JFrame {
         dispose();
     }//GEN-LAST:event_Back1ActionPerformed
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton4ActionPerformed
+
     private void showAddProjectDialog() {
         JTextField requestIdField = new JTextField();
         JTextField projectNameField = new JTextField();
-        JTextField startedDateField = new JTextField(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-        startedDateField.setEditable(false);
+        // Date pickers for started date and expected end date
+        JSpinner startedDateSpinner = new JSpinner(new SpinnerDateModel());
+        JSpinner.DateEditor startedDateEditor = new JSpinner.DateEditor(startedDateSpinner, "yyyy-MM-dd");
+        startedDateSpinner.setEditor(startedDateEditor);
+        startedDateSpinner.setValue(new java.util.Date());
+        JSpinner expectedEndSpinner = new JSpinner(new SpinnerDateModel());
+        JSpinner.DateEditor expectedEndEditor = new JSpinner.DateEditor(expectedEndSpinner, "yyyy-MM-dd");
+        expectedEndSpinner.setEditor(expectedEndEditor);
+        expectedEndSpinner.setValue(new java.util.Date());
         JTextField wardField = new JTextField();
-        JTextField expectedEndField = new JTextField();
+        // Fixed category options
+        String[] categories = {
+            "Education",
+            "Health and Medical",
+            "Housing and Rent",
+            "Transportation",
+            "Food and Groceries",
+            "Savings and Investments",
+            "Entertainment and Leisure"
+        };
+        JComboBox<String> categoryComboBox = new JComboBox<>(categories);
         JTextField descriptionField = new JTextField();
         JTextField statusField = new JTextField();
         JTextField budgetField = new JTextField();
@@ -217,11 +298,13 @@ public class ProjectRequests extends JFrame {
         panel.add(new JLabel("Project Name:"));
         panel.add(projectNameField);
         panel.add(new JLabel("Started Date:"));
-        panel.add(startedDateField);
+        panel.add(startedDateSpinner);
         panel.add(new JLabel("Ward:"));
         panel.add(wardField);
+        panel.add(new JLabel("Category:"));
+        panel.add(categoryComboBox);
         panel.add(new JLabel("Expected to End:"));
-        panel.add(expectedEndField);
+        panel.add(expectedEndSpinner);
         panel.add(new JLabel("Description:"));
         panel.add(descriptionField);
         panel.add(new JLabel("Status:"));
@@ -231,12 +314,14 @@ public class ProjectRequests extends JFrame {
 
         int result = JOptionPane.showConfirmDialog(this, panel, "Add Project", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String[] row = new String[] {
                 requestIdField.getText(),
                 projectNameField.getText(),
-                startedDateField.getText(),
+                dateFormat.format((Date) startedDateSpinner.getValue()),
                 wardField.getText(),
-                expectedEndField.getText(),
+                (String) categoryComboBox.getSelectedItem(),
+                dateFormat.format((Date) expectedEndSpinner.getValue()),
                 descriptionField.getText(),
                 statusField.getText(),
                 budgetField.getText()
@@ -290,6 +375,9 @@ public class ProjectRequests extends JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AddRequest;
     private javax.swing.JButton Back1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

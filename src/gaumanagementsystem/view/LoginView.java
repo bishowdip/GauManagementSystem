@@ -68,13 +68,7 @@ public class LoginView extends javax.swing.JFrame {
                 dispose();
             }
         });
-        forgotLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                new ForgotPassword().setVisible(true);
-                dispose();
-            }
-        });
+        
 
         // Add components
         add(titleLabel); add(emailLabel); add(emailField); add(passwordLabel);

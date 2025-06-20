@@ -237,11 +237,6 @@ public class EditProfileView extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveActionPerformed
-        // TODO add your handling code here:
-        
-    }//GEN-LAST:event_saveActionPerformed
-
     private void emailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emailActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_emailActionPerformed
@@ -384,5 +379,128 @@ public class EditProfileView extends javax.swing.JFrame {
         return upload;
     }
 
+    private String selectedImagePath = null; // To store the uploaded image path
+    private String role = "admin";
+    private String userCitizenId = null;
+    private boolean isEditMode = false;
+
+    public EditProfileView(String role, String citizenId, boolean isEditMode) {
+        this();
+        this.role = role;
+        this.userCitizenId = citizenId;
+        this.isEditMode = isEditMode;
+        // Role-based button visibility
+        if ("admin".equalsIgnoreCase(role)) {
+            save.setVisible(true);
+            backtoprofile.setVisible(true);
+        } else if ("user".equalsIgnoreCase(role)) {
+            save.setVisible(true);
+            backtoprofile.setVisible(true);
+        }
+        // Data loading logic
+        if (isEditMode && citizenId != null) {
+            gaumanagementsystem.controller.CitizenController controller = new gaumanagementsystem.controller.CitizenController();
+            gaumanagementsystem.model.CitizenData citizen = controller.getCitizenById(citizenId);
+            if (citizen != null) {
+                citizen_id.setText(citizen.getCitizenId());
+                name.setText(citizen.getName());
+                email.setText(citizen.getEmail());
+                dateofbirth.setText(citizen.getDateOfBirth());
+                address.setText(citizen.getAddress());
+                phone.setText(citizen.getPhone());
+                father_name.setText(citizen.getFatherName());
+                mother_name.setText(citizen.getMotherName());
+                if ("Male".equalsIgnoreCase(citizen.getGender())) {
+                    male.setSelected(true);
+                } else if ("Female".equalsIgnoreCase(citizen.getGender())) {
+                    female.setSelected(true);
+                } else {
+                    buttonGroup1.clearSelection();
+                }
+                // Load image if available
+                if (citizen.getImagePath() != null && !citizen.getImagePath().isEmpty()) {
+                    javax.swing.ImageIcon originalIcon = new javax.swing.ImageIcon(citizen.getImagePath());
+                    java.awt.Image scaledImage = originalIcon.getImage().getScaledInstance(90, 90, java.awt.Image.SCALE_SMOOTH);
+                    ProfileImageLabel.setIcon(new javax.swing.ImageIcon(scaledImage));
+                    selectedImagePath = citizen.getImagePath();
+                }
+            }
+        } else {
+            citizen_id.setText("");
+            name.setText("");
+            email.setText("");
+            dateofbirth.setText("");
+            address.setText("");
+            phone.setText("");
+            father_name.setText("");
+            mother_name.setText("");
+            buttonGroup1.clearSelection();
+            ProfileImageLabel.setIcon(null);
+            selectedImagePath = null;
+        }
+        // Add action listeners for buttons
+        save.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveActionPerformed(evt);
+            }
+        });
+        backtoprofile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backtoprofileActionPerformed(evt);
+            }
+        });
+        upload.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                uploadActionPerformed(evt);
+            }
+        });
+    }
+
+    private void saveActionPerformed(java.awt.event.ActionEvent evt) {
+        // Gather data from fields
+        String id = citizen_id.getText().trim();
+        String nm = name.getText().trim();
+        String em = email.getText().trim();
+        String dob = dateofbirth.getText().trim();
+        String addr = address.getText().trim();
+        String ph = phone.getText().trim();
+        String fn = father_name.getText().trim();
+        String mn = mother_name.getText().trim();
+        String gender = male.isSelected() ? "Male" : (female.isSelected() ? "Female" : "");
+        String imgPath = selectedImagePath;
+        gaumanagementsystem.model.CitizenData citizen = new gaumanagementsystem.model.CitizenData(id, nm, em, dob, addr, gender, ph, fn, mn, imgPath);
+        gaumanagementsystem.controller.CitizenController controller = new gaumanagementsystem.controller.CitizenController();
+        boolean success;
+        if (isEditMode) {
+            success = controller.updateCitizen(citizen);
+        } else {
+            success = controller.createCitizen(citizen);
+        }
+        if (success) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Citizen saved successfully!", "Success", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            // Return to CitizenEdit
+            new CitizenEdit(role, id).setVisible(true);
+            this.dispose();
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "Failed to save citizen. Please check your inputs.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void backtoprofileActionPerformed(java.awt.event.ActionEvent evt) {
+        // Return to CitizenEdit
+        new CitizenEdit(role, userCitizenId).setVisible(true);
+        this.dispose();
+    }
+
+    private void uploadActionPerformed(java.awt.event.ActionEvent evt) {
+        javax.swing.JFileChooser fileChooser = new javax.swing.JFileChooser();
+        int result = fileChooser.showOpenDialog(this);
+        if (result == javax.swing.JFileChooser.APPROVE_OPTION) {
+            java.io.File selectedFile = fileChooser.getSelectedFile();
+            selectedImagePath = selectedFile.getAbsolutePath();
+            javax.swing.ImageIcon icon = new javax.swing.ImageIcon(new javax.swing.ImageIcon(selectedImagePath).getImage().getScaledInstance(90, 90, java.awt.Image.SCALE_SMOOTH));
+            ProfileImageLabel.setIcon(icon);
+        }
+    }
 
 }

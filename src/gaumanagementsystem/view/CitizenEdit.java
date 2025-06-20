@@ -6,8 +6,6 @@ package gaumanagementsystem.view;
 
 import gaumanagementsystem.controller.CitizenController;
 import gaumanagementsystem.model.CitizenData;
-import gaumanagementsystem.database.MySqlConnection;
-import gaumanagementsystem.view.ProfileView;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.table.DefaultTableModel;
@@ -33,6 +31,7 @@ public class CitizenEdit extends javax.swing.JFrame {
 
     private String userRole = "user"; // default
     private CitizenController citizenController; // Declare CitizenController
+    private String currentCitizenNumber; // Add this to track the logged-in user's citizen number
 
     // Declare new UI components for Citizen Data
     private JTextField citizenIdField;
@@ -53,32 +52,19 @@ public class CitizenEdit extends javax.swing.JFrame {
      */
     public CitizenEdit() {
         initComponents();
-        setCrudButtonsVisible(false); // Hide by default
-        // Initialize CitizenController
         citizenController = new CitizenController();
-        loadCitizenTableData(); // Load data when the form initializes
-        addTableDoubleClickListener(); // Add double-click listener
-
-        // Initialize custom components after initComponents
-        initializeCustomComponents();
+        loadCitizenTableData();
+        addTableDoubleClickListener();
     }
 
     // New constructor with role
-    public CitizenEdit(String userRole) {
+    public CitizenEdit(String userRole, String currentCitizenNumber) {
         this();
         this.userRole = userRole;
-        if ("admin".equalsIgnoreCase(userRole)) {
-            setCrudButtonsVisible(true);
-        } else {
-            setCrudButtonsVisible(false);
+        this.currentCitizenNumber = currentCitizenNumber;
+        if ("user".equalsIgnoreCase(userRole)) {
+            loadCitizenTableDataForUser();
         }
-    }
-
-    private void setCrudButtonsVisible(boolean visible) {
-        add.setVisible(visible);
-        update.setVisible(visible);
-        remove.setVisible(visible);
-        save.setVisible(visible);
     }
 
     // Method to load data into the table
@@ -91,6 +77,24 @@ public class CitizenEdit extends javax.swing.JFrame {
                 citizen.getCitizenId(),
                 citizen.getName(),
                 "Ward", // Placeholder, assuming this will be filled or derived
+                citizen.getGender(),
+                citizen.getPhone(),
+                citizen.getAddress(),
+                citizen.getEmail()
+            });
+        }
+    }
+
+    // Load only the current user's data for user role
+    private void loadCitizenTableDataForUser() {
+        DefaultTableModel model = (DefaultTableModel) citizen_table.getModel();
+        model.setRowCount(0);
+        CitizenData citizen = citizenController.getCitizenById(currentCitizenNumber);
+        if (citizen != null) {
+            model.addRow(new Object[]{
+                citizen.getCitizenId(),
+                citizen.getName(),
+                "Ward",
                 citizen.getGender(),
                 citizen.getPhone(),
                 citizen.getAddress(),
@@ -119,131 +123,6 @@ public class CitizenEdit extends javax.swing.JFrame {
                 }
             }
         });
-    }
-
-    // Method to initialize and layout custom components (dummy implementation for now)
-    private void initializeCustomComponents() {
-        // Initialize components
-        citizenIdField = new JTextField();
-        nameField = new JTextField();
-        emailField = new JTextField();
-        dateOfBirthField = new JTextField();
-        addressField = new JTextField();
-        phoneField = new JTextField();
-        fatherNameField = new JTextField();
-        motherNameField = new JTextField();
-        maleRadioButton = new JRadioButton("Male");
-        femaleRadioButton = new JRadioButton("Female");
-        genderButtonGroup = new ButtonGroup();
-        genderButtonGroup.add(maleRadioButton);
-        genderButtonGroup.add(femaleRadioButton);
-        profileImageLabel = new JLabel();
-        profileImageLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        // Add components to panel (placeholder layout, adjust as needed in .form layout)
-        // You would typically use NetBeans GUI builder for this, or manually adjust layout managers
-        // For now, let's add them to jPanel2 (your main content panel) with absolute positions for demonstration
-        // You will need to manually adjust these in the design view or edit the generated code for a proper layout.
-        jPanel2.add(new JLabel("ID:"));
-        jPanel2.add(citizenIdField);
-        jPanel2.add(new JLabel("Name:"));
-        jPanel2.add(nameField);
-        jPanel2.add(new JLabel("Email:"));
-        jPanel2.add(emailField);
-        jPanel2.add(new JLabel("DOB:"));
-        jPanel2.add(dateOfBirthField);
-        jPanel2.add(new JLabel("Address:"));
-        jPanel2.add(addressField);
-        jPanel2.add(new JLabel("Phone:"));
-        jPanel2.add(phoneField);
-        jPanel2.add(new JLabel("Father:"));
-        jPanel2.add(fatherNameField);
-        jPanel2.add(new JLabel("Mother:"));
-        jPanel2.add(motherNameField);
-        jPanel2.add(new JLabel("Gender:"));
-        jPanel2.add(maleRadioButton);
-        jPanel2.add(femaleRadioButton);
-        jPanel2.add(new JLabel("Image:"));
-        jPanel2.add(profileImageLabel);
-
-        // Example absolute positioning (you will need to adjust these carefully)
-        // These coordinates are just placeholders and will likely overlap or be incorrect
-        // You should use the NetBeans GUI builder to arrange these visually.
-        int yPos = 10; // Starting Y position for input fields
-        int labelWidth = 100;
-        int fieldWidth = 200;
-        int rowHeight = 30;
-        int spacing = 5;
-        
-        // Adjust position based on existing components in jPanel2, or add a dedicated panel for these fields.
-        // For now, I'm placing them below the existing table and search area in jPanel2 for illustration.
-        // This will likely require manual adjustment in the GUI builder.
-
-        // Citizen ID
-        jPanel2.add(new JLabel("Citizen-number:")).setBounds(10, yPos, labelWidth, rowHeight);
-        citizenIdField.setBounds(10 + labelWidth + spacing, yPos, fieldWidth, rowHeight);
-        jPanel2.add(citizenIdField);
-        yPos += rowHeight + spacing;
-
-        // Name
-        jPanel2.add(new JLabel("Name:")).setBounds(10, yPos, labelWidth, rowHeight);
-        nameField.setBounds(10 + labelWidth + spacing, yPos, fieldWidth, rowHeight);
-        jPanel2.add(nameField);
-        yPos += rowHeight + spacing;
-        
-        // Email
-        jPanel2.add(new JLabel("Email:")).setBounds(10, yPos, labelWidth, rowHeight);
-        emailField.setBounds(10 + labelWidth + spacing, yPos, fieldWidth, rowHeight);
-        jPanel2.add(emailField);
-        yPos += rowHeight + spacing;
-
-        // Date of Birth
-        jPanel2.add(new JLabel("Date of Birth:")).setBounds(10, yPos, labelWidth, rowHeight);
-        dateOfBirthField.setBounds(10 + labelWidth + spacing, yPos, fieldWidth, rowHeight);
-        jPanel2.add(dateOfBirthField);
-        yPos += rowHeight + spacing;
-
-        // Address
-        jPanel2.add(new JLabel("Address:")).setBounds(10, yPos, labelWidth, rowHeight);
-        addressField.setBounds(10 + labelWidth + spacing, yPos, fieldWidth, rowHeight);
-        jPanel2.add(addressField);
-        yPos += rowHeight + spacing;
-
-        // Gender
-        jPanel2.add(new JLabel("Gender:")).setBounds(10, yPos, labelWidth, rowHeight);
-        maleRadioButton.setBounds(10 + labelWidth + spacing, yPos, 70, rowHeight);
-        femaleRadioButton.setBounds(10 + labelWidth + spacing + 70, yPos, 80, rowHeight);
-        jPanel2.add(maleRadioButton);
-        jPanel2.add(femaleRadioButton);
-        yPos += rowHeight + spacing;
-        
-        // Phone
-        jPanel2.add(new JLabel("Phone:")).setBounds(10, yPos, labelWidth, rowHeight);
-        phoneField.setBounds(10 + labelWidth + spacing, yPos, fieldWidth, rowHeight);
-        jPanel2.add(phoneField);
-        yPos += rowHeight + spacing;
-
-        // Father's Name
-        jPanel2.add(new JLabel("Father's Name:")).setBounds(10, yPos, labelWidth, rowHeight);
-        fatherNameField.setBounds(10 + labelWidth + spacing, yPos, fieldWidth, rowHeight);
-        jPanel2.add(fatherNameField);
-        yPos += rowHeight + spacing;
-
-        // Mother's Name
-        jPanel2.add(new JLabel("Mother's Name:")).setBounds(10, yPos, labelWidth, rowHeight);
-        motherNameField.setBounds(10 + labelWidth + spacing, yPos, fieldWidth, rowHeight);
-        jPanel2.add(motherNameField);
-        yPos += rowHeight + spacing;
-
-        // Profile Image Label (adjust position and size as needed)
-        jPanel2.add(new JLabel("Profile Image:")).setBounds(10, yPos, labelWidth, rowHeight);
-        profileImageLabel.setBounds(10 + labelWidth + spacing, yPos, 90, 90); // Example size
-        jPanel2.add(profileImageLabel);
-        yPos += 90 + spacing;
-
-        // Revalidate and repaint the panel to ensure new components are displayed
-        jPanel2.revalidate();
-        jPanel2.repaint();
     }
 
     // Method to load citizen details into the fields for editing
@@ -350,7 +229,6 @@ public class CitizenEdit extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel3 = new javax.swing.JLabel();
-        menu = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -362,19 +240,11 @@ public class CitizenEdit extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         citizen_table = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
-        save = new javax.swing.JButton();
 
         jLabel3.setText("jLabel3");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        menu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuActionPerformed(evt);
-            }
-        });
-        getContentPane().add(menu, new org.netbeans.lib.awtextra.AbsoluteConstraints(810, 10, 54, 55));
 
         jPanel1.setBackground(new java.awt.Color(153, 153, 255));
 
@@ -403,6 +273,7 @@ public class CitizenEdit extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(204, 204, 255));
 
         CitizentoDashboard.setBackground(new java.awt.Color(102, 102, 255));
+        CitizentoDashboard.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         CitizentoDashboard.setForeground(new java.awt.Color(255, 255, 255));
         CitizentoDashboard.setText("Back");
         CitizentoDashboard.addActionListener(new java.awt.event.ActionListener() {
@@ -412,6 +283,7 @@ public class CitizenEdit extends javax.swing.JFrame {
         });
 
         update.setBackground(new java.awt.Color(102, 102, 255));
+        update.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         update.setForeground(new java.awt.Color(255, 255, 255));
         update.setText("Update");
         update.addActionListener(new java.awt.event.ActionListener() {
@@ -421,8 +293,9 @@ public class CitizenEdit extends javax.swing.JFrame {
         });
 
         remove.setBackground(new java.awt.Color(102, 102, 255));
+        remove.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         remove.setForeground(new java.awt.Color(255, 255, 255));
-        remove.setText("Remove");
+        remove.setText("Delete");
         remove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removeActionPerformed(evt);
@@ -430,6 +303,7 @@ public class CitizenEdit extends javax.swing.JFrame {
         });
 
         add.setBackground(new java.awt.Color(102, 102, 255));
+        add.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         add.setForeground(new java.awt.Color(255, 255, 255));
         add.setText("Add");
         add.addActionListener(new java.awt.event.ActionListener() {
@@ -481,65 +355,64 @@ public class CitizenEdit extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setText(" Search Citizen");
 
-        save.setBackground(new java.awt.Color(102, 102, 255));
-        save.setForeground(new java.awt.Color(255, 255, 255));
-        save.setText("Save");
-        save.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(17, 17, 17)
-                .addComponent(CitizentoDashboard)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(add)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(remove)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(update)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(save)
-                .addGap(10, 10, 10))
-            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 880, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 880, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(add, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(31, 31, 31)
+                        .addComponent(remove, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(32, 32, 32)
+                        .addComponent(update, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(115, 115, 115)
+                        .addComponent(CitizentoDashboard)
+                        .addGap(29, 29, 29)))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(CitizentoDashboard)
-                    .addComponent(update)
-                    .addComponent(remove)
-                    .addComponent(add)
-                    .addComponent(save))
-                .addContainerGap())
+                    .addComponent(CitizentoDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(update, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(remove, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(add, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(46, 46, 46))
         );
 
-        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 80, 880, 460));
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 80, 880, 430));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateActionPerformed
-        // TODO add your handling code here:
-        CitizenEdit update = new CitizenEdit();
-        update.setVisible(true);
+        int selectedRow = citizen_table.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a citizen from the table to update.", "No Citizen Selected", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        String citizenId = (String) citizen_table.getValueAt(selectedRow, 0); // Citizen-number is the primary key
+        // Open EditProfileView in edit mode with selected citizen's number
+        EditProfileView editProfileView = new EditProfileView(userRole, citizenId, true);
+        editProfileView.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_updateActionPerformed
 
     private void CitizentoDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CitizentoDashboardActionPerformed
@@ -548,40 +421,6 @@ public class CitizenEdit extends javax.swing.JFrame {
         goingtodash.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_CitizentoDashboardActionPerformed
-
-    private void menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_menuActionPerformed
-
-    private void saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveActionPerformed
-        // Get data from input fields
-        CitizenData citizenToSave = getCitizenDataFromFields();
-
-        // Determine if it's a create or update operation
-        boolean success = false;
-        if (citizenToSave.getCitizenId() == null || citizenToSave.getCitizenId().trim().isEmpty()) {
-            // Citizen ID is empty, so it's a new citizen (CREATE operation)
-            JOptionPane.showMessageDialog(this, "Citizen ID cannot be empty for saving.", "Validation Error", JOptionPane.WARNING_MESSAGE);
-            return;
-        } else {
-            // Citizen ID is present, check if it exists in the database
-            if (citizenController.citizenExists(citizenToSave.getCitizenId())) {
-                // Citizen exists, so it's an UPDATE operation
-                success = citizenController.updateCitizen(citizenToSave);
-            } else {
-                // Citizen does not exist, so it's a CREATE operation
-                success = citizenController.createCitizen(citizenToSave);
-            }
-        }
-
-        if (success) {
-            JOptionPane.showMessageDialog(this, "Citizen saved successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-            loadCitizenTableData(); // Refresh the table after saving
-            clearInputFields(); // Clear fields after successful save
-        } else {
-            JOptionPane.showMessageDialog(this, "Failed to save citizen. Please check your inputs.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }//GEN-LAST:event_saveActionPerformed
 
     private void removeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeActionPerformed
         int selectedRow = citizen_table.getSelectedRow();
@@ -606,9 +445,10 @@ public class CitizenEdit extends javax.swing.JFrame {
     }//GEN-LAST:event_removeActionPerformed
 
     private void addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addActionPerformed
-        // Clear all input fields to prepare for adding a new citizen
-        clearInputFields();
-        JOptionPane.showMessageDialog(this, "Form cleared. Enter details for a new citizen and click Save.", "Ready to Add", JOptionPane.INFORMATION_MESSAGE);
+        // Open EditProfileView in add mode (empty fields)
+        EditProfileView editProfileView = new EditProfileView(userRole, null, false);
+        editProfileView.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_addActionPerformed
 
     /**
@@ -641,7 +481,7 @@ public class CitizenEdit extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CitizenEdit().setVisible(true);
+                new CitizenEdit("admin", "admin").setVisible(true);
             }
         });
     }
@@ -656,9 +496,7 @@ public class CitizenEdit extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JButton menu;
     private javax.swing.JButton remove;
-    private javax.swing.JButton save;
     private javax.swing.JTextField search;
     private javax.swing.JButton update;
     // End of variables declaration//GEN-END:variables

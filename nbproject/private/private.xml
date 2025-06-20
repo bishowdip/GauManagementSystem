@@ -9,6 +9,17 @@
             <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/ServiceRequest.java</file>
             <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/Service.java</file>
             <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/controller/DashboardController.java</file>
+            <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/controller/ForgotController.java</file>
+            <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/dao/UserDAO.java</file>
+            <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/dao/CitizenDao.java</file>
+            <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/Complaints_Tables.java</file>
+            <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/ComplaintsView.java</file>
+            <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/NewsAndNotice.java</file>
+            <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/New_Project.java</file>
+            <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/ProjectRequests.java</file>
+            <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/RegisterView.java</file>
+            <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/view/ProfileView.java</file>
+            <file>file:/D:/GauManagementSystem/GauManagementSystem/src/gaumanagementsystem/controller/UserController.java</file>
         </group>
     </open-files>
 </project-private>
