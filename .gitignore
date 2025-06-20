@@ -1,10 +1,35 @@
-<<<<<<< HEAD
+# Compiled class files
 *.class
+
+# Build directories
 /build/
-=======
 /dist/
->>>>>>> Paridhi
-*.class
-/build/
-*.class
-/build/
+/target/
+
+# NetBeans specific
+/nbproject/private/
+/nbbuild/
+/nbdist/
+/.nb-gradle/
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*~

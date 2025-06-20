@@ -5,12 +5,24 @@
 package gaumanagementsystem.view;
 
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerDateModel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.awt.GridLayout;
 
 /**
  *
  * @author wangel
  */
 public class EditProfileView extends javax.swing.JFrame {
+
+    // Calendar button for date of birth
+    private JButton calendarButton;
 
     /**
      * Creates new form EditProfileView
@@ -20,6 +32,9 @@ public class EditProfileView extends javax.swing.JFrame {
         ButtonGroup gender = new ButtonGroup();
         gender.add(male);
         gender.add(female);
+        
+        // Add calendar button functionality
+        addCalendarButton();
     }
 
     /**
@@ -500,6 +515,62 @@ public class EditProfileView extends javax.swing.JFrame {
             selectedImagePath = selectedFile.getAbsolutePath();
             javax.swing.ImageIcon icon = new javax.swing.ImageIcon(new javax.swing.ImageIcon(selectedImagePath).getImage().getScaledInstance(90, 90, java.awt.Image.SCALE_SMOOTH));
             ProfileImageLabel.setIcon(icon);
+        }
+    }
+
+    private void addCalendarButton() {
+        // Create calendar button
+        calendarButton = new JButton("📅");
+        calendarButton.setFont(new java.awt.Font("Arial", 0, 12));
+        calendarButton.setBounds(516, 282, 30, 22); // Position next to date field
+        calendarButton.setToolTipText("Select Date");
+        
+        // Add action listener
+        calendarButton.addActionListener(e -> openDatePicker());
+        
+        // Add to content pane
+        getContentPane().add(calendarButton);
+    }
+    
+    private void openDatePicker() {
+        // Create date picker dialog
+        JSpinner dateSpinner = new JSpinner(new SpinnerDateModel());
+        JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(dateSpinner, "yyyy-MM-dd");
+        dateSpinner.setEditor(dateEditor);
+        
+        // Set current value from text field if valid
+        String currentText = dateofbirth.getText().trim();
+        if (!currentText.isEmpty()) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                Date currentDate = sdf.parse(currentText);
+                dateSpinner.setValue(currentDate);
+            } catch (Exception ex) {
+                dateSpinner.setValue(new Date());
+            }
+        } else {
+            dateSpinner.setValue(new Date());
+        }
+        
+        // Create panel for dialog
+        JPanel panel = new JPanel(new GridLayout(2, 1));
+        panel.add(new JLabel("Select Date of Birth:"));
+        panel.add(dateSpinner);
+        
+        // Show dialog
+        int result = JOptionPane.showConfirmDialog(
+            this, 
+            panel, 
+            "Date Picker", 
+            JOptionPane.OK_CANCEL_OPTION, 
+            JOptionPane.PLAIN_MESSAGE
+        );
+        
+        if (result == JOptionPane.OK_OPTION) {
+            // Format and set the selected date
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String formattedDate = sdf.format((Date) dateSpinner.getValue());
+            dateofbirth.setText(formattedDate);
         }
     }
 

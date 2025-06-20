@@ -22,6 +22,14 @@ import java.awt.Image; // For image scaling
 import javax.swing.ImageIcon; // For image icons
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Color;
+import javax.swing.JButton;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerDateModel;
+import javax.swing.JPanel;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.awt.GridLayout;
 
 /**
  *
@@ -55,6 +63,24 @@ public class CitizenEdit extends javax.swing.JFrame {
         citizenController = new CitizenController();
         loadCitizenTableData();
         addTableDoubleClickListener();
+        
+        // Standardize button styling to match NewsAndNotice
+        Color lightBlue = new Color(173, 216, 230);
+        add.setBackground(lightBlue); 
+        add.setForeground(Color.BLACK);
+        add.setText("ADD");
+        
+        remove.setBackground(lightBlue); 
+        remove.setForeground(Color.BLACK);
+        remove.setText("DELETE");
+        
+        update.setBackground(lightBlue); 
+        update.setForeground(Color.BLACK);
+        update.setText("UPDATE");
+        
+        CitizentoDashboard.setBackground(lightBlue); 
+        CitizentoDashboard.setForeground(Color.BLACK);
+        CitizentoDashboard.setText("Back");
     }
 
     // New constructor with role
@@ -62,8 +88,12 @@ public class CitizenEdit extends javax.swing.JFrame {
         this();
         this.userRole = userRole;
         this.currentCitizenNumber = currentCitizenNumber;
+        
+        // Load data based on role
         if ("user".equalsIgnoreCase(userRole)) {
             loadCitizenTableDataForUser();
+        } else {
+            loadCitizenTableData();
         }
     }
 
@@ -178,6 +208,49 @@ public class CitizenEdit extends javax.swing.JFrame {
         motherNameField.setText("");
         genderButtonGroup.clearSelection();
         profileImageLabel.setIcon(null);
+    }
+    
+    // Method to open date picker dialog
+    private void openDatePickerForField(JTextField dateField) {
+        // Create date picker dialog
+        JSpinner dateSpinner = new JSpinner(new SpinnerDateModel());
+        JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(dateSpinner, "yyyy-MM-dd");
+        dateSpinner.setEditor(dateEditor);
+        
+        // Set current value from text field if valid
+        String currentText = dateField.getText().trim();
+        if (!currentText.isEmpty()) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                Date currentDate = sdf.parse(currentText);
+                dateSpinner.setValue(currentDate);
+            } catch (Exception ex) {
+                dateSpinner.setValue(new Date());
+            }
+        } else {
+            dateSpinner.setValue(new Date());
+        }
+        
+        // Create panel for dialog
+        JPanel panel = new JPanel(new GridLayout(2, 1));
+        panel.add(new JLabel("Select Date:"));
+        panel.add(dateSpinner);
+        
+        // Show dialog
+        int result = JOptionPane.showConfirmDialog(
+            this, 
+            panel, 
+            "Date Picker", 
+            JOptionPane.OK_CANCEL_OPTION, 
+            JOptionPane.PLAIN_MESSAGE
+        );
+        
+        if (result == JOptionPane.OK_OPTION) {
+            // Format and set the selected date
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String formattedDate = sdf.format((Date) dateSpinner.getValue());
+            dateField.setText(formattedDate);
+        }
     }
     
     // Method to get CitizenData from fields (for Add/Update)

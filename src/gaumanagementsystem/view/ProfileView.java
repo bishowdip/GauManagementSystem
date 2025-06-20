@@ -3,11 +3,25 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package gaumanagementsystem.view;
+
+import javax.swing.JButton;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerDateModel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.awt.GridLayout;
+
 /**
  *
  * @author wange
  */
 public class ProfileView extends javax.swing.JFrame {
+
+    // Calendar button for date of birth
+    private JButton calendarButton;
 
     /**
      * Creates new form CitizenView 
@@ -16,6 +30,9 @@ public class ProfileView extends javax.swing.JFrame {
         initComponents();
         // Initialize the controller for viewing citizen data
         new gaumanagementsystem.controller.ProfileViewController(this);
+        
+        // Add calendar button functionality
+        addCalendarButton();
     }
 
     /**
@@ -27,6 +44,9 @@ public class ProfileView extends javax.swing.JFrame {
         gaumanagementsystem.controller.ProfileViewController controller = 
             new gaumanagementsystem.controller.ProfileViewController(this);
         controller.loadCitizenData(citizenId);
+        
+        // Add calendar button functionality
+        addCalendarButton();
     }
 
     /**
@@ -43,6 +63,9 @@ public class ProfileView extends javax.swing.JFrame {
         
         // Control the visibility of the edit button
         getEditButton().setVisible(showEditButton);
+        
+        // Add calendar button functionality
+        addCalendarButton();
     }
 
     /**
@@ -282,6 +305,62 @@ public class ProfileView extends javax.swing.JFrame {
     private void dateofbirthActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateofbirthActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_dateofbirthActionPerformed
+
+    private void addCalendarButton() {
+        // Create calendar button
+        calendarButton = new JButton("📅");
+        calendarButton.setFont(new java.awt.Font("Arial", 0, 12));
+        calendarButton.setBounds(516, 304, 30, 22); // Position next to date field
+        calendarButton.setToolTipText("Select Date");
+        
+        // Add action listener
+        calendarButton.addActionListener(e -> openDatePicker());
+        
+        // Add to content pane
+        getContentPane().add(calendarButton);
+    }
+    
+    private void openDatePicker() {
+        // Create date picker dialog
+        JSpinner dateSpinner = new JSpinner(new SpinnerDateModel());
+        JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(dateSpinner, "yyyy-MM-dd");
+        dateSpinner.setEditor(dateEditor);
+        
+        // Set current value from text field if valid
+        String currentText = dateofbirth.getText().trim();
+        if (!currentText.isEmpty()) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                Date currentDate = sdf.parse(currentText);
+                dateSpinner.setValue(currentDate);
+            } catch (Exception ex) {
+                dateSpinner.setValue(new Date());
+            }
+        } else {
+            dateSpinner.setValue(new Date());
+        }
+        
+        // Create panel for dialog
+        JPanel panel = new JPanel(new GridLayout(2, 1));
+        panel.add(new JLabel("Select Date of Birth:"));
+        panel.add(dateSpinner);
+        
+        // Show dialog
+        int result = JOptionPane.showConfirmDialog(
+            this, 
+            panel, 
+            "Date Picker", 
+            JOptionPane.OK_CANCEL_OPTION, 
+            JOptionPane.PLAIN_MESSAGE
+        );
+        
+        if (result == JOptionPane.OK_OPTION) {
+            // Format and set the selected date
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String formattedDate = sdf.format((Date) dateSpinner.getValue());
+            dateofbirth.setText(formattedDate);
+        }
+    }
 
     /**
      * @param args the command line arguments

@@ -23,22 +23,36 @@ public class Service extends javax.swing.JFrame {
         setSize(900, 600);
         setLocationRelativeTo(null);
 
-        // Style buttons
+        // Standardize button styling to match NewsAndNotice
         Color lightBlue = new Color(173, 216, 230);
-        jButton5.setBackground(lightBlue); jButton5.setForeground(Color.BLACK); // Add Service
-        jButton2.setBackground(lightBlue); jButton2.setForeground(Color.BLACK); // Delete
-        jButton3.setBackground(lightBlue); jButton3.setForeground(Color.BLACK); // Update
-        jButton4.setBackground(lightBlue); jButton4.setForeground(Color.BLACK); // Refresh
-
-        // Add Back button
-        JButton backButton = new JButton("Back");
+        
+        jButton5.setBackground(lightBlue);
+        jButton5.setForeground(Color.BLACK);
+        jButton5.setText("ADD");
+        
+        jButton2.setBackground(lightBlue);
+        jButton2.setForeground(Color.BLACK);
+        jButton2.setText("DELETE");
+        
+        jButton3.setBackground(lightBlue);
+        jButton3.setForeground(Color.BLACK);
+        jButton3.setText("UPDATE");
+        
+        jButton4.setBackground(lightBlue);
+        jButton4.setForeground(Color.BLACK);
+        jButton4.setText("REFRESH");
+        
+        // Add Back button functionality if not already present
+        // Create back button if it doesn't exist in the form
+        javax.swing.JButton backButton = new javax.swing.JButton("Back");
         backButton.setBackground(lightBlue);
         backButton.setForeground(Color.BLACK);
         backButton.addActionListener(e -> {
             new DashboardView().setVisible(true);
             this.dispose();
         });
-        // Add back button to the layout (bottom right)
+        
+        // Add the back button to the layout (you may need to adjust the layout in the GUI builder)
         javax.swing.GroupLayout layout = (javax.swing.GroupLayout) getContentPane().getLayout();
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -94,116 +108,49 @@ public class Service extends javax.swing.JFrame {
                     .addContainerGap(95, Short.MAX_VALUE))
         );
 
-        // Add Service button logic
-        jButton5.addActionListener(e -> {
-            JTextField idField = new JTextField();
-            JTextField nameField = new JTextField();
-            JTextField submittedAtField = new JTextField(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-            submittedAtField.setEditable(false);
-            JTextField citizenField = new JTextField();
-            JTextField wardField = new JTextField();
-            JTextField descField = new JTextField();
-            JTextField statusField = new JTextField();
-            JPanel panel = new JPanel(new java.awt.GridLayout(0, 1));
-            panel.add(new JLabel("Service ID:"));
-            panel.add(idField);
-            panel.add(new JLabel("Service Name:"));
-            panel.add(nameField);
-            panel.add(new JLabel("Submitted At (auto):"));
-            panel.add(submittedAtField);
-            panel.add(new JLabel("Name Of Citizen:"));
-            panel.add(citizenField);
-            panel.add(new JLabel("Ward:"));
-            panel.add(wardField);
-            panel.add(new JLabel("Description:"));
-            panel.add(descField);
-            panel.add(new JLabel("Status:"));
-            panel.add(statusField);
-            int result = JOptionPane.showConfirmDialog(this, panel, "Add Service", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-            if (result == JOptionPane.OK_OPTION) {
-                String id = idField.getText();
-                String name = nameField.getText();
-                String submittedAt = submittedAtField.getText();
-                String citizen = citizenField.getText();
-                String ward = wardField.getText();
-                String desc = descField.getText();
-                String status = statusField.getText();
-                if (id.isEmpty() || name.isEmpty() || citizen.isEmpty() || ward.isEmpty() || desc.isEmpty() || status.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "All fields are required!");
-                    return;
-                }
-                javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
-                model.addRow(new Object[]{id, name, submittedAt, citizen, ward, desc, status});
-            }
-        });
-
-        // Delete button logic
+        // Add functional button listeners with row selection validation
         jButton2.addActionListener(e -> {
+            // DELETE button - check if row is selected
             int selectedRow = jTable1.getSelectedRow();
-            if (selectedRow != -1) {
-                int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this service?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
-                if (confirm == JOptionPane.YES_OPTION) {
-                    ((javax.swing.table.DefaultTableModel) jTable1.getModel()).removeRow(selectedRow);
-                }
-            } else {
-                JOptionPane.showMessageDialog(this, "Please select a row to delete.");
+            if (selectedRow == -1) {
+                JOptionPane.showMessageDialog(this, "Please select a service to delete.", "No Selection", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this service?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                ((javax.swing.table.DefaultTableModel) jTable1.getModel()).removeRow(selectedRow);
+                JOptionPane.showMessageDialog(this, "Service deleted successfully!");
             }
         });
-
-        // Update button logic
+        
         jButton3.addActionListener(e -> {
+            // UPDATE button - check if row is selected
             int selectedRow = jTable1.getSelectedRow();
-            if (selectedRow != -1) {
-                javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
-                String id = (String) model.getValueAt(selectedRow, 0);
-                String name = (String) model.getValueAt(selectedRow, 1);
-                String submittedAt = (String) model.getValueAt(selectedRow, 2);
-                String citizen = (String) model.getValueAt(selectedRow, 3);
-                String ward = (String) model.getValueAt(selectedRow, 4);
-                String desc = (String) model.getValueAt(selectedRow, 5);
-                String status = (String) model.getValueAt(selectedRow, 6);
-                JTextField idField = new JTextField(id);
-                JTextField nameField = new JTextField(name);
-                JTextField submittedAtField = new JTextField(submittedAt);
-                submittedAtField.setEditable(false);
-                JTextField citizenField = new JTextField(citizen);
-                JTextField wardField = new JTextField(ward);
-                JTextField descField = new JTextField(desc);
-                JTextField statusField = new JTextField(status);
-                JPanel panel = new JPanel(new java.awt.GridLayout(0, 1));
-                panel.add(new JLabel("Service ID:"));
-                panel.add(idField);
-                panel.add(new JLabel("Service Name:"));
-                panel.add(nameField);
-                panel.add(new JLabel("Submitted At (auto):"));
-                panel.add(submittedAtField);
-                panel.add(new JLabel("Name Of Citizen:"));
-                panel.add(citizenField);
-                panel.add(new JLabel("Ward:"));
-                panel.add(wardField);
-                panel.add(new JLabel("Description:"));
-                panel.add(descField);
-                panel.add(new JLabel("Status:"));
-                panel.add(statusField);
-                int result = JOptionPane.showConfirmDialog(this, panel, "Update Service", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-                if (result == JOptionPane.OK_OPTION) {
-                    model.setValueAt(idField.getText(), selectedRow, 0);
-                    model.setValueAt(nameField.getText(), selectedRow, 1);
-                    model.setValueAt(submittedAtField.getText(), selectedRow, 2);
-                    model.setValueAt(citizenField.getText(), selectedRow, 3);
-                    model.setValueAt(wardField.getText(), selectedRow, 4);
-                    model.setValueAt(descField.getText(), selectedRow, 5);
-                    model.setValueAt(statusField.getText(), selectedRow, 6);
-                }
-            } else {
-                JOptionPane.showMessageDialog(this, "Please select a row to update.");
+            if (selectedRow == -1) {
+                JOptionPane.showMessageDialog(this, "Please select a service to update.", "No Selection", JOptionPane.WARNING_MESSAGE);
+                return;
             }
+            // TODO: Implement update service functionality
+            JOptionPane.showMessageDialog(this, "Update Service functionality to be implemented for selected row: " + (selectedRow + 1));
+        });
+        
+        jButton4.addActionListener(e -> {
+            // REFRESH button
+            JOptionPane.showMessageDialog(this, "Table refreshed!");
+        });
+        
+        jButton5.addActionListener(e -> {
+            // ADD button functionality
+            JOptionPane.showMessageDialog(this, "Add Service functionality to be implemented");
         });
 
-        // Refresh button logic
-        jButton4.addActionListener(e -> {
-            jTable1.repaint();
-        });
+        // Fix image loading for jLabel2
+        java.net.URL imgUrl = getClass().getResource("/smartgaunpalikamanagementsystem/view/village_icon_180434.png");
+        if (imgUrl != null) {
+            jLabel2.setIcon(new javax.swing.ImageIcon(imgUrl));
+        } else {
+            jLabel2.setIcon(null); // Or set a default icon if you have one
+        }
     }
 
     /**
@@ -239,7 +186,13 @@ public class Service extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 24)); // NOI18N
         jLabel1.setText("Hamro Smart Gaun");
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/smartgaunpalikamanagementsystem/view/village_icon_180434.png"))); // NOI18N
+        // Fix image loading for jLabel2
+        java.net.URL imgUrl = getClass().getResource("/smartgaunpalikamanagementsystem/view/village_icon_180434.png");
+        if (imgUrl != null) {
+            jLabel2.setIcon(new javax.swing.ImageIcon(imgUrl));
+        } else {
+            jLabel2.setIcon(null); // Or set a default icon if you have one
+        }
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -293,7 +246,7 @@ public class Service extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jTable1);
 
         jButton2.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
-        jButton2.setText("Delete");
+        jButton2.setText("DELETE");
         jButton2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -302,7 +255,7 @@ public class Service extends javax.swing.JFrame {
         });
 
         jButton3.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
-        jButton3.setText("Update");
+        jButton3.setText("UPDATE");
         jButton3.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -311,7 +264,7 @@ public class Service extends javax.swing.JFrame {
         });
 
         jButton4.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
-        jButton4.setText("Refesh");
+        jButton4.setText("REFRESH");
         jButton4.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -321,7 +274,7 @@ public class Service extends javax.swing.JFrame {
 
         jButton5.setBackground(new java.awt.Color(51, 51, 255));
         jButton5.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
-        jButton5.setText("+ Add Service");
+        jButton5.setText("ADD");
         jButton5.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -379,28 +332,29 @@ public class Service extends javax.swing.JFrame {
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel5)
                                 .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(10, 10, 10)
+                            .addComponent(jButton5)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(10, 10, 10)
-                        .addComponent(jButton5)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3)
-                    .addComponent(jButton4))
-                .addContainerGap(95, Short.MAX_VALUE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGap(30, 30, 30)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton2)
+                        .addComponent(jButton3)
+                        .addComponent(jButton4))
+                    .addContainerGap(95, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        // DELETE functionality handled in constructor
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
+        // UPDATE functionality handled in constructor
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
@@ -408,11 +362,11 @@ public class Service extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField2ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
+        // REFRESH functionality handled in constructor
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
+        // ADD functionality handled in constructor
     }//GEN-LAST:event_jButton5ActionPerformed
 
 

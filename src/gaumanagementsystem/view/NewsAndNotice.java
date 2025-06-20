@@ -16,6 +16,9 @@ import java.util.Date;
 import java.awt.BorderLayout;
 import javax.swing.JComboBox;
 import java.awt.Color;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerDateModel;
+import java.awt.GridLayout;
 
 /**
  *
@@ -152,36 +155,43 @@ public class NewsAndNotice extends javax.swing.JFrame {
 
         // ADD button
         jButton1.addActionListener(e -> {
-            JTextField dateField = new JTextField(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-            dateField.setEditable(false);
+            JSpinner dateSpinner = new JSpinner(new SpinnerDateModel());
+            JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(dateSpinner, "yyyy-MM-dd");
+            dateSpinner.setEditor(dateEditor);
+            dateSpinner.setValue(new Date());
+            
             JTextField audienceField = new JTextField();
             JTextField subjectField = new JTextField();
             JTextField descriptionField = new JTextField();
-            JTextField expiryDateField = new JTextField();
+            
+            JSpinner expiryDateSpinner = new JSpinner(new SpinnerDateModel());
+            JSpinner.DateEditor expiryDateEditor = new JSpinner.DateEditor(expiryDateSpinner, "yyyy-MM-dd");
+            expiryDateSpinner.setEditor(expiryDateEditor);
+            expiryDateSpinner.setValue(new Date());
             String[] types = {"News", "Notice"};
             JComboBox<String> typeCombo = new JComboBox<>(types);
 
-            JPanel panel = new JPanel(new java.awt.GridLayout(0, 1));
-            panel.add(new JLabel("Date (auto):"));
-            panel.add(dateField);
+            JPanel panel = new JPanel(new GridLayout(0, 1));
+            panel.add(new JLabel("Date:"));
+            panel.add(dateSpinner);
             panel.add(new JLabel("Audience:"));
             panel.add(audienceField);
             panel.add(new JLabel("Subject:"));
             panel.add(subjectField);
             panel.add(new JLabel("Description:"));
             panel.add(descriptionField);
-            panel.add(new JLabel("Expiry Date (YYYY-MM-DD):"));
-            panel.add(expiryDateField);
+            panel.add(new JLabel("Expiry Date:"));
+            panel.add(expiryDateSpinner);
             panel.add(new JLabel("Type:"));
             panel.add(typeCombo);
 
             int result = JOptionPane.showConfirmDialog(this, panel, "Add News/Notice", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
             if (result == JOptionPane.OK_OPTION) {
-                String date = dateField.getText();
+                String date = new SimpleDateFormat("yyyy-MM-dd").format((Date) dateSpinner.getValue());
                 String audience = audienceField.getText();
                 String subject = subjectField.getText();
                 String description = descriptionField.getText();
-                String expiryDate = expiryDateField.getText();
+                String expiryDate = new SimpleDateFormat("yyyy-MM-dd").format((Date) expiryDateSpinner.getValue());
                 String type = (String) typeCombo.getSelectedItem();
                 if (date.isEmpty() || audience.isEmpty() || subject.isEmpty() || description.isEmpty() || expiryDate.isEmpty() || type.isEmpty()) {
                     JOptionPane.showMessageDialog(this, "All fields are required!");
@@ -222,37 +232,55 @@ public class NewsAndNotice extends javax.swing.JFrame {
                 String expiryDate = (String) model.getValueAt(selectedRow, 4);
                 String type = (String) model.getValueAt(selectedRow, 5);
 
-                JTextField dateField = new JTextField(date);
-                dateField.setEditable(false);
+                JSpinner dateSpinner = new JSpinner(new SpinnerDateModel());
+                JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(dateSpinner, "yyyy-MM-dd");
+                dateSpinner.setEditor(dateEditor);
+                try {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    Date currentDate = sdf.parse(date);
+                    dateSpinner.setValue(currentDate);
+                } catch (Exception ex) {
+                    dateSpinner.setValue(new Date());
+                }
                 JTextField audienceField = new JTextField(audience);
                 JTextField subjectField = new JTextField(subject);
                 JTextField descriptionField = new JTextField(description);
-                JTextField expiryDateField = new JTextField(expiryDate);
+                
+                JSpinner expiryDateSpinner = new JSpinner(new SpinnerDateModel());
+                JSpinner.DateEditor expiryDateEditor = new JSpinner.DateEditor(expiryDateSpinner, "yyyy-MM-dd");
+                expiryDateSpinner.setEditor(expiryDateEditor);
+                try {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    Date expiryDateParsed = sdf.parse(expiryDate);
+                    expiryDateSpinner.setValue(expiryDateParsed);
+                } catch (Exception ex) {
+                    expiryDateSpinner.setValue(new Date());
+                }
                 String[] types = {"News", "Notice"};
                 JComboBox<String> typeCombo = new JComboBox<>(types);
                 typeCombo.setSelectedItem(type);
 
-                JPanel panel = new JPanel(new java.awt.GridLayout(0, 1));
-                panel.add(new JLabel("Date (auto):"));
-                panel.add(dateField);
+                JPanel panel = new JPanel(new GridLayout(0, 1));
+                panel.add(new JLabel("Date:"));
+                panel.add(dateSpinner);
                 panel.add(new JLabel("Audience:"));
                 panel.add(audienceField);
                 panel.add(new JLabel("Subject:"));
                 panel.add(subjectField);
                 panel.add(new JLabel("Description:"));
                 panel.add(descriptionField);
-                panel.add(new JLabel("Expiry Date (YYYY-MM-DD):"));
-                panel.add(expiryDateField);
+                panel.add(new JLabel("Expiry Date:"));
+                panel.add(expiryDateSpinner);
                 panel.add(new JLabel("Type:"));
                 panel.add(typeCombo);
 
                 int result = JOptionPane.showConfirmDialog(this, panel, "Update News/Notice", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (result == JOptionPane.OK_OPTION) {
-                    String newDate = dateField.getText();
+                    String newDate = new SimpleDateFormat("yyyy-MM-dd").format((Date) dateSpinner.getValue());
                     String newAudience = audienceField.getText();
                     String newSubject = subjectField.getText();
                     String newDescription = descriptionField.getText();
-                    String newExpiryDate = expiryDateField.getText();
+                    String newExpiryDate = new SimpleDateFormat("yyyy-MM-dd").format((Date) expiryDateSpinner.getValue());
                     String newType = (String) typeCombo.getSelectedItem();
                     if (newDate.isEmpty() || newAudience.isEmpty() || newSubject.isEmpty() || newDescription.isEmpty() || newExpiryDate.isEmpty() || newType.isEmpty()) {
                         JOptionPane.showMessageDialog(this, "All fields are required!");
