@@ -11,6 +11,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
      
 /**
@@ -90,9 +92,44 @@ public class ServiceRequest extends javax.swing.JFrame {
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gaumanagementsystem/view/plus (1).png"))); // NOI18N
         jButton1.setText("Requested Service");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+        jButton1.addActionListener(e -> {
+            JTextField citizenField = new JTextField();
+            JTextField wardField = new JTextField();
+            JTextField serviceTypeField = new JTextField();
+            JTextField descriptionField = new JTextField();
+            JTextField statusField = new JTextField();
+            // Optionally, add a date field:
+            // JTextField dateField = new JTextField(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            // dateField.setEditable(false);
+
+            JPanel panel = new JPanel(new java.awt.GridLayout(0, 1));
+            // panel.add(new JLabel("Date (auto):"));
+            // panel.add(dateField);
+            panel.add(new JLabel("Citizen:"));
+            panel.add(citizenField);
+            panel.add(new JLabel("Ward:"));
+            panel.add(wardField);
+            panel.add(new JLabel("Service Type:"));
+            panel.add(serviceTypeField);
+            panel.add(new JLabel("Description:"));
+            panel.add(descriptionField);
+            panel.add(new JLabel("Status:"));
+            panel.add(statusField);
+
+            int result = JOptionPane.showConfirmDialog(this, panel, "Add Service Request", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            if (result == JOptionPane.OK_OPTION) {
+                String citizen = citizenField.getText();
+                String ward = wardField.getText();
+                String serviceType = serviceTypeField.getText();
+                String description = descriptionField.getText();
+                String status = statusField.getText();
+                // String date = dateField.getText();
+                if (citizen.isEmpty() || ward.isEmpty() || serviceType.isEmpty() || description.isEmpty() || status.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "All fields are required!");
+                    return;
+                }
+                javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+                model.addRow(new Object[]{citizen, ward, serviceType, description, status});
             }
         });
 
@@ -242,61 +279,6 @@ public class ServiceRequest extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField2;
     // End of variables declaration                   
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
-        JTextField citizenField = new JTextField();
-        JTextField wardField = new JTextField();
-        JTextField serviceTypeField = new JTextField();
-        JTextField descriptionField = new JTextField();
-        String[] statusOptions = {"Pending", "In Progress", "Completed"};
-        JComboBox<String> statusBox = new JComboBox<>(statusOptions);
-
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.add(new JLabel("Citizen:"));
-        panel.add(citizenField);
-        panel.add(new JLabel("Ward:"));
-        panel.add(wardField);
-        panel.add(new JLabel("Service Type:"));
-        panel.add(serviceTypeField);
-        panel.add(new JLabel("Description:"));
-        panel.add(descriptionField);
-        panel.add(new JLabel("Status:"));
-        panel.add(statusBox);
-
-        int result = JOptionPane.showConfirmDialog(
-            this,
-            panel,
-            "New Service Request",
-            JOptionPane.OK_CANCEL_OPTION,
-            JOptionPane.PLAIN_MESSAGE
-        );
-
-        if (result == JOptionPane.OK_OPTION) {
-            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-            model.addRow(new Object[]{
-                citizenField.getText(),
-                wardField.getText(),
-                serviceTypeField.getText(),
-                descriptionField.getText(),
-                statusBox.getSelectedItem()
-            });
-        }
-    }
-
-    private void setTableData() {
-        Object[][] data = {
-            {"Ram Bahadur", "5","Water Supply", "No water in tap", "Pending"},
-            {"Sita Kumari", "3","Electricity", "Frequent power cuts", "In Progress"},
-            {"Hari Prasad", "2","Road Repair", "Potholes in main road", "Completed"},
-            {"Gita Devi", "1","Sanitation", "Garbage not collected", "Pending"}
-        };
-        String[] columns = {
-            "Citizen", "Ward","Service Type", "Description", "Status"
-        };
-        DefaultTableModel model = new DefaultTableModel(data, columns);
-        jTable1.setModel(model);
-    }
-
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {
         int selectedRow = jTable1.getSelectedRow();
         if (selectedRow != -1) {
@@ -392,6 +374,20 @@ public class ServiceRequest extends javax.swing.JFrame {
                 model.addRow(row);
             }
         }
+    }
+
+    private void setTableData() {
+        Object[][] data = {
+            {"Ram Bahadur", "5","Water Supply", "No water in tap", "Pending"},
+            {"Sita Kumari", "3","Electricity", "Frequent power cuts", "In Progress"},
+            {"Hari Prasad", "2","Road Repair", "Potholes in main road", "Completed"},
+            {"Gita Devi", "1","Sanitation", "Garbage not collected", "Pending"}
+        };
+        String[] columns = {
+            "Citizen", "Ward","Service Type", "Description", "Status"
+        };
+        DefaultTableModel model = new DefaultTableModel(data, columns);
+        jTable1.setModel(model);
     }
 }
 

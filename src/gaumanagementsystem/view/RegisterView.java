@@ -7,6 +7,7 @@ package gaumanagementsystem.view;
 
 import java.awt.event.ActionListener;
 import javax.swing.ButtonGroup;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -213,9 +214,9 @@ public class RegisterView extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_emailActionPerformed
 
-    private void RegisterUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegisterUserActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_RegisterUserActionPerformed
+    private void RegisterUserActionPerformed(java.awt.event.ActionEvent evt) {
+        new gaumanagementsystem.controller.UserController().handleRegistration(this);
+    }
 
     private void view_passwordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_view_passwordActionPerformed
         if (view_password.isSelected()) {

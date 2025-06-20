@@ -17,11 +17,11 @@ public class NewsAndNoticeController {
 
     public NewsAndNoticeController() {
         // Sample data
-        dataList.add(new NewsAndNotice("2024-03-20", "All Citizens", "Road Maintenance", "Annual road maintenance work will begin next week", "2024-04-20"));
-        dataList.add(new NewsAndNotice("2024-03-19", "Students", "School Holiday", "School will remain closed for spring break", "2024-03-25"));
-        dataList.add(new NewsAndNotice("2024-03-18", "Farmers", "Agricultural Workshop", "Free workshop on modern farming techniques", "2024-03-30"));
-        dataList.add(new NewsAndNotice("2024-03-17", "Business Owners", "Tax Filing", "Last date for tax filing is approaching", "2024-03-31"));
-        dataList.add(new NewsAndNotice("2024-03-16", "All Citizens", "Water Supply", "Water supply will be affected due to maintenance", "2024-03-18"));
+        dataList.add(new NewsAndNotice("2024-03-20", "All Citizens", "Road Maintenance", "Annual road maintenance work will begin next week", "2024-04-20", "Notice"));
+        dataList.add(new NewsAndNotice("2024-03-19", "Students", "School Holiday", "School will remain closed for spring break", "2024-03-25", "Notice"));
+        dataList.add(new NewsAndNotice("2024-03-18", "Farmers", "Agricultural Workshop", "Free workshop on modern farming techniques", "2024-03-30", "News"));
+        dataList.add(new NewsAndNotice("2024-03-17", "Business Owners", "Tax Filing", "Last date for tax filing is approaching", "2024-03-31", "Notice"));
+        dataList.add(new NewsAndNotice("2024-03-16", "All Citizens", "Water Supply", "Water supply will be affected due to maintenance", "2024-03-18", "News"));
         // ... add more as needed
     }
 
@@ -41,11 +41,11 @@ public class NewsAndNoticeController {
         dataList.remove(index);
     }
 
-    public List<NewsAndNotice> search(String query, String ward) {
+    public List<NewsAndNotice> search(String query, String type) {
         List<NewsAndNotice> result = new ArrayList<>();
         for (NewsAndNotice notice : dataList) {
             boolean matchesSearch = query.isEmpty();
-            boolean matchesWard = ward.isEmpty();
+            boolean matchesType = type.isEmpty() || notice.getType().equalsIgnoreCase(type);
 
             // Check if any field contains the search text
             if (!query.isEmpty()) {
@@ -53,17 +53,13 @@ public class NewsAndNoticeController {
                     notice.getAudience().toLowerCase().contains(query.toLowerCase()) ||
                     notice.getSubject().toLowerCase().contains(query.toLowerCase()) ||
                     notice.getDescription().toLowerCase().contains(query.toLowerCase()) ||
-                    notice.getExpiryDate().toLowerCase().contains(query.toLowerCase())) {
+                    notice.getExpiryDate().toLowerCase().contains(query.toLowerCase()) ||
+                    notice.getType().toLowerCase().contains(query.toLowerCase())) {
                     matchesSearch = true;
                 }
             }
 
-            // Check if audience matches ward
-            if (!ward.isEmpty() && notice.getAudience().toLowerCase().contains(ward.toLowerCase())) {
-                matchesWard = true;
-            }
-
-            if (matchesSearch && matchesWard) {
+            if (matchesSearch && matchesType) {
                 result.add(notice);
             }
         }

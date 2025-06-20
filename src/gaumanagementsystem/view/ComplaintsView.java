@@ -236,7 +236,7 @@ public class ComplaintsView extends JFrame {
     }//GEN-LAST:event_SubmitActionPerformed
 
     private void BackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackActionPerformed
-        DashboardUser ddd = new DashboardUser();
+        DashboardView ddd = new DashboardView();
         ddd.setVisible(true);
         dispose();
     }//GEN-LAST:event_BackActionPerformed

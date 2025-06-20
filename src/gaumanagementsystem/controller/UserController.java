@@ -14,16 +14,13 @@ public class UserController {
     }
 
     public void handleRegistration(RegisterView view) {
-        String name = view.getNameTextField().getText().trim();
-        String username = view.getUsernameTextField().getText().trim();
         String email = view.getEmailTextField().getText().trim();
-        String gender = view.getGenderTextField().getText().trim();
         String password = new String(view.getPasswordField().getPassword());
         String confirmPassword = new String(view.getConfirmPasswordField().getPassword());
+        String role = view.getRadioButton();
 
         // Validate all fields
-        if (name.isEmpty() || username.isEmpty() || email.isEmpty() || 
-            gender.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+        if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || role.isEmpty()) {
             JOptionPane.showMessageDialog(view, "Please fill in all fields", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -41,19 +38,15 @@ public class UserController {
         }
 
         try {
-            // Check if user exists
-            if (userDAO.checkUserExists(username, email)) {
-                JOptionPane.showMessageDialog(view, "Username or email already exists", "Error", JOptionPane.ERROR_MESSAGE);
+            if (userDAO.checkUserExists(email)) {
+                JOptionPane.showMessageDialog(view, "Email already exists", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
-            // Create user object
-            User user = new User(name, username, email, gender, password);
-
-            // Register user
-            if (userDAO.registerUser(user)) {
+            User user = new User();
+            user.setEmail(email);
+            user.setPassword(password);
+            if (userDAO.registerUser(user, role)) {
                 JOptionPane.showMessageDialog(view, "Registration successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                // Redirect to login
                 LoginView loginView = new LoginView();
                 loginView.setVisible(true);
                 view.dispose();
@@ -70,7 +63,7 @@ public class UserController {
             User user = userDAO.authenticateUser(email, password);
             if (user != null) {
                 JOptionPane.showMessageDialog(view, "Login Successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                // TODO: Navigate to appropriate dashboard based on user role
+                new gaumanagementsystem.view.DashboardView().setVisible(true);
                 view.dispose();
             } else {
                 JOptionPane.showMessageDialog(view, "Invalid credentials", "Error", JOptionPane.ERROR_MESSAGE);

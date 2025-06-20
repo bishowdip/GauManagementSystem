@@ -167,8 +167,8 @@ public class Complaints_Tables extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void Back1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Back1ActionPerformed
-        ComplaintsView cmp = new ComplaintsView();
-        cmp.setVisible(true);
+        gaumanagementsystem.view.DashboardView dashboard = new gaumanagementsystem.view.DashboardView();
+        dashboard.setVisible(true);
         dispose();
     }//GEN-LAST:event_Back1ActionPerformed
 
