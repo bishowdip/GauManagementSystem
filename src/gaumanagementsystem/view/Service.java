@@ -20,8 +20,16 @@ public class Service extends javax.swing.JFrame {
      */
     public Service() {
         initComponents();
+        
+        // Make window fully responsive
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH); // Start maximized
+        setMinimumSize(new java.awt.Dimension(800, 600)); // Set minimum size
         setSize(900, 600);
         setLocationRelativeTo(null);
+        
+        // Make table responsive
+        jTable1.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        jTable1.setFillsViewportHeight(true);
 
         // Standardize button styling to match NewsAndNotice
         Color lightBlue = new Color(173, 216, 230);
@@ -186,13 +194,7 @@ public class Service extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 24)); // NOI18N
         jLabel1.setText("Hamro Smart Gaun");
 
-        // Fix image loading for jLabel2
-        java.net.URL imgUrl = getClass().getResource("/smartgaunpalikamanagementsystem/view/village_icon_180434.png");
-        if (imgUrl != null) {
-            jLabel2.setIcon(new javax.swing.ImageIcon(imgUrl));
-        } else {
-            jLabel2.setIcon(null); // Or set a default icon if you have one
-        }
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/smartgaunpalikamanagementsystem/view/village_icon_180434.png"))); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -246,7 +248,7 @@ public class Service extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jTable1);
 
         jButton2.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
-        jButton2.setText("DELETE");
+        jButton2.setText("Delete");
         jButton2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -255,7 +257,7 @@ public class Service extends javax.swing.JFrame {
         });
 
         jButton3.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
-        jButton3.setText("UPDATE");
+        jButton3.setText("Update");
         jButton3.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -264,7 +266,7 @@ public class Service extends javax.swing.JFrame {
         });
 
         jButton4.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
-        jButton4.setText("REFRESH");
+        jButton4.setText("Refesh");
         jButton4.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -274,7 +276,7 @@ public class Service extends javax.swing.JFrame {
 
         jButton5.setBackground(new java.awt.Color(51, 51, 255));
         jButton5.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
-        jButton5.setText("ADD");
+        jButton5.setText("+ Add Service");
         jButton5.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -309,16 +311,16 @@ public class Service extends javax.swing.JFrame {
                         .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(128, 128, 128)
                         .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(40, 40, 40))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(339, 339, 339)
-                        .addComponent(jButton2)
-                        .addGap(23, 23, 23)
-                        .addComponent(jButton3)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton4)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(40, 40, 40)))
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(339, 339, 339)
+                .addComponent(jButton2)
+                .addGap(23, 23, 23)
+                .addComponent(jButton3)
+                .addGap(18, 18, 18)
+                .addComponent(jButton4)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -332,18 +334,17 @@ public class Service extends javax.swing.JFrame {
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel5)
                                 .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(10, 10, 10)
-                            .addComponent(jButton5)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(10, 10, 10)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGap(30, 30, 30)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton2)
-                        .addComponent(jButton3)
-                        .addComponent(jButton4))
-                    .addContainerGap(95, Short.MAX_VALUE))
+                        .addComponent(jButton5)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton2)
+                    .addComponent(jButton3)
+                    .addComponent(jButton4))
+                .addGap(54, 54, 54))
         );
 
         pack();

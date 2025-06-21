@@ -19,9 +19,16 @@ public class Complaints_Tables extends javax.swing.JFrame {
      */
     public Complaints_Tables() {
         initComponents();
-        setSize(900, 650); // Set appropriate window size
+        
+        // Make window fully responsive
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH); // Start maximized
+        setMinimumSize(new java.awt.Dimension(800, 600)); // Set minimum size
         setLocationRelativeTo(null); // Center the window
         setResizable(true); // Override the setResizable(false) from initComponents
+        
+        // Make table responsive
+        ComplaintTable1.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        ComplaintTable1.setFillsViewportHeight(true);
         
         // Standardize button styling to match NewsAndNotice
         Color lightBlue = new Color(173, 216, 230);
@@ -201,23 +208,37 @@ public class Complaints_Tables extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Table refreshed with latest data!");
         });
         
-        // Add buttons directly to content pane with absolute positioning
-        getContentPane().setLayout(null);
+        // Create responsive layout instead of absolute positioning
+        setLayout(new java.awt.BorderLayout());
         
-        // Re-add all the original components with their positions
-        jPanel1.setBounds(6, 6, 888, 80);
-        jLabel3.setBounds(355, 98, 180, 17);
-        jScrollPane2.setBounds(0, 127, 900, 350);
-        Back1.setBounds(750, 480, 100, 30);
+        // Header panel
+        add(jPanel1, java.awt.BorderLayout.NORTH);
         
-        getContentPane().add(jPanel1);
-        getContentPane().add(jLabel3);
-        getContentPane().add(jScrollPane2);
-        getContentPane().add(addButton);
-        getContentPane().add(deleteButton);
-        getContentPane().add(updateButton);
-        getContentPane().add(refreshButton);
-        getContentPane().add(Back1);
+        // Main content panel
+        javax.swing.JPanel mainPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
+        mainPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        // Title label panel
+        javax.swing.JPanel titlePanel = new javax.swing.JPanel();
+        titlePanel.add(jLabel3);
+        mainPanel.add(titlePanel, java.awt.BorderLayout.NORTH);
+        
+        // Table panel (this will now resize with window)
+        mainPanel.add(jScrollPane2, java.awt.BorderLayout.CENTER);
+        
+        add(mainPanel, java.awt.BorderLayout.CENTER);
+        
+        // Button panel
+        javax.swing.JPanel buttonPanel = new javax.swing.JPanel(new java.awt.FlowLayout());
+        buttonPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        buttonPanel.add(addButton);
+        buttonPanel.add(deleteButton);
+        buttonPanel.add(updateButton);
+        buttonPanel.add(refreshButton);
+        buttonPanel.add(javax.swing.Box.createHorizontalStrut(20)); // Add space
+        buttonPanel.add(Back1);
+        
+        add(buttonPanel, java.awt.BorderLayout.SOUTH);
     }
 
     /**

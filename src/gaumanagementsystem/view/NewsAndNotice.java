@@ -39,8 +39,28 @@ public class NewsAndNotice extends javax.swing.JFrame {
 
     public NewsAndNotice(String userRole) {
         initComponents();
-        setSize(900, 600); // Set preferred window size
+        
+        // Make window fully responsive
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH); // Start maximized
+        setMinimumSize(new java.awt.Dimension(800, 600)); // Set minimum size
         setLocationRelativeTo(null); // Center the window
+        
+        // Make table responsive
+        jTable1.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        jTable1.setFillsViewportHeight(true);
+        
+        // Create and style the back button BEFORE setting up layout
+        backButton = new JButton("Back");
+        backButton.setBackground(new Color(173, 216, 230));
+        backButton.setForeground(Color.BLACK);
+        backButton.addActionListener(e -> {
+            new DashboardView().setVisible(true);
+            this.dispose();
+        });
+        
+        // Set up a simple layout for panel2 since the original was removed
+        setupPanel2Layout();
+        
         loadTableData();
 
         // Hide add, delete, update buttons for non-admin users
@@ -67,84 +87,7 @@ public class NewsAndNotice extends javax.swing.JFrame {
             }
         });
 
-        // Create and style the back button
-        backButton = new JButton("Back");
-        backButton.setBackground(new Color(173, 216, 230));
-        backButton.setForeground(Color.BLACK);
-        backButton.addActionListener(e -> {
-            new DashboardView().setVisible(true);
-            this.dispose();
-        });
-        // Set panel2's layout to GroupLayout before using it
-        panel2.setLayout(new javax.swing.GroupLayout(panel2));
-        javax.swing.GroupLayout panel2Layout = (javax.swing.GroupLayout) panel2.getLayout();
-        panel2Layout.setHorizontalGroup(
-            panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(panel2Layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(panel2Layout.createSequentialGroup()
-                            .addGap(192, 192, 192)
-                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(33, 33, 33)
-                            .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(26, 26, 26)
-                            .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(26, 26, 26)
-                            .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
-                            .addComponent(jLabel4)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(264, 264, 264))))
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 784, Short.MAX_VALUE)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
-                    .addGap(30, 30, 30)
-                    .addComponent(jLabel5)
-                    .addGap(18, 18, 18)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(39, 39, 39)
-                    .addComponent(jLabel6)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel2)
-                    .addGap(18, 18, 18)
-                    .addComponent(jLabel3)
-                    .addGap(18, 18, 18)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(18, 18, 18))
-        );
-        panel2Layout.setVerticalGroup(
-            panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(panel2Layout.createSequentialGroup()
-                    .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(panel2Layout.createSequentialGroup()
-                            .addGap(24, 24, 24)
-                            .addComponent(jLabel4)))
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton1)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3))
-                        .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel6)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 313, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(24, 24, 24)
-                    .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton4)
-                        .addComponent(jButton3)
-                        .addComponent(jButton2)
-                        .addComponent(backButton))
-                    .addContainerGap(67, Short.MAX_VALUE))
-        );
+        // Back button already created earlier
 
         // Set button colors for visibility
         Color lightBlue = new Color(173, 216, 230);
@@ -306,18 +249,12 @@ public class NewsAndNotice extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Table refreshed successfully!");
         });
 
-        // SEARCH and AUDIENCE filter (fix logic)
+        // SEARCH filter (single search field)
         ActionListener filterListener = (ActionEvent e) -> {
             filterTable(getSearchText(), currentTypeFilter);
         };
         jTextField3.addActionListener(filterListener);
-        jTextField1.addActionListener(filterListener);
         jTextField3.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-            public void insertUpdate(javax.swing.event.DocumentEvent e) { filterTable(getSearchText(), currentTypeFilter); }
-            public void removeUpdate(javax.swing.event.DocumentEvent e) { filterTable(getSearchText(), currentTypeFilter); }
-            public void changedUpdate(javax.swing.event.DocumentEvent e) { filterTable(getSearchText(), currentTypeFilter); }
-        });
-        jTextField1.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             public void insertUpdate(javax.swing.event.DocumentEvent e) { filterTable(getSearchText(), currentTypeFilter); }
             public void removeUpdate(javax.swing.event.DocumentEvent e) { filterTable(getSearchText(), currentTypeFilter); }
             public void changedUpdate(javax.swing.event.DocumentEvent e) { filterTable(getSearchText(), currentTypeFilter); }
@@ -347,9 +284,170 @@ public class NewsAndNotice extends javax.swing.JFrame {
     }
 
     private String getSearchText() {
-        String search = jTextField3.getText().trim();
-        String audience = jTextField1.getText().trim();
-        return (search + " " + audience).trim();
+        return jTextField3.getText().trim();
+    }
+    
+    private void makeLayoutResponsive() {
+        // Remove the existing complex layout and create a simple responsive one
+        getContentPane().removeAll();
+        getContentPane().setLayout(new java.awt.BorderLayout());
+        
+        // Create header panel
+        javax.swing.JPanel headerPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
+        headerPanel.setBackground(new java.awt.Color(204, 204, 255));
+        headerPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        // Title in center
+        javax.swing.JPanel titlePanel = new javax.swing.JPanel();
+        titlePanel.setBackground(new java.awt.Color(204, 204, 255));
+        titlePanel.add(jLabel4); // "News and Notice" label
+        headerPanel.add(titlePanel, java.awt.BorderLayout.CENTER);
+        
+        // System title on right
+        javax.swing.JPanel systemTitlePanel = new javax.swing.JPanel();
+        systemTitlePanel.setBackground(new java.awt.Color(204, 204, 255));
+        systemTitlePanel.add(jLabel1); // "Hamro Smart Gaun" label
+        headerPanel.add(systemTitlePanel, java.awt.BorderLayout.EAST);
+        
+        getContentPane().add(headerPanel, java.awt.BorderLayout.NORTH);
+        
+        // Create main content panel
+        javax.swing.JPanel mainPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
+        mainPanel.setBackground(new java.awt.Color(204, 204, 255));
+        mainPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        // Top panel with search and controls
+        javax.swing.JPanel topPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
+        topPanel.setBackground(new java.awt.Color(204, 204, 255));
+        
+        // Search section - positioned at left quarter with single search field
+        javax.swing.JPanel searchPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        searchPanel.setBackground(new java.awt.Color(204, 204, 255));
+        searchPanel.add(javax.swing.Box.createHorizontalStrut(150)); // Left quarter spacing
+        searchPanel.add(jLabel5); // Search
+        searchPanel.add(javax.swing.Box.createHorizontalStrut(10)); // Gap between label and field
+        
+        // Make search field larger and responsive
+        jTextField3.setPreferredSize(new java.awt.Dimension(250, 25));
+        jTextField3.setMinimumSize(new java.awt.Dimension(200, 25));
+        searchPanel.add(jTextField3);
+        
+        // Right side - filter labels and add button
+        javax.swing.JPanel rightPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+        rightPanel.setBackground(new java.awt.Color(204, 204, 255));
+        rightPanel.add(jLabel2); // News
+        rightPanel.add(jLabel3); // Notices
+        rightPanel.add(jButton1); // ADD
+        
+        topPanel.add(searchPanel, java.awt.BorderLayout.WEST);
+        topPanel.add(rightPanel, java.awt.BorderLayout.EAST);
+        
+        mainPanel.add(topPanel, java.awt.BorderLayout.NORTH);
+        
+        // Table panel (this will now resize with window)
+        mainPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+        
+        getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
+        
+        // Button panel
+        javax.swing.JPanel buttonPanel = new javax.swing.JPanel(new java.awt.FlowLayout());
+        buttonPanel.setBackground(new java.awt.Color(204, 204, 255));
+        buttonPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        buttonPanel.add(jButton2); // DELETE
+        buttonPanel.add(jButton3); // UPDATE
+        buttonPanel.add(jButton4); // REFRESH
+        buttonPanel.add(javax.swing.Box.createHorizontalStrut(20)); // Add space
+        buttonPanel.add(backButton); // Back
+        
+        getContentPane().add(buttonPanel, java.awt.BorderLayout.SOUTH);
+        
+        // Refresh the layout
+        revalidate();
+        repaint();
+    }
+    
+    private void setupPanel2Layout() {
+        // Set up a simple BorderLayout for panel2 to arrange components
+        panel2.setLayout(new java.awt.BorderLayout());
+        
+        // Create header panel
+        javax.swing.JPanel headerPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
+        headerPanel.setBackground(new java.awt.Color(204, 204, 255));
+        headerPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        // Left side - title
+        javax.swing.JPanel titlePanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        titlePanel.setBackground(new java.awt.Color(204, 204, 255));
+        titlePanel.add(jLabel4); // "News and Notice"
+        
+        // Right side - system title
+        javax.swing.JPanel systemTitlePanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+        systemTitlePanel.setBackground(new java.awt.Color(204, 204, 255));
+        systemTitlePanel.add(jLabel1); // "Hamro Smart Gaun"
+        
+        headerPanel.add(titlePanel, java.awt.BorderLayout.WEST);
+        headerPanel.add(systemTitlePanel, java.awt.BorderLayout.EAST);
+        
+        // Create control panel
+        javax.swing.JPanel controlPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
+        controlPanel.setBackground(new java.awt.Color(204, 204, 255));
+        controlPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        
+        // Search section - positioned at left quarter with single search field
+        javax.swing.JPanel searchPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        searchPanel.setBackground(new java.awt.Color(204, 204, 255));
+        searchPanel.add(javax.swing.Box.createHorizontalStrut(150)); // Left quarter spacing
+        searchPanel.add(jLabel5); // Search
+        searchPanel.add(javax.swing.Box.createHorizontalStrut(10)); // Gap between label and field
+        
+        // Make search field larger and responsive
+        jTextField3.setPreferredSize(new java.awt.Dimension(250, 25));
+        jTextField3.setMinimumSize(new java.awt.Dimension(200, 25));
+        searchPanel.add(jTextField3);
+        
+        // Right side - filter labels and add button
+        javax.swing.JPanel rightControlPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+        rightControlPanel.setBackground(new java.awt.Color(204, 204, 255));
+        rightControlPanel.add(jLabel2); // News
+        rightControlPanel.add(jLabel3); // Notices
+        rightControlPanel.add(jButton1); // ADD
+        
+        controlPanel.add(searchPanel, java.awt.BorderLayout.WEST);
+        controlPanel.add(rightControlPanel, java.awt.BorderLayout.EAST);
+        
+        // Create main content panel
+        javax.swing.JPanel mainPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
+        mainPanel.setBackground(new java.awt.Color(204, 204, 255));
+        mainPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 10, 10, 10));
+        
+        // Add table (this will now resize with window)
+        mainPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+        
+        // Create button panel
+        javax.swing.JPanel buttonPanel = new javax.swing.JPanel(new java.awt.FlowLayout());
+        buttonPanel.setBackground(new java.awt.Color(204, 204, 255));
+        buttonPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 10, 10, 10));
+        buttonPanel.add(jButton2); // DELETE
+        buttonPanel.add(jButton3); // UPDATE
+        buttonPanel.add(jButton4); // REFRESH
+        buttonPanel.add(javax.swing.Box.createHorizontalStrut(20));
+        buttonPanel.add(backButton); // Back
+        
+        // Assemble the layout
+        panel2.add(headerPanel, java.awt.BorderLayout.NORTH);
+        
+        // Create center panel to hold controls and table
+        javax.swing.JPanel centerPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
+        centerPanel.setBackground(new java.awt.Color(204, 204, 255));
+        centerPanel.add(controlPanel, java.awt.BorderLayout.NORTH);
+        centerPanel.add(mainPanel, java.awt.BorderLayout.CENTER);
+        
+        panel2.add(centerPanel, java.awt.BorderLayout.CENTER);
+        panel2.add(buttonPanel, java.awt.BorderLayout.SOUTH);
+        
+        // Refresh the layout
+        panel2.revalidate();
+        panel2.repaint();
     }
 
     /**

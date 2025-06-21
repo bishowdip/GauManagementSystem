@@ -20,11 +20,17 @@ public class ProjectRequests extends JFrame {
      */
     public ProjectRequests() {
         setTitle("Project Requests");
-        setSize(900, 650);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         initComponents();
+        
+        // Make window fully responsive
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH); // Start maximized
+        setMinimumSize(new java.awt.Dimension(800, 600)); // Set minimum size
         setResizable(true);
+        
+        // Override the generated layout to make it truly responsive
+        makeLayoutResponsive();
         
         // Standardize button styling to match NewsAndNotice
         Color lightBlue = new Color(173, 216, 230);
@@ -89,6 +95,135 @@ public class ProjectRequests extends JFrame {
             dashboard.setVisible(true);
             this.dispose();
         });
+        
+        // Add search functionality
+        addSearchFunctionality();
+    }
+    
+    private void makeLayoutResponsive() {
+        // Remove the existing layout and create a new responsive one
+        getContentPane().removeAll();
+        setLayout(new java.awt.BorderLayout());
+        
+        // Header panel
+        add(jPanel1, java.awt.BorderLayout.NORTH);
+        
+        // Main content panel
+        javax.swing.JPanel mainPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
+        mainPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        // Top panel with title, search, and add button
+        javax.swing.JPanel topPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
+        javax.swing.JPanel leftTopPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        leftTopPanel.add(jLabel3);
+        
+        // Search section - positioned at left quarter with search field to the right
+        javax.swing.JPanel searchSection = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        searchSection.add(javax.swing.Box.createHorizontalStrut(200)); // Left quarter spacing
+        searchSection.add(jLabel5);
+        searchSection.add(javax.swing.Box.createHorizontalStrut(10)); // Small gap between label and field
+        
+        // Make search field larger and responsive
+        jTextField1.setPreferredSize(new java.awt.Dimension(250, 25));
+        jTextField1.setMinimumSize(new java.awt.Dimension(200, 25));
+        searchSection.add(jTextField1);
+        
+        // Right side - add button only
+        javax.swing.JPanel rightTopPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+        rightTopPanel.add(AddRequest);
+        
+        topPanel.add(leftTopPanel, java.awt.BorderLayout.WEST);
+        topPanel.add(searchSection, java.awt.BorderLayout.CENTER);
+        topPanel.add(rightTopPanel, java.awt.BorderLayout.EAST);
+        
+        mainPanel.add(topPanel, java.awt.BorderLayout.NORTH);
+        
+        // Table panel (this will now resize with window)
+        mainPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+        
+        add(mainPanel, java.awt.BorderLayout.CENTER);
+        
+        // Button panel
+        javax.swing.JPanel buttonPanel = new javax.swing.JPanel(new java.awt.FlowLayout());
+        buttonPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        buttonPanel.add(jButton2);
+        buttonPanel.add(jButton3);
+        buttonPanel.add(jButton4);
+        buttonPanel.add(javax.swing.Box.createHorizontalStrut(20)); // Add space
+        buttonPanel.add(Back1);
+        
+        add(buttonPanel, java.awt.BorderLayout.SOUTH);
+        
+        // Refresh the layout
+        revalidate();
+        repaint();
+    }
+    
+    private void addSearchFunctionality() {
+        // Add real-time search functionality
+        jTextField1.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { performSearch(); }
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { performSearch(); }
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { performSearch(); }
+        });
+        
+        // Add some sample data for demonstration
+        populateTableWithSampleData();
+    }
+    
+    private void performSearch() {
+        String searchText = jTextField1.getText().toLowerCase().trim();
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+        
+        if (searchText.isEmpty()) {
+            // If search is empty, show all data
+            populateTableWithSampleData();
+            return;
+        }
+        
+        // Clear current data
+        model.setRowCount(0);
+        
+        // Filter and add matching rows
+        Object[][] sampleData = getSampleProjectData();
+        for (Object[] row : sampleData) {
+            boolean matches = false;
+            for (Object cell : row) {
+                if (cell != null && cell.toString().toLowerCase().contains(searchText)) {
+                    matches = true;
+                    break;
+                }
+            }
+            if (matches) {
+                model.addRow(row);
+            }
+        }
+    }
+    
+    private void populateTableWithSampleData() {
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+        model.setRowCount(0); // Clear existing data
+        
+        Object[][] sampleData = getSampleProjectData();
+        for (Object[] row : sampleData) {
+            model.addRow(row);
+        }
+    }
+    
+    private Object[][] getSampleProjectData() {
+        return new Object[][] {
+            {"REQ001", "Road Construction", "2024-01-15", "Ward 1", "Infrastructure", "2024-06-15", "Main road repair and expansion", "In Progress", 500000},
+            {"REQ002", "School Building", "2024-02-01", "Ward 2", "Education", "2024-12-01", "New primary school construction", "Approved", 1200000},
+            {"REQ003", "Water Supply", "2024-01-20", "Ward 3", "Utilities", "2024-08-20", "Clean water distribution system", "Planning", 800000},
+            {"REQ004", "Health Center", "2024-03-01", "Ward 1", "Healthcare", "2024-11-01", "Community health center establishment", "Pending", 1500000},
+            {"REQ005", "Bridge Construction", "2024-02-15", "Ward 4", "Infrastructure", "2024-09-15", "Suspension bridge over river", "In Progress", 2000000},
+            {"REQ006", "Solar Installation", "2024-03-10", "Ward 2", "Energy", "2024-07-10", "Solar panels for street lighting", "Approved", 600000},
+            {"REQ007", "Community Hall", "2024-01-25", "Ward 3", "Community", "2024-10-25", "Multi-purpose community center", "Planning", 900000},
+            {"REQ008", "Waste Management", "2024-02-20", "Ward 5", "Environment", "2024-08-20", "Waste collection and recycling system", "Pending", 400000}
+        };
     }
 
     /**
@@ -188,6 +323,11 @@ public class ProjectRequests extends JFrame {
         jTable1.setGridColor(new java.awt.Color(102, 51, 255));
         jTable1.setSelectionBackground(new java.awt.Color(255, 255, 255));
         jTable1.setShowGrid(true);
+        
+        // Make table responsive
+        jTable1.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        jTable1.setFillsViewportHeight(true);
+        
         jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

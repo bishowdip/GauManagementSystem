@@ -30,6 +30,7 @@ import javax.swing.JPanel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.awt.GridLayout;
+import java.awt.Dimension;
 
 /**
  *
@@ -60,6 +61,14 @@ public class CitizenEdit extends javax.swing.JFrame {
      */
     public CitizenEdit() {
         initComponents();
+        
+        // Make window responsive
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH); // Start maximized
+        setMinimumSize(new Dimension(800, 600)); // Set minimum size
+        
+        // Override the generated layout to make it truly responsive
+        makeLayoutResponsive();
+        
         citizenController = new CitizenController();
         loadCitizenTableData();
         addTableDoubleClickListener();
@@ -81,6 +90,9 @@ public class CitizenEdit extends javax.swing.JFrame {
         CitizentoDashboard.setBackground(lightBlue); 
         CitizentoDashboard.setForeground(Color.BLACK);
         CitizentoDashboard.setText("Back");
+        
+        // Add search functionality
+        addSearchFunctionality();
     }
 
     // New constructor with role
@@ -291,6 +303,124 @@ public class CitizenEdit extends javax.swing.JFrame {
         popupMenu.add(viewProfileItem);
         popupMenu.show(citizen_table, x, y);
     }
+    
+    private void addSearchFunctionality() {
+        // Add real-time search functionality
+        search.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { performSearch(); }
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { performSearch(); }
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { performSearch(); }
+        });
+    }
+    
+    private void performSearch() {
+        String searchText = search.getText().toLowerCase().trim();
+        
+        if (searchText.isEmpty()) {
+            // If search is empty, reload all data
+            if ("user".equalsIgnoreCase(userRole)) {
+                loadCitizenTableDataForUser();
+            } else {
+                loadCitizenTableData();
+            }
+            return;
+        }
+        
+        // Filter existing data
+        DefaultTableModel model = (DefaultTableModel) citizen_table.getModel();
+        DefaultTableModel filteredModel = new DefaultTableModel(
+            new String[]{"Citizen-number", "Name", "Ward", "Gender", "Phone", "Address", "Email"}, 0
+        );
+        
+        // Get all citizens and filter
+        List<CitizenData> allCitizens;
+        if ("user".equalsIgnoreCase(userRole)) {
+            allCitizens = new java.util.ArrayList<>();
+            CitizenData citizen = citizenController.getCitizenById(currentCitizenNumber);
+            if (citizen != null) {
+                allCitizens.add(citizen);
+            }
+        } else {
+            allCitizens = citizenController.getAllCitizens();
+        }
+        
+        for (CitizenData citizen : allCitizens) {
+            boolean matches = false;
+            
+            // Check if search text matches any field
+            if (citizen.getCitizenId().toLowerCase().contains(searchText) ||
+                citizen.getName().toLowerCase().contains(searchText) ||
+                citizen.getGender().toLowerCase().contains(searchText) ||
+                citizen.getPhone().toLowerCase().contains(searchText) ||
+                citizen.getAddress().toLowerCase().contains(searchText) ||
+                citizen.getEmail().toLowerCase().contains(searchText)) {
+                matches = true;
+            }
+            
+            if (matches) {
+                filteredModel.addRow(new Object[]{
+                    citizen.getCitizenId(),
+                    citizen.getName(),
+                    "Ward", // Placeholder
+                    citizen.getGender(),
+                    citizen.getPhone(),
+                    citizen.getAddress(),
+                    citizen.getEmail()
+                });
+            }
+        }
+        
+        citizen_table.setModel(filteredModel);
+    }
+    
+    private void makeLayoutResponsive() {
+        // Remove the existing layout and create a new responsive one
+        getContentPane().removeAll();
+        setLayout(new java.awt.BorderLayout());
+        
+        // Header panel
+        add(jPanel1, java.awt.BorderLayout.NORTH);
+        
+        // Main content panel with search and table
+        javax.swing.JPanel mainPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
+        mainPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        // Search panel - positioned at left quarter with search field to the right
+        javax.swing.JPanel searchPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        searchPanel.add(javax.swing.Box.createHorizontalStrut(200)); // Left quarter spacing
+        searchPanel.add(jLabel2);
+        searchPanel.add(javax.swing.Box.createHorizontalStrut(10)); // Small gap between label and field
+        
+        // Make search field larger and responsive
+        search.setPreferredSize(new java.awt.Dimension(300, 25));
+        search.setMinimumSize(new java.awt.Dimension(250, 25));
+        searchPanel.add(search);
+        
+        mainPanel.add(searchPanel, java.awt.BorderLayout.NORTH);
+        
+        // Table panel (this will now resize with window)
+        mainPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+        
+        add(mainPanel, java.awt.BorderLayout.CENTER);
+        
+        // Button panel
+        javax.swing.JPanel buttonPanel = new javax.swing.JPanel(new java.awt.FlowLayout());
+        buttonPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        buttonPanel.add(add);
+        buttonPanel.add(remove);
+        buttonPanel.add(update);
+        buttonPanel.add(javax.swing.Box.createHorizontalStrut(20)); // Add space
+        buttonPanel.add(CitizentoDashboard);
+        
+        add(buttonPanel, java.awt.BorderLayout.SOUTH);
+        
+        // Refresh the layout
+        revalidate();
+        repaint();
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -317,7 +447,7 @@ public class CitizenEdit extends javax.swing.JFrame {
         jLabel3.setText("jLabel3");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        getContentPane().setLayout(new java.awt.BorderLayout());
 
         jPanel1.setBackground(new java.awt.Color(153, 153, 255));
 
@@ -341,7 +471,7 @@ public class CitizenEdit extends javax.swing.JFrame {
                 .addContainerGap(23, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 880, 80));
+        getContentPane().add(jPanel1, java.awt.BorderLayout.NORTH);
 
         jPanel2.setBackground(new java.awt.Color(204, 204, 255));
 
@@ -423,6 +553,11 @@ public class CitizenEdit extends javax.swing.JFrame {
             }
         });
         citizen_table.setShowGrid(true);
+        
+        // Make table responsive
+        citizen_table.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        citizen_table.setFillsViewportHeight(true);
+        
         jScrollPane1.setViewportView(citizen_table);
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -470,7 +605,7 @@ public class CitizenEdit extends javax.swing.JFrame {
                 .addGap(46, 46, 46))
         );
 
-        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 80, 880, 430));
+        getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents

@@ -42,6 +42,8 @@ public class DashboardView extends javax.swing.JFrame {
         
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Hamro Smart Gaun - Dashboard");
+        setExtendedState(JFrame.MAXIMIZED_BOTH); // Start maximized
+        setMinimumSize(new Dimension(800, 600)); // Set minimum size
         
         jPanel1.setBackground(new java.awt.Color(204, 204, 204));
         jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -64,15 +66,25 @@ public class DashboardView extends javax.swing.JFrame {
         
         citizensButton.setText("Citizens");
         
-        
         logoutButton.setText("Logout");
         
-        menuPanel.add(serviceButton);
-        menuPanel.add(budgetButton);
-        menuPanel.add(complaintsButton);
-        menuPanel.add(projectsButton);
-        menuPanel.add(newsButton);
+        // Add light red color when logout button is clicked
+        logoutButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                logoutButton.setBackground(new java.awt.Color(255, 182, 193)); // Light red
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                logoutButton.setBackground(null); // Reset to default
+            }
+        });
+        
+        // Add buttons in the requested order
         menuPanel.add(citizensButton);
+        menuPanel.add(serviceButton);
+        menuPanel.add(projectsButton);
+        menuPanel.add(budgetButton);
+        menuPanel.add(newsButton);
+        menuPanel.add(complaintsButton);
         menuPanel.add(logoutButton);
         
         // Layout
@@ -112,6 +124,8 @@ public class DashboardView extends javax.swing.JFrame {
         pack();
     }
     
+
+    
     public void addServiceButtonListener(ActionListener listener) {
         serviceButton.addActionListener(listener);
     }
@@ -136,7 +150,6 @@ public class DashboardView extends javax.swing.JFrame {
         citizensButton.addActionListener(listener);
     }
 
-
     public void addLogoutButtonListener(ActionListener listener) {
         logoutButton.addActionListener(listener);
     }
@@ -160,25 +173,38 @@ public class DashboardView extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> {
             new DashboardView("admin").setVisible(true);
         });
+    }
 
-}
-
+    // Getter methods for controller access
     public JButton getServiceButton() { 
-        return serviceButton; }
+        return serviceButton; 
+    }
+    
     public JButton getBudgetButton() { 
-        return budgetButton; }
+        return budgetButton; 
+    }
+    
     public JButton getComplaintsButton() { 
-        return complaintsButton; }
+        return complaintsButton; 
+    }
+    
     public JButton getProjectsButton() { 
-        return projectsButton; }
+        return projectsButton; 
+    }
+    
     public JButton getNewsButton() { 
-        return newsButton; }
+        return newsButton; 
+    }
+    
     public JButton getCitizensButton() { 
-        return citizensButton; }
+        return citizensButton; 
+    }
+    
     public JButton getLogoutButton() { 
-        return logoutButton; }
+        return logoutButton; 
+    }
 
     public String getUserRole() {
         return userRole;
     }
-    }
+}
