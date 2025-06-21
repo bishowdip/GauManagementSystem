@@ -401,10 +401,40 @@ public class CitizenController {
         return true;
     }
     
-    // Email validation helper
+    // Email validation helper - more lenient validation
     private boolean isValidEmail(String email) {
-        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-        return email.matches(emailRegex);
+        // More lenient email validation - just check for basic format
+        if (email == null || email.trim().isEmpty()) {
+            return false;
+        }
+        
+        email = email.trim();
+        
+        // Basic checks: contains @ and has some text before and after @
+        if (!email.contains("@")) {
+            return false;
+        }
+        
+        String[] parts = email.split("@");
+        if (parts.length != 2) {
+            return false;
+        }
+        
+        String localPart = parts[0];
+        String domainPart = parts[1];
+        
+        // Check that both parts are not empty
+        if (localPart.isEmpty() || domainPart.isEmpty()) {
+            return false;
+        }
+        
+        // Check that domain has at least one dot
+        if (!domainPart.contains(".")) {
+            return false;
+        }
+        
+        // Very basic format check
+        return true;
     }
     
     // Close database connection

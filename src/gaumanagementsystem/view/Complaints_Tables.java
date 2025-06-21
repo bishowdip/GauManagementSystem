@@ -21,7 +21,7 @@ public class Complaints_Tables extends javax.swing.JFrame {
 
     private static AtomicInteger idCounter = new AtomicInteger(1); // Auto-increment ID counter
     private String currentFilter = "All"; // Track current filter: "All", "Complaint", "Feedback"
-    
+
     /**
      * Creates new form Complaints_Tables
      */

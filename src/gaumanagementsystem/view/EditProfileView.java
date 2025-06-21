@@ -33,8 +33,8 @@ public class EditProfileView extends javax.swing.JFrame {
         gender.add(male);
         gender.add(female);
         
-        // Add calendar button functionality
-        addCalendarButton();
+        // Make date field clickable for calendar
+        setupDateFieldCalendar();
     }
 
     /**
@@ -518,18 +518,18 @@ public class EditProfileView extends javax.swing.JFrame {
         }
     }
 
-    private void addCalendarButton() {
-        // Create calendar button
-        calendarButton = new JButton("📅");
-        calendarButton.setFont(new java.awt.Font("Arial", 0, 12));
-        calendarButton.setBounds(516, 282, 30, 22); // Position next to date field
-        calendarButton.setToolTipText("Select Date");
-        
-        // Add action listener
-        calendarButton.addActionListener(e -> openDatePicker());
-        
-        // Add to content pane
-        getContentPane().add(calendarButton);
+    private void setupDateFieldCalendar() {
+        // Make date field clickable for calendar selection
+        if (dateofbirth != null) {
+            dateofbirth.setEditable(false);
+            dateofbirth.setToolTipText("Click to select date");
+            dateofbirth.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    openDatePicker();
+                }
+            });
+        }
     }
     
     private void openDatePicker() {
