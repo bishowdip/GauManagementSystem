@@ -98,13 +98,29 @@ public class ServiceRequest extends javax.swing.JFrame {
             JTextField serviceTypeField = new JTextField();
             JTextField descriptionField = new JTextField();
             JTextField statusField = new JTextField();
-            // Optionally, add a date field:
-            // JTextField dateField = new JTextField(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-            // dateField.setEditable(false);
+            
+            // Create date field with calendar picker
+            javax.swing.JTextField dateField = new javax.swing.JTextField(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+            dateField.setEditable(false);
+            javax.swing.JButton calendarButton = new javax.swing.JButton("📅");
+            javax.swing.JPanel datePanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+            dateField.setPreferredSize(new java.awt.Dimension(120, 25));
+            calendarButton.setPreferredSize(new java.awt.Dimension(30, 25));
+            datePanel.add(dateField);
+            datePanel.add(calendarButton);
+            
+            // Calendar button action
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            calendarButton.addActionListener(evt -> {
+                Date selectedDate = showCalendarDialog(dateField.getText(), "Select Request Date");
+                if (selectedDate != null) {
+                    dateField.setText(sdf.format(selectedDate));
+                }
+            });
 
             JPanel panel = new JPanel(new java.awt.GridLayout(0, 1));
-            // panel.add(new JLabel("Date (auto):"));
-            // panel.add(dateField);
+            panel.add(new JLabel("Request Date:"));
+            panel.add(datePanel);
             panel.add(new JLabel("Citizen:"));
             panel.add(citizenField);
             panel.add(new JLabel("Ward:"));
@@ -123,13 +139,13 @@ public class ServiceRequest extends javax.swing.JFrame {
                 String serviceType = serviceTypeField.getText();
                 String description = descriptionField.getText();
                 String status = statusField.getText();
-                // String date = dateField.getText();
-                if (citizen.isEmpty() || ward.isEmpty() || serviceType.isEmpty() || description.isEmpty() || status.isEmpty()) {
+                String date = dateField.getText();
+                if (citizen.isEmpty() || ward.isEmpty() || serviceType.isEmpty() || description.isEmpty() || status.isEmpty() || date.isEmpty()) {
                     JOptionPane.showMessageDialog(this, "All fields are required!");
                     return;
                 }
                 javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
-                model.addRow(new Object[]{citizen, ward, serviceType, description, status});
+                model.addRow(new Object[]{date, citizen, ward, serviceType, description, status});
             }
         });
 
@@ -299,16 +315,38 @@ public class ServiceRequest extends javax.swing.JFrame {
         int selectedRow = jTable1.getSelectedRow();
         if (selectedRow != -1) {
             DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-            JTextField citizenField = new JTextField(model.getValueAt(selectedRow, 0).toString());
-            JTextField wardField = new JTextField(model.getValueAt(selectedRow, 1).toString());
-            JTextField serviceTypeField = new JTextField(model.getValueAt(selectedRow, 2).toString());
-            JTextField descriptionField = new JTextField(model.getValueAt(selectedRow, 3).toString());
+            
+            // Create date field with calendar picker for update
+            javax.swing.JTextField dateField = new javax.swing.JTextField(model.getValueAt(selectedRow, 0).toString());
+            dateField.setEditable(false);
+            javax.swing.JButton calendarButton = new javax.swing.JButton("📅");
+            javax.swing.JPanel datePanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+            dateField.setPreferredSize(new java.awt.Dimension(120, 25));
+            calendarButton.setPreferredSize(new java.awt.Dimension(30, 25));
+            datePanel.add(dateField);
+            datePanel.add(calendarButton);
+            
+            // Calendar button action
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            calendarButton.addActionListener(evt2 -> {
+                Date selectedDate = showCalendarDialog(dateField.getText(), "Select Request Date");
+                if (selectedDate != null) {
+                    dateField.setText(sdf.format(selectedDate));
+                }
+            });
+            
+            JTextField citizenField = new JTextField(model.getValueAt(selectedRow, 1).toString());
+            JTextField wardField = new JTextField(model.getValueAt(selectedRow, 2).toString());
+            JTextField serviceTypeField = new JTextField(model.getValueAt(selectedRow, 3).toString());
+            JTextField descriptionField = new JTextField(model.getValueAt(selectedRow, 4).toString());
             String[] statusOptions = {"Pending", "In Progress", "Completed"};
             JComboBox<String> statusBox = new JComboBox<>(statusOptions);
-            statusBox.setSelectedItem(model.getValueAt(selectedRow, 4));
+            statusBox.setSelectedItem(model.getValueAt(selectedRow, 5));
 
             JPanel panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+            panel.add(new JLabel("Request Date:"));
+            panel.add(datePanel);
             panel.add(new JLabel("Citizen:"));
             panel.add(citizenField);
             panel.add(new JLabel("Ward:"));
@@ -329,11 +367,12 @@ public class ServiceRequest extends javax.swing.JFrame {
             );
 
             if (result == JOptionPane.OK_OPTION) {
-                model.setValueAt(citizenField.getText(), selectedRow, 0);
-                model.setValueAt(wardField.getText(), selectedRow, 1);
-                model.setValueAt(serviceTypeField.getText(), selectedRow, 2);
-                model.setValueAt(descriptionField.getText(), selectedRow, 3);
-                model.setValueAt(statusBox.getSelectedItem(), selectedRow, 4);
+                model.setValueAt(dateField.getText(), selectedRow, 0);
+                model.setValueAt(citizenField.getText(), selectedRow, 1);
+                model.setValueAt(wardField.getText(), selectedRow, 2);
+                model.setValueAt(serviceTypeField.getText(), selectedRow, 3);
+                model.setValueAt(descriptionField.getText(), selectedRow, 4);
+                model.setValueAt(statusBox.getSelectedItem(), selectedRow, 5);
             }
         } else {
             JOptionPane.showMessageDialog(this, "Please select a row to update.");
@@ -354,21 +393,21 @@ public class ServiceRequest extends javax.swing.JFrame {
         
         // Get the original data
         Object[][] originalData = {
-            {"Ram Bahadur", "5","Water Supply", "No water in tap", "Pending"},
-            {"Sita Kumari", "3","Electricity", "Frequent power cuts", "In Progress"},
-            {"Hari Prasad", "2","Road Repair", "Potholes in main road", "Completed"},
-            {"Gita Devi", "1","Sanitation", "Garbage not collected", "Pending"}
+            {"2024-01-15", "Ram Bahadur", "5","Water Supply", "No water in tap", "Pending"},
+            {"2024-01-16", "Sita Kumari", "3","Electricity", "Frequent power cuts", "In Progress"},
+            {"2024-01-17", "Hari Prasad", "2","Road Repair", "Potholes in main road", "Completed"},
+            {"2024-01-18", "Gita Devi", "1","Sanitation", "Garbage not collected", "Pending"}
         };
         
         // Filter the data
         for (Object[] row : originalData) {
             boolean matchesSearch = searchText.isEmpty() || 
-                row[0].toString().toLowerCase().contains(searchText) || // Citizen
-                row[2].toString().toLowerCase().contains(searchText) || // Service Type
-                row[3].toString().toLowerCase().contains(searchText);   // Description
+                row[1].toString().toLowerCase().contains(searchText) || // Citizen
+                row[3].toString().toLowerCase().contains(searchText) || // Service Type
+                row[4].toString().toLowerCase().contains(searchText);   // Description
                 
             boolean matchesWard = wardText.isEmpty() || 
-                row[1].toString().equals(wardText); // Ward
+                row[2].toString().equals(wardText); // Ward
             
             if (matchesSearch && matchesWard) {
                 model.addRow(row);
@@ -378,16 +417,166 @@ public class ServiceRequest extends javax.swing.JFrame {
 
     private void setTableData() {
         Object[][] data = {
-            {"Ram Bahadur", "5","Water Supply", "No water in tap", "Pending"},
-            {"Sita Kumari", "3","Electricity", "Frequent power cuts", "In Progress"},
-            {"Hari Prasad", "2","Road Repair", "Potholes in main road", "Completed"},
-            {"Gita Devi", "1","Sanitation", "Garbage not collected", "Pending"}
+            {"2024-01-15", "Ram Bahadur", "5","Water Supply", "No water in tap", "Pending"},
+            {"2024-01-16", "Sita Kumari", "3","Electricity", "Frequent power cuts", "In Progress"},
+            {"2024-01-17", "Hari Prasad", "2","Road Repair", "Potholes in main road", "Completed"},
+            {"2024-01-18", "Gita Devi", "1","Sanitation", "Garbage not collected", "Pending"}
         };
         String[] columns = {
-            "Citizen", "Ward","Service Type", "Description", "Status"
+            "Date", "Citizen", "Ward","Service Type", "Description", "Status"
         };
         DefaultTableModel model = new DefaultTableModel(data, columns);
         jTable1.setModel(model);
+    }
+    
+    private Date showCalendarDialog(String currentDate, String title) {
+        // Parse current date
+        Date initialDate = new Date();
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            if (currentDate != null && !currentDate.trim().isEmpty()) {
+                initialDate = sdf.parse(currentDate);
+            }
+        } catch (Exception e) {
+            // Use current date if parsing fails
+            initialDate = new Date();
+        }
+        
+        // Create calendar dialog
+        javax.swing.JDialog calendarDialog = new javax.swing.JDialog(this, title, true);
+        calendarDialog.setDefaultCloseOperation(javax.swing.JDialog.DISPOSE_ON_CLOSE);
+        calendarDialog.setLayout(new java.awt.BorderLayout());
+        
+        // Create calendar panel
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.setTime(initialDate);
+        
+        // Year spinner
+        javax.swing.SpinnerModel yearModel = new javax.swing.SpinnerNumberModel(cal.get(java.util.Calendar.YEAR), 1900, 2100, 1);
+        javax.swing.JSpinner yearSpinner = new javax.swing.JSpinner(yearModel);
+        
+        // Month combo box
+        String[] months = {"January", "February", "March", "April", "May", "June",
+                          "July", "August", "September", "October", "November", "December"};
+        javax.swing.JComboBox<String> monthCombo = new javax.swing.JComboBox<>(months);
+        monthCombo.setSelectedIndex(cal.get(java.util.Calendar.MONTH));
+        
+        // Day spinner
+        javax.swing.SpinnerModel dayModel = new javax.swing.SpinnerNumberModel(cal.get(java.util.Calendar.DAY_OF_MONTH), 1, 31, 1);
+        javax.swing.JSpinner daySpinner = new javax.swing.JSpinner(dayModel);
+        
+        // Update day spinner when month/year changes
+        Runnable updateDaySpinner = () -> {
+            int year = (Integer) yearSpinner.getValue();
+            int month = monthCombo.getSelectedIndex();
+            java.util.Calendar tempCal = java.util.Calendar.getInstance();
+            tempCal.set(year, month, 1);
+            int maxDay = tempCal.getActualMaximum(java.util.Calendar.DAY_OF_MONTH);
+            int currentDay = (Integer) daySpinner.getValue();
+            if (currentDay > maxDay) {
+                daySpinner.setValue(maxDay);
+            }
+            ((javax.swing.SpinnerNumberModel) daySpinner.getModel()).setMaximum(maxDay);
+        };
+        
+        yearSpinner.addChangeListener(e -> updateDaySpinner.run());
+        monthCombo.addActionListener(e -> updateDaySpinner.run());
+        
+        // Create top panel for date selection
+        javax.swing.JPanel datePanel = new javax.swing.JPanel(new java.awt.GridBagLayout());
+        datePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select Date"));
+        java.awt.GridBagConstraints gbc = new java.awt.GridBagConstraints();
+        gbc.insets = new java.awt.Insets(5, 5, 5, 5);
+        
+        gbc.gridx = 0; gbc.gridy = 0;
+        datePanel.add(new javax.swing.JLabel("Year:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(yearSpinner, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 1;
+        datePanel.add(new javax.swing.JLabel("Month:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(monthCombo, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 2;
+        datePanel.add(new javax.swing.JLabel("Day:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(daySpinner, gbc);
+        
+        // Create preview label
+        javax.swing.JLabel previewLabel = new javax.swing.JLabel();
+        previewLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        previewLabel.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected Date"));
+        
+        // Update preview
+        Runnable updatePreview = () -> {
+            try {
+                int year = (Integer) yearSpinner.getValue();
+                int month = monthCombo.getSelectedIndex();
+                int day = (Integer) daySpinner.getValue();
+                java.util.Calendar previewCal = java.util.Calendar.getInstance();
+                previewCal.set(year, month, day);
+                SimpleDateFormat displayFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
+                previewLabel.setText(displayFormat.format(previewCal.getTime()));
+            } catch (Exception e) {
+                previewLabel.setText("Invalid Date");
+            }
+        };
+        
+        yearSpinner.addChangeListener(e -> updatePreview.run());
+        monthCombo.addActionListener(e -> updatePreview.run());
+        daySpinner.addChangeListener(e -> updatePreview.run());
+        updatePreview.run(); // Initial update
+        
+        // Create button panel
+        javax.swing.JPanel buttonPanel = new javax.swing.JPanel(new java.awt.FlowLayout());
+        javax.swing.JButton okButton = new javax.swing.JButton("OK");
+        javax.swing.JButton cancelButton = new javax.swing.JButton("Cancel");
+        javax.swing.JButton todayButton = new javax.swing.JButton("Today");
+        
+        final Date[] selectedDate = {null};
+        
+        okButton.addActionListener(e -> {
+            try {
+                int year = (Integer) yearSpinner.getValue();
+                int month = monthCombo.getSelectedIndex();
+                int day = (Integer) daySpinner.getValue();
+                java.util.Calendar resultCal = java.util.Calendar.getInstance();
+                resultCal.set(year, month, day);
+                selectedDate[0] = resultCal.getTime();
+                calendarDialog.dispose();
+            } catch (Exception ex) {
+                javax.swing.JOptionPane.showMessageDialog(calendarDialog, "Please select a valid date!");
+            }
+        });
+        
+        cancelButton.addActionListener(e -> {
+            selectedDate[0] = null;
+            calendarDialog.dispose();
+        });
+        
+        todayButton.addActionListener(e -> {
+            java.util.Calendar today = java.util.Calendar.getInstance();
+            yearSpinner.setValue(today.get(java.util.Calendar.YEAR));
+            monthCombo.setSelectedIndex(today.get(java.util.Calendar.MONTH));
+            daySpinner.setValue(today.get(java.util.Calendar.DAY_OF_MONTH));
+        });
+        
+        buttonPanel.add(todayButton);
+        buttonPanel.add(okButton);
+        buttonPanel.add(cancelButton);
+        
+        // Assemble dialog
+        calendarDialog.add(datePanel, java.awt.BorderLayout.NORTH);
+        calendarDialog.add(previewLabel, java.awt.BorderLayout.CENTER);
+        calendarDialog.add(buttonPanel, java.awt.BorderLayout.SOUTH);
+        
+        // Set dialog properties
+        calendarDialog.setSize(300, 250);
+        calendarDialog.setLocationRelativeTo(this);
+        calendarDialog.setVisible(true);
+        
+        return selectedDate[0];
     }
 }
 

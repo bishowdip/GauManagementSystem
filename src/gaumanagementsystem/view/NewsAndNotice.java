@@ -17,8 +17,10 @@ import java.awt.BorderLayout;
 import javax.swing.JComboBox;
 import java.awt.Color;
 import javax.swing.JSpinner;
-import javax.swing.SpinnerDateModel;
+
 import java.awt.GridLayout;
+import java.util.Calendar;
+import javax.swing.SpinnerModel;
 
 /**
  *
@@ -98,25 +100,51 @@ public class NewsAndNotice extends javax.swing.JFrame {
 
         // ADD button
         jButton1.addActionListener(e -> {
-            JSpinner dateSpinner = new JSpinner(new SpinnerDateModel());
-            JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(dateSpinner, "yyyy-MM-dd");
-            dateSpinner.setEditor(dateEditor);
-            dateSpinner.setValue(new Date());
+            // Create date field with calendar picker
+            javax.swing.JTextField dateField = new javax.swing.JTextField();
+            javax.swing.JButton calendarButton1 = new javax.swing.JButton("📅");
+            javax.swing.JPanel datePanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            dateField.setText(sdf.format(new Date()));
+            dateField.setPreferredSize(new java.awt.Dimension(120, 25));
+            calendarButton1.setPreferredSize(new java.awt.Dimension(30, 25));
+            datePanel.add(dateField);
+            datePanel.add(calendarButton1);
+            
+            // Create expiry date field with calendar picker
+            javax.swing.JTextField expiryDateField = new javax.swing.JTextField();
+            javax.swing.JButton calendarButton2 = new javax.swing.JButton("📅");
+            javax.swing.JPanel expiryDatePanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+            expiryDateField.setText(sdf.format(new Date()));
+            expiryDateField.setPreferredSize(new java.awt.Dimension(120, 25));
+            calendarButton2.setPreferredSize(new java.awt.Dimension(30, 25));
+            expiryDatePanel.add(expiryDateField);
+            expiryDatePanel.add(calendarButton2);
+            
+            // Calendar button actions
+            calendarButton1.addActionListener(evt -> {
+                Date selectedDate = showCalendarDialog(dateField.getText(), "Select Date");
+                if (selectedDate != null) {
+                    dateField.setText(sdf.format(selectedDate));
+                }
+            });
+            
+            calendarButton2.addActionListener(evt -> {
+                Date selectedDate = showCalendarDialog(expiryDateField.getText(), "Select Expiry Date");
+                if (selectedDate != null) {
+                    expiryDateField.setText(sdf.format(selectedDate));
+                }
+            });
             
             JTextField audienceField = new JTextField();
             JTextField subjectField = new JTextField();
             JTextField descriptionField = new JTextField();
-            
-            JSpinner expiryDateSpinner = new JSpinner(new SpinnerDateModel());
-            JSpinner.DateEditor expiryDateEditor = new JSpinner.DateEditor(expiryDateSpinner, "yyyy-MM-dd");
-            expiryDateSpinner.setEditor(expiryDateEditor);
-            expiryDateSpinner.setValue(new Date());
             String[] types = {"News", "Notice"};
             JComboBox<String> typeCombo = new JComboBox<>(types);
 
             JPanel panel = new JPanel(new GridLayout(0, 1));
             panel.add(new JLabel("Date:"));
-            panel.add(dateSpinner);
+            panel.add(datePanel);
             panel.add(new JLabel("Audience:"));
             panel.add(audienceField);
             panel.add(new JLabel("Subject:"));
@@ -124,17 +152,17 @@ public class NewsAndNotice extends javax.swing.JFrame {
             panel.add(new JLabel("Description:"));
             panel.add(descriptionField);
             panel.add(new JLabel("Expiry Date:"));
-            panel.add(expiryDateSpinner);
+            panel.add(expiryDatePanel);
             panel.add(new JLabel("Type:"));
             panel.add(typeCombo);
 
             int result = JOptionPane.showConfirmDialog(this, panel, "Add News/Notice", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
             if (result == JOptionPane.OK_OPTION) {
-                String date = new SimpleDateFormat("yyyy-MM-dd").format((Date) dateSpinner.getValue());
+                String date = dateField.getText();
                 String audience = audienceField.getText();
                 String subject = subjectField.getText();
                 String description = descriptionField.getText();
-                String expiryDate = new SimpleDateFormat("yyyy-MM-dd").format((Date) expiryDateSpinner.getValue());
+                String expiryDate = expiryDateField.getText();
                 String type = (String) typeCombo.getSelectedItem();
                 if (date.isEmpty() || audience.isEmpty() || subject.isEmpty() || description.isEmpty() || expiryDate.isEmpty() || type.isEmpty()) {
                     JOptionPane.showMessageDialog(this, "All fields are required!");
@@ -175,37 +203,50 @@ public class NewsAndNotice extends javax.swing.JFrame {
                 String expiryDate = (String) model.getValueAt(selectedRow, 4);
                 String type = (String) model.getValueAt(selectedRow, 5);
 
-                JSpinner dateSpinner = new JSpinner(new SpinnerDateModel());
-                JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(dateSpinner, "yyyy-MM-dd");
-                dateSpinner.setEditor(dateEditor);
-                try {
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    Date currentDate = sdf.parse(date);
-                    dateSpinner.setValue(currentDate);
-                } catch (Exception ex) {
-                    dateSpinner.setValue(new Date());
-                }
                 JTextField audienceField = new JTextField(audience);
                 JTextField subjectField = new JTextField(subject);
                 JTextField descriptionField = new JTextField(description);
-                
-                JSpinner expiryDateSpinner = new JSpinner(new SpinnerDateModel());
-                JSpinner.DateEditor expiryDateEditor = new JSpinner.DateEditor(expiryDateSpinner, "yyyy-MM-dd");
-                expiryDateSpinner.setEditor(expiryDateEditor);
-                try {
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    Date expiryDateParsed = sdf.parse(expiryDate);
-                    expiryDateSpinner.setValue(expiryDateParsed);
-                } catch (Exception ex) {
-                    expiryDateSpinner.setValue(new Date());
-                }
                 String[] types = {"News", "Notice"};
                 JComboBox<String> typeCombo = new JComboBox<>(types);
                 typeCombo.setSelectedItem(type);
 
+                // Create date field with calendar picker for update
+                javax.swing.JTextField dateFieldUpdate = new javax.swing.JTextField(date);
+                javax.swing.JButton calendarButton1Update = new javax.swing.JButton("📅");
+                javax.swing.JPanel datePanelUpdate = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+                dateFieldUpdate.setPreferredSize(new java.awt.Dimension(120, 25));
+                calendarButton1Update.setPreferredSize(new java.awt.Dimension(30, 25));
+                datePanelUpdate.add(dateFieldUpdate);
+                datePanelUpdate.add(calendarButton1Update);
+                
+                // Create expiry date field with calendar picker for update
+                javax.swing.JTextField expiryDateFieldUpdate = new javax.swing.JTextField(expiryDate);
+                javax.swing.JButton calendarButton2Update = new javax.swing.JButton("📅");
+                javax.swing.JPanel expiryDatePanelUpdate = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+                expiryDateFieldUpdate.setPreferredSize(new java.awt.Dimension(120, 25));
+                calendarButton2Update.setPreferredSize(new java.awt.Dimension(30, 25));
+                expiryDatePanelUpdate.add(expiryDateFieldUpdate);
+                expiryDatePanelUpdate.add(calendarButton2Update);
+                
+                // Calendar button actions for update
+                SimpleDateFormat sdfUpdate = new SimpleDateFormat("yyyy-MM-dd");
+                calendarButton1Update.addActionListener(evt -> {
+                    Date selectedDate = showCalendarDialog(dateFieldUpdate.getText(), "Select Date");
+                    if (selectedDate != null) {
+                        dateFieldUpdate.setText(sdfUpdate.format(selectedDate));
+                    }
+                });
+                
+                calendarButton2Update.addActionListener(evt -> {
+                    Date selectedDate = showCalendarDialog(expiryDateFieldUpdate.getText(), "Select Expiry Date");
+                    if (selectedDate != null) {
+                        expiryDateFieldUpdate.setText(sdfUpdate.format(selectedDate));
+                    }
+                });
+
                 JPanel panel = new JPanel(new GridLayout(0, 1));
                 panel.add(new JLabel("Date:"));
-                panel.add(dateSpinner);
+                panel.add(datePanelUpdate);
                 panel.add(new JLabel("Audience:"));
                 panel.add(audienceField);
                 panel.add(new JLabel("Subject:"));
@@ -213,17 +254,17 @@ public class NewsAndNotice extends javax.swing.JFrame {
                 panel.add(new JLabel("Description:"));
                 panel.add(descriptionField);
                 panel.add(new JLabel("Expiry Date:"));
-                panel.add(expiryDateSpinner);
+                panel.add(expiryDatePanelUpdate);
                 panel.add(new JLabel("Type:"));
                 panel.add(typeCombo);
 
                 int result = JOptionPane.showConfirmDialog(this, panel, "Update News/Notice", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (result == JOptionPane.OK_OPTION) {
-                    String newDate = new SimpleDateFormat("yyyy-MM-dd").format((Date) dateSpinner.getValue());
+                    String newDate = dateFieldUpdate.getText();
                     String newAudience = audienceField.getText();
                     String newSubject = subjectField.getText();
                     String newDescription = descriptionField.getText();
-                    String newExpiryDate = new SimpleDateFormat("yyyy-MM-dd").format((Date) expiryDateSpinner.getValue());
+                    String newExpiryDate = expiryDateFieldUpdate.getText();
                     String newType = (String) typeCombo.getSelectedItem();
                     if (newDate.isEmpty() || newAudience.isEmpty() || newSubject.isEmpty() || newDescription.isEmpty() || newExpiryDate.isEmpty() || newType.isEmpty()) {
                         JOptionPane.showMessageDialog(this, "All fields are required!");
@@ -448,6 +489,156 @@ public class NewsAndNotice extends javax.swing.JFrame {
         // Refresh the layout
         panel2.revalidate();
         panel2.repaint();
+    }
+
+    private Date showCalendarDialog(String currentDate, String title) {
+        // Parse current date
+        Date initialDate = new Date();
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            if (currentDate != null && !currentDate.trim().isEmpty()) {
+                initialDate = sdf.parse(currentDate);
+            }
+        } catch (Exception e) {
+            // Use current date if parsing fails
+            initialDate = new Date();
+        }
+        
+        // Create calendar dialog
+        javax.swing.JDialog calendarDialog = new javax.swing.JDialog(this, title, true);
+        calendarDialog.setDefaultCloseOperation(javax.swing.JDialog.DISPOSE_ON_CLOSE);
+        calendarDialog.setLayout(new java.awt.BorderLayout());
+        
+        // Create calendar panel
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(initialDate);
+        
+        // Year spinner
+        SpinnerModel yearModel = new javax.swing.SpinnerNumberModel(cal.get(Calendar.YEAR), 1900, 2100, 1);
+        javax.swing.JSpinner yearSpinner = new javax.swing.JSpinner(yearModel);
+        
+        // Month combo box
+        String[] months = {"January", "February", "March", "April", "May", "June",
+                          "July", "August", "September", "October", "November", "December"};
+        javax.swing.JComboBox<String> monthCombo = new javax.swing.JComboBox<>(months);
+        monthCombo.setSelectedIndex(cal.get(Calendar.MONTH));
+        
+        // Day spinner
+        SpinnerModel dayModel = new javax.swing.SpinnerNumberModel(cal.get(Calendar.DAY_OF_MONTH), 1, 31, 1);
+        javax.swing.JSpinner daySpinner = new javax.swing.JSpinner(dayModel);
+        
+        // Update day spinner when month/year changes
+        Runnable updateDaySpinner = () -> {
+            int year = (Integer) yearSpinner.getValue();
+            int month = monthCombo.getSelectedIndex();
+            Calendar tempCal = Calendar.getInstance();
+            tempCal.set(year, month, 1);
+            int maxDay = tempCal.getActualMaximum(Calendar.DAY_OF_MONTH);
+            int currentDay = (Integer) daySpinner.getValue();
+            if (currentDay > maxDay) {
+                daySpinner.setValue(maxDay);
+            }
+            ((javax.swing.SpinnerNumberModel) daySpinner.getModel()).setMaximum(maxDay);
+        };
+        
+        yearSpinner.addChangeListener(e -> updateDaySpinner.run());
+        monthCombo.addActionListener(e -> updateDaySpinner.run());
+        
+        // Create top panel for date selection
+        javax.swing.JPanel datePanel = new javax.swing.JPanel(new java.awt.GridBagLayout());
+        datePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select Date"));
+        java.awt.GridBagConstraints gbc = new java.awt.GridBagConstraints();
+        gbc.insets = new java.awt.Insets(5, 5, 5, 5);
+        
+        gbc.gridx = 0; gbc.gridy = 0;
+        datePanel.add(new javax.swing.JLabel("Year:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(yearSpinner, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 1;
+        datePanel.add(new javax.swing.JLabel("Month:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(monthCombo, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 2;
+        datePanel.add(new javax.swing.JLabel("Day:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(daySpinner, gbc);
+        
+        // Create preview label
+        javax.swing.JLabel previewLabel = new javax.swing.JLabel();
+        previewLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        previewLabel.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected Date"));
+        
+        // Update preview
+        Runnable updatePreview = () -> {
+            try {
+                int year = (Integer) yearSpinner.getValue();
+                int month = monthCombo.getSelectedIndex();
+                int day = (Integer) daySpinner.getValue();
+                Calendar previewCal = Calendar.getInstance();
+                previewCal.set(year, month, day);
+                SimpleDateFormat displayFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
+                previewLabel.setText(displayFormat.format(previewCal.getTime()));
+            } catch (Exception e) {
+                previewLabel.setText("Invalid Date");
+            }
+        };
+        
+        yearSpinner.addChangeListener(e -> updatePreview.run());
+        monthCombo.addActionListener(e -> updatePreview.run());
+        daySpinner.addChangeListener(e -> updatePreview.run());
+        updatePreview.run(); // Initial update
+        
+        // Create button panel
+        javax.swing.JPanel buttonPanel = new javax.swing.JPanel(new java.awt.FlowLayout());
+        javax.swing.JButton okButton = new javax.swing.JButton("OK");
+        javax.swing.JButton cancelButton = new javax.swing.JButton("Cancel");
+        javax.swing.JButton todayButton = new javax.swing.JButton("Today");
+        
+        final Date[] selectedDate = {null};
+        
+        okButton.addActionListener(e -> {
+            try {
+                int year = (Integer) yearSpinner.getValue();
+                int month = monthCombo.getSelectedIndex();
+                int day = (Integer) daySpinner.getValue();
+                Calendar resultCal = Calendar.getInstance();
+                resultCal.set(year, month, day);
+                selectedDate[0] = resultCal.getTime();
+                calendarDialog.dispose();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(calendarDialog, "Please select a valid date!");
+            }
+        });
+        
+        cancelButton.addActionListener(e -> {
+            selectedDate[0] = null;
+            calendarDialog.dispose();
+        });
+        
+        todayButton.addActionListener(e -> {
+            Calendar today = Calendar.getInstance();
+            yearSpinner.setValue(today.get(Calendar.YEAR));
+            monthCombo.setSelectedIndex(today.get(Calendar.MONTH));
+            daySpinner.setValue(today.get(Calendar.DAY_OF_MONTH));
+        });
+        
+        buttonPanel.add(todayButton);
+        buttonPanel.add(okButton);
+        buttonPanel.add(cancelButton);
+        
+        // Assemble dialog
+        calendarDialog.add(datePanel, java.awt.BorderLayout.NORTH);
+        calendarDialog.add(previewLabel, java.awt.BorderLayout.CENTER);
+        calendarDialog.add(buttonPanel, java.awt.BorderLayout.SOUTH);
+        
+        // Set dialog properties
+        calendarDialog.setSize(300, 250);
+        calendarDialog.setLocationRelativeTo(this);
+        calendarDialog.setVisible(true);
+        
+        return selectedDate[0];
     }
 
     /**

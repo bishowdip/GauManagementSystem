@@ -7,6 +7,11 @@ package gaumanagementsystem.view;
 import java.awt.Color;
 import javax.swing.JOptionPane;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import javax.swing.SpinnerDateModel;
+import javax.swing.SpinnerModel;
 
 /**
  *
@@ -14,6 +19,9 @@ import java.util.Date;
  */
 public class Complaints_Tables extends javax.swing.JFrame {
 
+    private static AtomicInteger idCounter = new AtomicInteger(1); // Auto-increment ID counter
+    private String currentFilter = "All"; // Track current filter: "All", "Complaint", "Feedback"
+    
     /**
      * Creates new form Complaints_Tables
      */
@@ -49,56 +57,7 @@ public class Complaints_Tables extends javax.swing.JFrame {
         addButton.setBackground(lightBlue);
         addButton.setForeground(Color.BLACK);
         addButton.setBounds(150, 480, 100, 30);
-        addButton.addActionListener(e -> {
-            // Implement add complaint functionality
-            javax.swing.JTextField nameField = new javax.swing.JTextField();
-            javax.swing.JTextField emailField = new javax.swing.JTextField();
-            javax.swing.JTextField descriptionField = new javax.swing.JTextField();
-            javax.swing.JTextField statusField = new javax.swing.JTextField("Pending");
-            javax.swing.JTextField feedbackField = new javax.swing.JTextField();
-            javax.swing.JTextField checkingField = new javax.swing.JTextField("Not Checked");
-            
-            // Create date field with current date
-            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
-            javax.swing.JTextField dateField = new javax.swing.JTextField(sdf.format(new java.util.Date()));
-            
-            javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
-            panel.add(new javax.swing.JLabel("Name:"));
-            panel.add(nameField);
-            panel.add(new javax.swing.JLabel("Date:"));
-            panel.add(dateField);
-            panel.add(new javax.swing.JLabel("Email:"));
-            panel.add(emailField);
-            panel.add(new javax.swing.JLabel("Description:"));
-            panel.add(descriptionField);
-            panel.add(new javax.swing.JLabel("Status:"));
-            panel.add(statusField);
-            panel.add(new javax.swing.JLabel("Feedback:"));
-            panel.add(feedbackField);
-            panel.add(new javax.swing.JLabel("Checking:"));
-            panel.add(checkingField);
-            
-            int result = JOptionPane.showConfirmDialog(this, panel, "Add Complaint", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-            if (result == JOptionPane.OK_OPTION) {
-                String name = nameField.getText().trim();
-                String date = dateField.getText().trim();
-                String email = emailField.getText().trim();
-                String description = descriptionField.getText().trim();
-                String status = statusField.getText().trim();
-                String feedback = feedbackField.getText().trim();
-                String checking = checkingField.getText().trim();
-                
-                if (name.isEmpty() || email.isEmpty() || description.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Name, Email, and Description are required fields!");
-                    return;
-                }
-                
-                // Add to table
-                javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) ComplaintTable1.getModel();
-                model.addRow(new Object[]{name, date, email, description, status, feedback, checking});
-                JOptionPane.showMessageDialog(this, "Complaint added successfully!");
-            }
-        });
+        addButton.addActionListener(e -> showComplaintForm(false, -1));
         
         javax.swing.JButton deleteButton = new javax.swing.JButton("DELETE");
         deleteButton.setBackground(lightBlue);
@@ -127,68 +86,7 @@ public class Complaints_Tables extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Please select a complaint to update.", "No Selection", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            
-            // Get current values from the selected row
-            javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) ComplaintTable1.getModel();
-            String currentName = (String) model.getValueAt(selectedRow, 0);
-            String currentDate = (String) model.getValueAt(selectedRow, 1);
-            String currentEmail = (String) model.getValueAt(selectedRow, 2);
-            String currentDescription = (String) model.getValueAt(selectedRow, 3);
-            String currentStatus = (String) model.getValueAt(selectedRow, 4);
-            String currentFeedback = (String) model.getValueAt(selectedRow, 5);
-            String currentChecking = (String) model.getValueAt(selectedRow, 6);
-            
-            // Create form fields with current values
-            javax.swing.JTextField nameField = new javax.swing.JTextField(currentName);
-            javax.swing.JTextField dateField = new javax.swing.JTextField(currentDate);
-            javax.swing.JTextField emailField = new javax.swing.JTextField(currentEmail);
-            javax.swing.JTextField descriptionField = new javax.swing.JTextField(currentDescription);
-            javax.swing.JTextField statusField = new javax.swing.JTextField(currentStatus);
-            javax.swing.JTextField feedbackField = new javax.swing.JTextField(currentFeedback);
-            javax.swing.JTextField checkingField = new javax.swing.JTextField(currentChecking);
-            
-            javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
-            panel.add(new javax.swing.JLabel("Name:"));
-            panel.add(nameField);
-            panel.add(new javax.swing.JLabel("Date:"));
-            panel.add(dateField);
-            panel.add(new javax.swing.JLabel("Email:"));
-            panel.add(emailField);
-            panel.add(new javax.swing.JLabel("Description:"));
-            panel.add(descriptionField);
-            panel.add(new javax.swing.JLabel("Status:"));
-            panel.add(statusField);
-            panel.add(new javax.swing.JLabel("Feedback:"));
-            panel.add(feedbackField);
-            panel.add(new javax.swing.JLabel("Checking:"));
-            panel.add(checkingField);
-            
-            int result = JOptionPane.showConfirmDialog(this, panel, "Update Complaint", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-            if (result == JOptionPane.OK_OPTION) {
-                String name = nameField.getText().trim();
-                String date = dateField.getText().trim();
-                String email = emailField.getText().trim();
-                String description = descriptionField.getText().trim();
-                String status = statusField.getText().trim();
-                String feedback = feedbackField.getText().trim();
-                String checking = checkingField.getText().trim();
-                
-                if (name.isEmpty() || email.isEmpty() || description.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Name, Email, and Description are required fields!");
-                    return;
-                }
-                
-                // Update the table
-                model.setValueAt(name, selectedRow, 0);
-                model.setValueAt(date, selectedRow, 1);
-                model.setValueAt(email, selectedRow, 2);
-                model.setValueAt(description, selectedRow, 3);
-                model.setValueAt(status, selectedRow, 4);
-                model.setValueAt(feedback, selectedRow, 5);
-                model.setValueAt(checking, selectedRow, 6);
-                
-                JOptionPane.showMessageDialog(this, "Complaint updated successfully!");
-            }
+            showComplaintForm(true, selectedRow);
         });
         
         javax.swing.JButton refreshButton = new javax.swing.JButton("REFRESH");
@@ -200,12 +98,19 @@ public class Complaints_Tables extends javax.swing.JFrame {
             javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) ComplaintTable1.getModel();
             model.setRowCount(0); // Clear all rows
             
-            // Add some sample data for demonstration (in a real app, this would load from database)
-            model.addRow(new Object[]{"John Doe", "2024-01-15", "john@email.com", "Street light not working", "Pending", "", "Not Checked"});
-            model.addRow(new Object[]{"Jane Smith", "2024-01-14", "jane@email.com", "Water supply issue", "In Progress", "Under review", "Checked"});
-            model.addRow(new Object[]{"Bob Wilson", "2024-01-13", "bob@email.com", "Road repair needed", "Resolved", "Fixed last week", "Checked"});
+            // Add comprehensive sample data using getAllTableData method
+            Object[][] allData = getAllTableData();
+            for (Object[] row : allData) {
+                model.addRow(row);
+            }
             
-            JOptionPane.showMessageDialog(this, "Table refreshed with latest data!");
+            // Update the counter to continue from the last ID
+            idCounter.set(9);
+            
+            // Reset filter to "All"
+            currentFilter = "All";
+            
+            JOptionPane.showMessageDialog(this, "Table refreshed with sample data!");
         });
         
         // Create responsive layout instead of absolute positioning
@@ -218,10 +123,69 @@ public class Complaints_Tables extends javax.swing.JFrame {
         javax.swing.JPanel mainPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
         mainPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
-        // Title label panel
-        javax.swing.JPanel titlePanel = new javax.swing.JPanel();
-        titlePanel.add(jLabel3);
-        mainPanel.add(titlePanel, java.awt.BorderLayout.NORTH);
+        // Title and filter panel
+        javax.swing.JPanel titleFilterPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
+        titleFilterPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        
+        // Left side - title
+        javax.swing.JPanel leftTitlePanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        leftTitlePanel.add(jLabel3);
+        titleFilterPanel.add(leftTitlePanel, java.awt.BorderLayout.WEST);
+        
+        // Center - filter buttons
+        javax.swing.JPanel filterPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER));
+        
+        // Create filter buttons
+        javax.swing.JButton complaintsBtn = new javax.swing.JButton("Complaints");
+        javax.swing.JButton feedbackBtn = new javax.swing.JButton("Feedback");
+        javax.swing.JButton allBtn = new javax.swing.JButton("All");
+        
+        // Style filter buttons
+        Color activeColor = new Color(102, 178, 255);
+        
+        complaintsBtn.setBackground(lightBlue);
+        complaintsBtn.setForeground(Color.BLACK);
+        complaintsBtn.setFocusPainted(false);
+        
+        feedbackBtn.setBackground(lightBlue);
+        feedbackBtn.setForeground(Color.BLACK);
+        feedbackBtn.setFocusPainted(false);
+        
+        allBtn.setBackground(activeColor); // Start with "All" active
+        allBtn.setForeground(Color.BLACK);
+        allBtn.setFocusPainted(false);
+        
+        // Add filter functionality
+        complaintsBtn.addActionListener(e -> {
+            currentFilter = "Complaint";
+            complaintsBtn.setBackground(activeColor);
+            feedbackBtn.setBackground(lightBlue);
+            allBtn.setBackground(lightBlue);
+            filterTable();
+        });
+        
+        feedbackBtn.addActionListener(e -> {
+            currentFilter = "Feedback";
+            feedbackBtn.setBackground(activeColor);
+            complaintsBtn.setBackground(lightBlue);
+            allBtn.setBackground(lightBlue);
+            filterTable();
+        });
+        
+        allBtn.addActionListener(e -> {
+            currentFilter = "All";
+            allBtn.setBackground(activeColor);
+            complaintsBtn.setBackground(lightBlue);
+            feedbackBtn.setBackground(lightBlue);
+            filterTable();
+        });
+        
+        filterPanel.add(allBtn);
+        filterPanel.add(complaintsBtn);
+        filterPanel.add(feedbackBtn);
+        titleFilterPanel.add(filterPanel, java.awt.BorderLayout.CENTER);
+        
+        mainPanel.add(titleFilterPanel, java.awt.BorderLayout.NORTH);
         
         // Table panel (this will now resize with window)
         mainPanel.add(jScrollPane2, java.awt.BorderLayout.CENTER);
@@ -239,6 +203,21 @@ public class Complaints_Tables extends javax.swing.JFrame {
         buttonPanel.add(Back1);
         
         add(buttonPanel, java.awt.BorderLayout.SOUTH);
+        
+        // Add initial sample data
+        loadInitialData();
+    }
+
+    private void loadInitialData() {
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) ComplaintTable1.getModel();
+        // Load comprehensive sample data including both complaints and feedback
+        Object[][] allData = getAllTableData();
+        for (Object[] row : allData) {
+            model.addRow(row);
+        }
+        
+        // Update the counter to continue from the last ID
+        idCounter.set(9); // Set to 9 since we have 8 sample records
     }
 
     /**
@@ -282,7 +261,7 @@ public class Complaints_Tables extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Name", "Date", "Email", "Description", "Status", "Feedback", "Checking"
+                "ID", "Name", "Date", "Email", "Description", "Category", "Status"
             }
         ));
         ComplaintTable.setGridColor(new java.awt.Color(153, 51, 255));
@@ -337,9 +316,15 @@ public class Complaints_Tables extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Name", "Date", "Email", "Description", "Status", "Feedback", "Checking"
+                "ID", "Name", "Date", "Email", "Description", "Category", "Status"
             }
-        ));
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // Make ID column non-editable
+                return column != 0;
+            }
+        });
         ComplaintTable1.setGridColor(new java.awt.Color(153, 51, 255));
         ComplaintTable1.setShowGrid(true);
         jScrollPane2.setViewportView(ComplaintTable1);
@@ -433,4 +418,394 @@ public class Complaints_Tables extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
+
+    private void filterTable() {
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) ComplaintTable1.getModel();
+        javax.swing.table.DefaultTableModel originalModel = new javax.swing.table.DefaultTableModel(
+            new String[]{"ID", "Name", "Date", "Email", "Description", "Category", "Status"}, 0
+        );
+        
+        // Get all data (you would normally get this from a database)
+        Object[][] allData = getAllTableData();
+        
+        // Clear current table
+        model.setRowCount(0);
+        
+        // Filter and add rows based on current filter
+        for (Object[] row : allData) {
+            String category = (String) row[5]; // Category is at index 5
+            
+            if (currentFilter.equals("All") || 
+                (currentFilter.equals("Complaint") && category.equals("Complaint")) ||
+                (currentFilter.equals("Feedback") && category.equals("Suggestion"))) { // Map "Feedback" to "Suggestion" category
+                model.addRow(row);
+            }
+        }
+    }
+    
+    private Object[][] getAllTableData() {
+        // This method should ideally get data from database
+        // For now, return the sample data including both complaints and feedback
+        return new Object[][] {
+            {1, "John Doe", "2024-01-15", "john@email.com", "Street light not working on Main Road", "Complaint", "Pending"},
+            {2, "Jane Smith", "2024-01-14", "jane@email.com", "Water supply issue in Ward 3", "Complaint", "In Progress"},
+            {3, "Bob Wilson", "2024-01-13", "bob@email.com", "Road repair needed near school", "Complaint", "Resolved"},
+            {4, "Alice Brown", "2024-01-12", "alice@email.com", "Garbage collection delayed", "Complaint", "Pending"},
+            {5, "Mike Johnson", "2024-01-11", "mike@email.com", "Suggestion for new park", "Suggestion", "Pending"},
+            {6, "Sarah Davis", "2024-01-10", "sarah@email.com", "Great job on road maintenance", "Suggestion", "Resolved"},
+            {7, "Tom Wilson", "2024-01-09", "tom@email.com", "Need better street cleaning", "Complaint", "In Progress"},
+            {8, "Lisa Chen", "2024-01-08", "lisa@email.com", "Appreciate the quick response", "Suggestion", "Closed"}
+        };
+    }
+
+    private void showComplaintForm(boolean isUpdate, int selectedRow) {
+        // Create form fields with proper sizing
+        javax.swing.JTextField nameField = new javax.swing.JTextField(20);
+        nameField.setPreferredSize(new java.awt.Dimension(250, 25));
+        nameField.setMinimumSize(new java.awt.Dimension(200, 25));
+        
+        javax.swing.JTextField emailField = new javax.swing.JTextField(20);
+        emailField.setPreferredSize(new java.awt.Dimension(250, 25));
+        emailField.setMinimumSize(new java.awt.Dimension(200, 25));
+        
+        javax.swing.JTextArea descriptionArea = new javax.swing.JTextArea(4, 25);
+        descriptionArea.setLineWrap(true);
+        descriptionArea.setWrapStyleWord(true);
+        descriptionArea.setPreferredSize(new java.awt.Dimension(250, 80));
+        javax.swing.JScrollPane descScrollPane = new javax.swing.JScrollPane(descriptionArea);
+        descScrollPane.setPreferredSize(new java.awt.Dimension(250, 80));
+        
+        // Category dropdown
+        String[] categories = {"Complaint", "Suggestion", "General", "Infrastructure", "Service", "Other"};
+        javax.swing.JComboBox<String> categoryCombo = new javax.swing.JComboBox<>(categories);
+        categoryCombo.setPreferredSize(new java.awt.Dimension(250, 25));
+        
+        // Status dropdown
+        String[] statuses = {"Pending", "In Progress", "Resolved", "Closed"};
+        javax.swing.JComboBox<String> statusCombo = new javax.swing.JComboBox<>(statuses);
+        statusCombo.setPreferredSize(new java.awt.Dimension(250, 25));
+        
+        // Create date field with calendar picker
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+        javax.swing.JTextField dateField = new javax.swing.JTextField(sdf.format(new java.util.Date()));
+        dateField.setPreferredSize(new java.awt.Dimension(180, 25));
+        dateField.setMinimumSize(new java.awt.Dimension(150, 25));
+        dateField.setEditable(false); // Make it read-only so users must use calendar
+        
+        javax.swing.JButton calendarButton = new javax.swing.JButton("📅");
+        calendarButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        calendarButton.setToolTipText("Select Date");
+        
+        // Create date panel with text field and calendar button
+        javax.swing.JPanel datePanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
+        datePanel.add(dateField);
+        datePanel.add(calendarButton);
+        datePanel.setPreferredSize(new java.awt.Dimension(250, 25));
+        
+        // Add calendar button action
+        calendarButton.addActionListener(e -> {
+            Date selectedDate = showCalendarDialog(dateField.getText());
+            if (selectedDate != null) {
+                dateField.setText(sdf.format(selectedDate));
+            }
+        });
+        
+        // If updating, populate fields with existing data
+        if (isUpdate && selectedRow >= 0) {
+            javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) ComplaintTable1.getModel();
+            nameField.setText((String) model.getValueAt(selectedRow, 1)); // Name
+            dateField.setText((String) model.getValueAt(selectedRow, 2)); // Date
+            emailField.setText((String) model.getValueAt(selectedRow, 3)); // Email
+            descriptionArea.setText((String) model.getValueAt(selectedRow, 4)); // Description
+            categoryCombo.setSelectedItem((String) model.getValueAt(selectedRow, 5)); // Category
+            statusCombo.setSelectedItem((String) model.getValueAt(selectedRow, 6)); // Status
+        }
+        
+        // Create form panel with better layout
+        javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridBagLayout());
+        panel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        java.awt.GridBagConstraints gbc = new java.awt.GridBagConstraints();
+        gbc.insets = new java.awt.Insets(8, 8, 8, 8);
+        gbc.anchor = java.awt.GridBagConstraints.WEST;
+        
+        // Add form fields with proper constraints
+        gbc.gridx = 0; gbc.gridy = 0;
+        gbc.fill = java.awt.GridBagConstraints.NONE;
+        panel.add(new javax.swing.JLabel("Name:"), gbc);
+        gbc.gridx = 1;
+        gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        panel.add(nameField, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 1;
+        gbc.fill = java.awt.GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
+        panel.add(new javax.swing.JLabel("Date:"), gbc);
+        gbc.gridx = 1;
+        gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        panel.add(datePanel, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 2;
+        gbc.fill = java.awt.GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
+        panel.add(new javax.swing.JLabel("Email:"), gbc);
+        gbc.gridx = 1;
+        gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        panel.add(emailField, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 3;
+        gbc.fill = java.awt.GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
+        panel.add(new javax.swing.JLabel("Category:"), gbc);
+        gbc.gridx = 1;
+        gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        panel.add(categoryCombo, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 4;
+        gbc.fill = java.awt.GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
+        panel.add(new javax.swing.JLabel("Status:"), gbc);
+        gbc.gridx = 1;
+        gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        panel.add(statusCombo, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 5;
+        gbc.fill = java.awt.GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
+        gbc.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        panel.add(new javax.swing.JLabel("Description:"), gbc);
+        gbc.gridx = 1;
+        gbc.fill = java.awt.GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        panel.add(descScrollPane, gbc);
+        
+        // Show dialog with larger size
+        String title = isUpdate ? "Update Complaint" : "Add New Complaint";
+        
+        // Create a custom dialog for better control
+        javax.swing.JDialog dialog = new javax.swing.JDialog(this, title, true);
+        dialog.setDefaultCloseOperation(javax.swing.JDialog.DISPOSE_ON_CLOSE);
+        dialog.setLayout(new java.awt.BorderLayout());
+        dialog.add(panel, java.awt.BorderLayout.CENTER);
+        
+        // Create button panel
+        javax.swing.JPanel buttonPanel = new javax.swing.JPanel(new java.awt.FlowLayout());
+        javax.swing.JButton okButton = new javax.swing.JButton("OK");
+        javax.swing.JButton cancelButton = new javax.swing.JButton("Cancel");
+        
+        // Add button actions
+        final boolean[] dialogResult = {false};
+        okButton.addActionListener(e -> {
+            dialogResult[0] = true;
+            dialog.dispose();
+        });
+        cancelButton.addActionListener(e -> {
+            dialogResult[0] = false;
+            dialog.dispose();
+        });
+        
+        buttonPanel.add(okButton);
+        buttonPanel.add(cancelButton);
+        dialog.add(buttonPanel, java.awt.BorderLayout.SOUTH);
+        
+        // Set dialog size and position
+        dialog.setSize(400, 350);
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+        
+        // Process result
+        if (dialogResult[0]) {
+            String name = nameField.getText().trim();
+            String date = dateField.getText().trim();
+            String email = emailField.getText().trim();
+            String description = descriptionArea.getText().trim();
+            String category = (String) categoryCombo.getSelectedItem();
+            String status = (String) statusCombo.getSelectedItem();
+            
+            // Validation
+            if (name.isEmpty() || email.isEmpty() || description.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Name, Email, and Description are required fields!");
+                return;
+            }
+            
+            // Email validation
+            if (!email.contains("@") || !email.contains(".")) {
+                JOptionPane.showMessageDialog(this, "Please enter a valid email address!");
+                return;
+            }
+            
+            javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) ComplaintTable1.getModel();
+            
+            if (isUpdate) {
+                // Update existing row (keep the same ID)
+                model.setValueAt(name, selectedRow, 1);
+                model.setValueAt(date, selectedRow, 2);
+                model.setValueAt(email, selectedRow, 3);
+                model.setValueAt(description, selectedRow, 4);
+                model.setValueAt(category, selectedRow, 5);
+                model.setValueAt(status, selectedRow, 6);
+                JOptionPane.showMessageDialog(this, "Complaint updated successfully!");
+            } else {
+                // Add new row with auto-generated ID
+                int newId = idCounter.getAndIncrement();
+                model.addRow(new Object[]{newId, name, date, email, description, category, status});
+                JOptionPane.showMessageDialog(this, "Complaint added successfully!");
+            }
+        }
+    }
+
+    private Date showCalendarDialog(String currentDate) {
+        // Parse current date
+        Date initialDate = new Date();
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            if (currentDate != null && !currentDate.trim().isEmpty()) {
+                initialDate = sdf.parse(currentDate);
+            }
+        } catch (Exception e) {
+            // Use current date if parsing fails
+            initialDate = new Date();
+        }
+        
+        // Create calendar dialog
+        javax.swing.JDialog calendarDialog = new javax.swing.JDialog(this, "Select Date", true);
+        calendarDialog.setDefaultCloseOperation(javax.swing.JDialog.DISPOSE_ON_CLOSE);
+        calendarDialog.setLayout(new java.awt.BorderLayout());
+        
+        // Create calendar panel
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(initialDate);
+        
+        // Year spinner
+        SpinnerModel yearModel = new javax.swing.SpinnerNumberModel(cal.get(Calendar.YEAR), 1900, 2100, 1);
+        javax.swing.JSpinner yearSpinner = new javax.swing.JSpinner(yearModel);
+        
+        // Month combo box
+        String[] months = {"January", "February", "March", "April", "May", "June",
+                          "July", "August", "September", "October", "November", "December"};
+        javax.swing.JComboBox<String> monthCombo = new javax.swing.JComboBox<>(months);
+        monthCombo.setSelectedIndex(cal.get(Calendar.MONTH));
+        
+        // Day spinner
+        SpinnerModel dayModel = new javax.swing.SpinnerNumberModel(cal.get(Calendar.DAY_OF_MONTH), 1, 31, 1);
+        javax.swing.JSpinner daySpinner = new javax.swing.JSpinner(dayModel);
+        
+        // Update day spinner when month/year changes
+        Runnable updateDaySpinner = () -> {
+            int year = (Integer) yearSpinner.getValue();
+            int month = monthCombo.getSelectedIndex();
+            Calendar tempCal = Calendar.getInstance();
+            tempCal.set(year, month, 1);
+            int maxDay = tempCal.getActualMaximum(Calendar.DAY_OF_MONTH);
+            int currentDay = (Integer) daySpinner.getValue();
+            if (currentDay > maxDay) {
+                daySpinner.setValue(maxDay);
+            }
+            ((javax.swing.SpinnerNumberModel) daySpinner.getModel()).setMaximum(maxDay);
+        };
+        
+        yearSpinner.addChangeListener(e -> updateDaySpinner.run());
+        monthCombo.addActionListener(e -> updateDaySpinner.run());
+        
+        // Create top panel for date selection
+        javax.swing.JPanel datePanel = new javax.swing.JPanel(new java.awt.GridBagLayout());
+        datePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select Date"));
+        java.awt.GridBagConstraints gbc = new java.awt.GridBagConstraints();
+        gbc.insets = new java.awt.Insets(5, 5, 5, 5);
+        
+        gbc.gridx = 0; gbc.gridy = 0;
+        datePanel.add(new javax.swing.JLabel("Year:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(yearSpinner, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 1;
+        datePanel.add(new javax.swing.JLabel("Month:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(monthCombo, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 2;
+        datePanel.add(new javax.swing.JLabel("Day:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(daySpinner, gbc);
+        
+        // Create preview label
+        javax.swing.JLabel previewLabel = new javax.swing.JLabel();
+        previewLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        previewLabel.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected Date"));
+        
+        // Update preview
+        Runnable updatePreview = () -> {
+            try {
+                int year = (Integer) yearSpinner.getValue();
+                int month = monthCombo.getSelectedIndex();
+                int day = (Integer) daySpinner.getValue();
+                Calendar previewCal = Calendar.getInstance();
+                previewCal.set(year, month, day);
+                SimpleDateFormat displayFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
+                previewLabel.setText(displayFormat.format(previewCal.getTime()));
+            } catch (Exception e) {
+                previewLabel.setText("Invalid Date");
+            }
+        };
+        
+        yearSpinner.addChangeListener(e -> updatePreview.run());
+        monthCombo.addActionListener(e -> updatePreview.run());
+        daySpinner.addChangeListener(e -> updatePreview.run());
+        updatePreview.run(); // Initial update
+        
+        // Create button panel
+        javax.swing.JPanel buttonPanel = new javax.swing.JPanel(new java.awt.FlowLayout());
+        javax.swing.JButton okButton = new javax.swing.JButton("OK");
+        javax.swing.JButton cancelButton = new javax.swing.JButton("Cancel");
+        javax.swing.JButton todayButton = new javax.swing.JButton("Today");
+        
+        final Date[] selectedDate = {null};
+        
+        okButton.addActionListener(e -> {
+            try {
+                int year = (Integer) yearSpinner.getValue();
+                int month = monthCombo.getSelectedIndex();
+                int day = (Integer) daySpinner.getValue();
+                Calendar resultCal = Calendar.getInstance();
+                resultCal.set(year, month, day);
+                selectedDate[0] = resultCal.getTime();
+                calendarDialog.dispose();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(calendarDialog, "Please select a valid date!");
+            }
+        });
+        
+        cancelButton.addActionListener(e -> {
+            selectedDate[0] = null;
+            calendarDialog.dispose();
+        });
+        
+        todayButton.addActionListener(e -> {
+            Calendar today = Calendar.getInstance();
+            yearSpinner.setValue(today.get(Calendar.YEAR));
+            monthCombo.setSelectedIndex(today.get(Calendar.MONTH));
+            daySpinner.setValue(today.get(Calendar.DAY_OF_MONTH));
+        });
+        
+        buttonPanel.add(todayButton);
+        buttonPanel.add(okButton);
+        buttonPanel.add(cancelButton);
+        
+        // Assemble dialog
+        calendarDialog.add(datePanel, java.awt.BorderLayout.NORTH);
+        calendarDialog.add(previewLabel, java.awt.BorderLayout.CENTER);
+        calendarDialog.add(buttonPanel, java.awt.BorderLayout.SOUTH);
+        
+        // Set dialog properties
+        calendarDialog.setSize(300, 250);
+        calendarDialog.setLocationRelativeTo(this);
+        calendarDialog.setVisible(true);
+        
+        return selectedDate[0];
+    }
 }

@@ -13,6 +13,10 @@ import javax.swing.JLabel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.awt.GridLayout;
+import java.awt.Color;
+import java.util.Calendar;
+import javax.swing.SpinnerModel;
+
 
 /**
  *
@@ -321,45 +325,161 @@ public class ProfileView extends javax.swing.JFrame {
     }
     
     private void openDatePicker() {
-        // Create date picker dialog
-        JSpinner dateSpinner = new JSpinner(new SpinnerDateModel());
-        JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(dateSpinner, "yyyy-MM-dd");
-        dateSpinner.setEditor(dateEditor);
-        
-        // Set current value from text field if valid
-        String currentText = dateofbirth.getText().trim();
-        if (!currentText.isEmpty()) {
-            try {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                Date currentDate = sdf.parse(currentText);
-                dateSpinner.setValue(currentDate);
-            } catch (Exception ex) {
-                dateSpinner.setValue(new Date());
-            }
-        } else {
-            dateSpinner.setValue(new Date());
-        }
-        
-        // Create panel for dialog
-        JPanel panel = new JPanel(new GridLayout(2, 1));
-        panel.add(new JLabel("Select Date of Birth:"));
-        panel.add(dateSpinner);
-        
-        // Show dialog
-        int result = JOptionPane.showConfirmDialog(
-            this, 
-            panel, 
-            "Date Picker", 
-            JOptionPane.OK_CANCEL_OPTION, 
-            JOptionPane.PLAIN_MESSAGE
-        );
-        
-        if (result == JOptionPane.OK_OPTION) {
-            // Format and set the selected date
+        Date selectedDate = showCalendarDialog(dateofbirth.getText());
+        if (selectedDate != null) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            String formattedDate = sdf.format((Date) dateSpinner.getValue());
-            dateofbirth.setText(formattedDate);
+            dateofbirth.setText(sdf.format(selectedDate));
         }
+    }
+    
+    private Date showCalendarDialog(String currentDate) {
+        // Parse current date
+        Date initialDate = new Date();
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            if (currentDate != null && !currentDate.trim().isEmpty()) {
+                initialDate = sdf.parse(currentDate);
+            }
+        } catch (Exception e) {
+            // Use current date if parsing fails
+            initialDate = new Date();
+        }
+        
+        // Create calendar dialog
+        javax.swing.JDialog calendarDialog = new javax.swing.JDialog(this, "Select Date of Birth", true);
+        calendarDialog.setDefaultCloseOperation(javax.swing.JDialog.DISPOSE_ON_CLOSE);
+        calendarDialog.setLayout(new java.awt.BorderLayout());
+        
+        // Create calendar panel
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(initialDate);
+        
+        // Year spinner
+        SpinnerModel yearModel = new javax.swing.SpinnerNumberModel(cal.get(Calendar.YEAR), 1900, 2100, 1);
+        javax.swing.JSpinner yearSpinner = new javax.swing.JSpinner(yearModel);
+        
+        // Month combo box
+        String[] months = {"January", "February", "March", "April", "May", "June",
+                          "July", "August", "September", "October", "November", "December"};
+        javax.swing.JComboBox<String> monthCombo = new javax.swing.JComboBox<>(months);
+        monthCombo.setSelectedIndex(cal.get(Calendar.MONTH));
+        
+        // Day spinner
+        SpinnerModel dayModel = new javax.swing.SpinnerNumberModel(cal.get(Calendar.DAY_OF_MONTH), 1, 31, 1);
+        javax.swing.JSpinner daySpinner = new javax.swing.JSpinner(dayModel);
+        
+        // Update day spinner when month/year changes
+        Runnable updateDaySpinner = () -> {
+            int year = (Integer) yearSpinner.getValue();
+            int month = monthCombo.getSelectedIndex();
+            Calendar tempCal = Calendar.getInstance();
+            tempCal.set(year, month, 1);
+            int maxDay = tempCal.getActualMaximum(Calendar.DAY_OF_MONTH);
+            int currentDay = (Integer) daySpinner.getValue();
+            if (currentDay > maxDay) {
+                daySpinner.setValue(maxDay);
+            }
+            ((javax.swing.SpinnerNumberModel) daySpinner.getModel()).setMaximum(maxDay);
+        };
+        
+        yearSpinner.addChangeListener(e -> updateDaySpinner.run());
+        monthCombo.addActionListener(e -> updateDaySpinner.run());
+        
+        // Create top panel for date selection
+        javax.swing.JPanel datePanel = new javax.swing.JPanel(new java.awt.GridBagLayout());
+        datePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select Date"));
+        java.awt.GridBagConstraints gbc = new java.awt.GridBagConstraints();
+        gbc.insets = new java.awt.Insets(5, 5, 5, 5);
+        
+        gbc.gridx = 0; gbc.gridy = 0;
+        datePanel.add(new javax.swing.JLabel("Year:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(yearSpinner, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 1;
+        datePanel.add(new javax.swing.JLabel("Month:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(monthCombo, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 2;
+        datePanel.add(new javax.swing.JLabel("Day:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(daySpinner, gbc);
+        
+        // Create preview label
+        javax.swing.JLabel previewLabel = new javax.swing.JLabel();
+        previewLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        previewLabel.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected Date"));
+        
+        // Update preview
+        Runnable updatePreview = () -> {
+            try {
+                int year = (Integer) yearSpinner.getValue();
+                int month = monthCombo.getSelectedIndex();
+                int day = (Integer) daySpinner.getValue();
+                Calendar previewCal = Calendar.getInstance();
+                previewCal.set(year, month, day);
+                SimpleDateFormat displayFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
+                previewLabel.setText(displayFormat.format(previewCal.getTime()));
+            } catch (Exception e) {
+                previewLabel.setText("Invalid Date");
+            }
+        };
+        
+        yearSpinner.addChangeListener(e -> updatePreview.run());
+        monthCombo.addActionListener(e -> updatePreview.run());
+        daySpinner.addChangeListener(e -> updatePreview.run());
+        updatePreview.run(); // Initial update
+        
+        // Create button panel
+        javax.swing.JPanel buttonPanel = new javax.swing.JPanel(new java.awt.FlowLayout());
+        javax.swing.JButton okButton = new javax.swing.JButton("OK");
+        javax.swing.JButton cancelButton = new javax.swing.JButton("Cancel");
+        javax.swing.JButton todayButton = new javax.swing.JButton("Today");
+        
+        final Date[] selectedDate = {null};
+        
+        okButton.addActionListener(e -> {
+            try {
+                int year = (Integer) yearSpinner.getValue();
+                int month = monthCombo.getSelectedIndex();
+                int day = (Integer) daySpinner.getValue();
+                Calendar resultCal = Calendar.getInstance();
+                resultCal.set(year, month, day);
+                selectedDate[0] = resultCal.getTime();
+                calendarDialog.dispose();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(calendarDialog, "Please select a valid date!");
+            }
+        });
+        
+        cancelButton.addActionListener(e -> {
+            selectedDate[0] = null;
+            calendarDialog.dispose();
+        });
+        
+        todayButton.addActionListener(e -> {
+            Calendar today = Calendar.getInstance();
+            yearSpinner.setValue(today.get(Calendar.YEAR));
+            monthCombo.setSelectedIndex(today.get(Calendar.MONTH));
+            daySpinner.setValue(today.get(Calendar.DAY_OF_MONTH));
+        });
+        
+        buttonPanel.add(todayButton);
+        buttonPanel.add(okButton);
+        buttonPanel.add(cancelButton);
+        
+        // Assemble dialog
+        calendarDialog.add(datePanel, java.awt.BorderLayout.NORTH);
+        calendarDialog.add(previewLabel, java.awt.BorderLayout.CENTER);
+        calendarDialog.add(buttonPanel, java.awt.BorderLayout.SOUTH);
+        
+        // Set dialog properties
+        calendarDialog.setSize(300, 250);
+        calendarDialog.setLocationRelativeTo(this);
+        calendarDialog.setVisible(true);
+        
+        return selectedDate[0];
     }
 
     /**

@@ -8,6 +8,8 @@ import javax.swing.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.awt.Color;
+import java.util.Calendar;
+import javax.swing.SpinnerModel;
 
 /**
  *
@@ -421,15 +423,43 @@ public class ProjectRequests extends JFrame {
     private void showAddProjectDialog() {
         JTextField requestIdField = new JTextField();
         JTextField projectNameField = new JTextField();
-        // Date pickers for started date and expected end date
-        JSpinner startedDateSpinner = new JSpinner(new SpinnerDateModel());
-        JSpinner.DateEditor startedDateEditor = new JSpinner.DateEditor(startedDateSpinner, "yyyy-MM-dd");
-        startedDateSpinner.setEditor(startedDateEditor);
-        startedDateSpinner.setValue(new java.util.Date());
-        JSpinner expectedEndSpinner = new JSpinner(new SpinnerDateModel());
-        JSpinner.DateEditor expectedEndEditor = new JSpinner.DateEditor(expectedEndSpinner, "yyyy-MM-dd");
-        expectedEndSpinner.setEditor(expectedEndEditor);
-        expectedEndSpinner.setValue(new java.util.Date());
+        
+        // Create started date field with calendar picker
+        javax.swing.JTextField startedDateField = new javax.swing.JTextField();
+        javax.swing.JButton startedCalendarButton = new javax.swing.JButton("📅");
+        javax.swing.JPanel startedDatePanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        startedDateField.setText(sdf.format(new Date()));
+        startedDateField.setPreferredSize(new java.awt.Dimension(120, 25));
+        startedCalendarButton.setPreferredSize(new java.awt.Dimension(30, 25));
+        startedDatePanel.add(startedDateField);
+        startedDatePanel.add(startedCalendarButton);
+        
+        // Create expected end date field with calendar picker
+        javax.swing.JTextField expectedEndDateField = new javax.swing.JTextField();
+        javax.swing.JButton expectedEndCalendarButton = new javax.swing.JButton("📅");
+        javax.swing.JPanel expectedEndDatePanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        expectedEndDateField.setText(sdf.format(new Date()));
+        expectedEndDateField.setPreferredSize(new java.awt.Dimension(120, 25));
+        expectedEndCalendarButton.setPreferredSize(new java.awt.Dimension(30, 25));
+        expectedEndDatePanel.add(expectedEndDateField);
+        expectedEndDatePanel.add(expectedEndCalendarButton);
+        
+        // Calendar button actions
+        startedCalendarButton.addActionListener(evt -> {
+            Date selectedDate = showCalendarDialog(startedDateField.getText(), "Select Started Date");
+            if (selectedDate != null) {
+                startedDateField.setText(sdf.format(selectedDate));
+            }
+        });
+        
+        expectedEndCalendarButton.addActionListener(evt -> {
+            Date selectedDate = showCalendarDialog(expectedEndDateField.getText(), "Select Expected End Date");
+            if (selectedDate != null) {
+                expectedEndDateField.setText(sdf.format(selectedDate));
+            }
+        });
+        
         JTextField wardField = new JTextField();
         // Fixed category options
         String[] categories = {
@@ -452,13 +482,13 @@ public class ProjectRequests extends JFrame {
         panel.add(new JLabel("Project Name:"));
         panel.add(projectNameField);
         panel.add(new JLabel("Started Date:"));
-        panel.add(startedDateSpinner);
+        panel.add(startedDatePanel);
         panel.add(new JLabel("Ward:"));
         panel.add(wardField);
         panel.add(new JLabel("Category:"));
         panel.add(categoryComboBox);
         panel.add(new JLabel("Expected to End:"));
-        panel.add(expectedEndSpinner);
+        panel.add(expectedEndDatePanel);
         panel.add(new JLabel("Description:"));
         panel.add(descriptionField);
         panel.add(new JLabel("Status:"));
@@ -468,14 +498,13 @@ public class ProjectRequests extends JFrame {
 
         int result = JOptionPane.showConfirmDialog(this, panel, "Add Project", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String[] row = new String[] {
                 requestIdField.getText(),
                 projectNameField.getText(),
-                dateFormat.format((Date) startedDateSpinner.getValue()),
+                startedDateField.getText(),
                 wardField.getText(),
                 (String) categoryComboBox.getSelectedItem(),
-                dateFormat.format((Date) expectedEndSpinner.getValue()),
+                expectedEndDateField.getText(),
                 descriptionField.getText(),
                 statusField.getText(),
                 budgetField.getText()
@@ -489,6 +518,156 @@ public class ProjectRequests extends JFrame {
             javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
             model.addRow(row);
         }
+    }
+    
+    private Date showCalendarDialog(String currentDate, String title) {
+        // Parse current date
+        Date initialDate = new Date();
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            if (currentDate != null && !currentDate.trim().isEmpty()) {
+                initialDate = sdf.parse(currentDate);
+            }
+        } catch (Exception e) {
+            // Use current date if parsing fails
+            initialDate = new Date();
+        }
+        
+        // Create calendar dialog
+        javax.swing.JDialog calendarDialog = new javax.swing.JDialog(this, title, true);
+        calendarDialog.setDefaultCloseOperation(javax.swing.JDialog.DISPOSE_ON_CLOSE);
+        calendarDialog.setLayout(new java.awt.BorderLayout());
+        
+        // Create calendar panel
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(initialDate);
+        
+        // Year spinner
+        SpinnerModel yearModel = new javax.swing.SpinnerNumberModel(cal.get(Calendar.YEAR), 1900, 2100, 1);
+        javax.swing.JSpinner yearSpinner = new javax.swing.JSpinner(yearModel);
+        
+        // Month combo box
+        String[] months = {"January", "February", "March", "April", "May", "June",
+                          "July", "August", "September", "October", "November", "December"};
+        javax.swing.JComboBox<String> monthCombo = new javax.swing.JComboBox<>(months);
+        monthCombo.setSelectedIndex(cal.get(Calendar.MONTH));
+        
+        // Day spinner
+        SpinnerModel dayModel = new javax.swing.SpinnerNumberModel(cal.get(Calendar.DAY_OF_MONTH), 1, 31, 1);
+        javax.swing.JSpinner daySpinner = new javax.swing.JSpinner(dayModel);
+        
+        // Update day spinner when month/year changes
+        Runnable updateDaySpinner = () -> {
+            int year = (Integer) yearSpinner.getValue();
+            int month = monthCombo.getSelectedIndex();
+            Calendar tempCal = Calendar.getInstance();
+            tempCal.set(year, month, 1);
+            int maxDay = tempCal.getActualMaximum(Calendar.DAY_OF_MONTH);
+            int currentDay = (Integer) daySpinner.getValue();
+            if (currentDay > maxDay) {
+                daySpinner.setValue(maxDay);
+            }
+            ((javax.swing.SpinnerNumberModel) daySpinner.getModel()).setMaximum(maxDay);
+        };
+        
+        yearSpinner.addChangeListener(e -> updateDaySpinner.run());
+        monthCombo.addActionListener(e -> updateDaySpinner.run());
+        
+        // Create top panel for date selection
+        javax.swing.JPanel datePanel = new javax.swing.JPanel(new java.awt.GridBagLayout());
+        datePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select Date"));
+        java.awt.GridBagConstraints gbc = new java.awt.GridBagConstraints();
+        gbc.insets = new java.awt.Insets(5, 5, 5, 5);
+        
+        gbc.gridx = 0; gbc.gridy = 0;
+        datePanel.add(new javax.swing.JLabel("Year:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(yearSpinner, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 1;
+        datePanel.add(new javax.swing.JLabel("Month:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(monthCombo, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 2;
+        datePanel.add(new javax.swing.JLabel("Day:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(daySpinner, gbc);
+        
+        // Create preview label
+        javax.swing.JLabel previewLabel = new javax.swing.JLabel();
+        previewLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        previewLabel.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected Date"));
+        
+        // Update preview
+        Runnable updatePreview = () -> {
+            try {
+                int year = (Integer) yearSpinner.getValue();
+                int month = monthCombo.getSelectedIndex();
+                int day = (Integer) daySpinner.getValue();
+                Calendar previewCal = Calendar.getInstance();
+                previewCal.set(year, month, day);
+                SimpleDateFormat displayFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
+                previewLabel.setText(displayFormat.format(previewCal.getTime()));
+            } catch (Exception e) {
+                previewLabel.setText("Invalid Date");
+            }
+        };
+        
+        yearSpinner.addChangeListener(e -> updatePreview.run());
+        monthCombo.addActionListener(e -> updatePreview.run());
+        daySpinner.addChangeListener(e -> updatePreview.run());
+        updatePreview.run(); // Initial update
+        
+        // Create button panel
+        javax.swing.JPanel buttonPanel = new javax.swing.JPanel(new java.awt.FlowLayout());
+        javax.swing.JButton okButton = new javax.swing.JButton("OK");
+        javax.swing.JButton cancelButton = new javax.swing.JButton("Cancel");
+        javax.swing.JButton todayButton = new javax.swing.JButton("Today");
+        
+        final Date[] selectedDate = {null};
+        
+        okButton.addActionListener(e -> {
+            try {
+                int year = (Integer) yearSpinner.getValue();
+                int month = monthCombo.getSelectedIndex();
+                int day = (Integer) daySpinner.getValue();
+                Calendar resultCal = Calendar.getInstance();
+                resultCal.set(year, month, day);
+                selectedDate[0] = resultCal.getTime();
+                calendarDialog.dispose();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(calendarDialog, "Please select a valid date!");
+            }
+        });
+        
+        cancelButton.addActionListener(e -> {
+            selectedDate[0] = null;
+            calendarDialog.dispose();
+        });
+        
+        todayButton.addActionListener(e -> {
+            Calendar today = Calendar.getInstance();
+            yearSpinner.setValue(today.get(Calendar.YEAR));
+            monthCombo.setSelectedIndex(today.get(Calendar.MONTH));
+            daySpinner.setValue(today.get(Calendar.DAY_OF_MONTH));
+        });
+        
+        buttonPanel.add(todayButton);
+        buttonPanel.add(okButton);
+        buttonPanel.add(cancelButton);
+        
+        // Assemble dialog
+        calendarDialog.add(datePanel, java.awt.BorderLayout.NORTH);
+        calendarDialog.add(previewLabel, java.awt.BorderLayout.CENTER);
+        calendarDialog.add(buttonPanel, java.awt.BorderLayout.SOUTH);
+        
+        // Set dialog properties
+        calendarDialog.setSize(300, 250);
+        calendarDialog.setLocationRelativeTo(this);
+        calendarDialog.setVisible(true);
+        
+        return selectedDate[0];
     }
 
     /**
