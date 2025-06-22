@@ -18,10 +18,23 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Service extends javax.swing.JFrame {
 
+    private String userRole = "admin"; // Store user role for navigation
+    private String currentUserId = null; // Store current user ID for filtering
+
     /**
      * Creates new form ProjectRequest
      */
     public Service() {
+        this("admin", null); // Default to admin for backward compatibility
+    }
+
+    public Service(String userRole) {
+        this(userRole, null); // Backward compatibility
+    }
+    
+    public Service(String userRole, String currentUserId) {
+        this.userRole = userRole; // Store the user role
+        this.currentUserId = currentUserId; // Store the user ID
         initComponents();
         
         // Make window fully responsive
@@ -57,9 +70,27 @@ public class Service extends javax.swing.JFrame {
         backButton.setBackground(lightBlue);
         backButton.setForeground(Color.BLACK);
         backButton.addActionListener(e -> {
-            new DashboardView().setVisible(true);
+            new DashboardView(userRole, currentUserId).setVisible(true);
             this.dispose();
         });
+
+        // Update button visibility: Users can ADD and UPDATE their own services, only admins can DELETE
+        boolean isAdmin = "admin".equalsIgnoreCase(userRole);
+        jButton5.setVisible(true);        // ADD - Visible for both admin and user
+        jButton2.setVisible(isAdmin);     // DELETE - Admin only
+        jButton3.setVisible(true);        // UPDATE - Visible for both admin and user
+        
+        // Set up a simple layout for panel2 since the original was removed
+        setupPanel2Layout();
+        
+        // Ensure emoji is visible in header
+        setupEmojiFont();
+        
+        // Load initial data based on user role
+        refreshTableData();
+        
+        // Add search functionality to match News and Notice
+        addSearchFunctionality();
 
         // Add functional button listeners with row selection validation
         jButton2.addActionListener(e -> {
@@ -100,9 +131,9 @@ public class Service extends javax.swing.JFrame {
         // Fix image loading for jLabel2
         try {
             java.net.URL imgUrl = getClass().getResource("/gaumanagementsystem/view/village_icon_180434.png");
-            if (imgUrl != null) {
-                jLabel2.setIcon(new javax.swing.ImageIcon(imgUrl));
-            } else {
+        if (imgUrl != null) {
+            jLabel2.setIcon(new javax.swing.ImageIcon(imgUrl));
+        } else {
                 // If image not found, set a simple text or leave empty
                 jLabel2.setText("🏘️"); // Village emoji as fallback
                 jLabel2.setFont(new java.awt.Font("Arial", 0, 24));
@@ -225,7 +256,7 @@ public class Service extends javax.swing.JFrame {
             // Auto-generate service ID and current timestamp
             String currentTimestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
             
-            String sql = "INSERT INTO services (service_name, submitted_at, citizen_name, ward, description, status) VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO services (service_name, submitted_at, name_of_citizen, ward, description, status, created_by_user_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, serviceName);
             stmt.setString(2, currentTimestamp);
@@ -233,6 +264,7 @@ public class Service extends javax.swing.JFrame {
             stmt.setString(4, ward);
             stmt.setString(5, description);
             stmt.setString(6, status);
+            stmt.setString(7, currentUserId); // Store the user ID who created the service
 
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
@@ -260,10 +292,13 @@ public class Service extends javax.swing.JFrame {
                 service_id INT AUTO_INCREMENT PRIMARY KEY,
                 service_name VARCHAR(255) NOT NULL,
                 submitted_at DATETIME NOT NULL,
-                citizen_name VARCHAR(255) NOT NULL,
-                ward VARCHAR(50) NOT NULL,
+                name_of_citizen VARCHAR(255) NOT NULL,
+                ward INT NOT NULL,
+                phone VARCHAR(20),
+                email VARCHAR(255),
                 description TEXT,
                 status VARCHAR(50) DEFAULT 'Pending',
+                created_by_user_id VARCHAR(50),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )
@@ -271,6 +306,16 @@ public class Service extends javax.swing.JFrame {
         
         try (PreparedStatement stmt = conn.prepareStatement(createTableSQL)) {
             stmt.executeUpdate();
+        }
+        
+        // Add the created_by_user_id column if it doesn't exist (for existing tables)
+        try {
+            String addColumnSQL = "ALTER TABLE services ADD COLUMN created_by_user_id VARCHAR(50)";
+            PreparedStatement addColumnStmt = conn.prepareStatement(addColumnSQL);
+            addColumnStmt.executeUpdate();
+            addColumnStmt.close();
+        } catch (SQLException e) {
+            // Column already exists, ignore the error
         }
     }
 
@@ -290,8 +335,23 @@ public class Service extends javax.swing.JFrame {
                 return;
             }
 
-            String sql = "SELECT service_id, service_name, submitted_at, citizen_name, ward, description, status FROM services ORDER BY service_id DESC";
-            stmt = conn.prepareStatement(sql);
+            // Create services table if it doesn't exist
+            createServicesTableIfNotExists(conn);
+            
+            String sql;
+            boolean isAdmin = "admin".equalsIgnoreCase(userRole);
+            
+            if (isAdmin) {
+                // Admin sees all services
+                sql = "SELECT service_id, service_name, submitted_at, name_of_citizen, ward, description, status FROM services ORDER BY service_id DESC";
+                stmt = conn.prepareStatement(sql);
+            } else {
+                // Users see only their own services
+                sql = "SELECT service_id, service_name, submitted_at, name_of_citizen, ward, description, status FROM services WHERE created_by_user_id = ? ORDER BY service_id DESC";
+                stmt = conn.prepareStatement(sql);
+                stmt.setString(1, currentUserId);
+            }
+            
             rs = stmt.executeQuery();
 
             // Clear existing table data
@@ -304,8 +364,8 @@ public class Service extends javax.swing.JFrame {
                     rs.getInt("service_id"),
                     rs.getString("service_name"),
                     rs.getString("submitted_at"),
-                    rs.getString("citizen_name"),
-                    rs.getString("ward"),
+                    rs.getString("name_of_citizen"),
+                    rs.getInt("ward"),
                     rs.getString("description"),
                     rs.getString("status")
                 };
@@ -326,6 +386,175 @@ public class Service extends javax.swing.JFrame {
         }
     }
 
+    private void setupPanel2Layout() {
+        // Create a GroupLayout for panel2 to match NewsAndNotice layout
+        javax.swing.GroupLayout panel2Layout = new javax.swing.GroupLayout(panel2);
+        panel2.setLayout(panel2Layout);
+        
+        // Add components to panel2
+        panel2.add(jLabel1);
+        panel2.add(jLabel2);
+        panel2.add(jLabel3);
+        panel2.add(jLabel4);
+        panel2.add(jLabel5);
+        panel2.add(jLabel6);
+        panel2.add(jTextField1);
+        panel2.add(jTextField3);
+        panel2.add(jScrollPane1);
+        panel2.add(jButton5);
+        panel2.add(jButton2);
+        panel2.add(jButton3);
+        panel2.add(jButton4);
+        panel2.add(backButton);
+        
+        // Set up horizontal layout
+        panel2Layout.setHorizontalGroup(
+            panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
+                    .addGroup(panel2Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panel2Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(backButton)))
+                .addContainerGap())
+        );
+        
+        // Set up vertical layout
+        panel2Layout.setVerticalGroup(
+            panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel6)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel5)
+                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton5)
+                    .addComponent(jButton2)
+                    .addComponent(jButton3)
+                    .addComponent(jButton4)
+                    .addComponent(backButton))
+                .addContainerGap())
+        );
+    }
+
+    private void addSearchFunctionality() {
+        // Add document listener to search field (jTextField3) to filter table as user types
+        jTextField3.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { 
+                filterTable(jTextField3.getText().trim()); 
+            }
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { 
+                filterTable(jTextField3.getText().trim()); 
+            }
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { 
+                filterTable(jTextField3.getText().trim()); 
+            }
+        });
+        
+        // Add document listener to citizen field (jTextField1) for additional filtering
+        jTextField1.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { 
+                filterTable(jTextField3.getText().trim()); 
+            }
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { 
+                filterTable(jTextField3.getText().trim()); 
+            }
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { 
+                filterTable(jTextField3.getText().trim()); 
+            }
+        });
+    }
+    
+    private void setupEmojiFont() {
+        // Multiple approaches to ensure emoji visibility
+        try {
+            // Try different fonts that support emojis
+            java.awt.Font[] emojiCompatibleFonts = {
+                new java.awt.Font("Segoe UI Emoji", java.awt.Font.BOLD, 32),
+                new java.awt.Font("Apple Color Emoji", java.awt.Font.BOLD, 32),
+                new java.awt.Font("Noto Color Emoji", java.awt.Font.BOLD, 32),
+                new java.awt.Font("Symbola", java.awt.Font.BOLD, 32),
+                new java.awt.Font(java.awt.Font.SANS_SERIF, java.awt.Font.BOLD, 32)
+            };
+            
+            boolean emojiSet = false;
+            for (java.awt.Font font : emojiCompatibleFonts) {
+                if (font.canDisplayUpTo("🏛️") == -1) {
+                    jLabel1.setFont(font);
+                    emojiSet = true;
+                    break;
+                }
+            }
+            
+            if (!emojiSet) {
+                // If no emoji font works, use a clear text alternative
+                jLabel1.setText("⌂ Hamro Smart Gaun ⌂");
+                jLabel1.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 32));
+            }
+            
+            // Force repaint to ensure changes are visible
+            jLabel1.repaint();
+            
+        } catch (Exception e) {
+            // Ultimate fallback
+            jLabel1.setText("HAMRO SMART GAUN");
+            jLabel1.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 28));
+        }
+    }
+    
+    private void filterTable(String searchText) {
+        // Simple filter implementation - in a real app this would filter the table model
+        if (searchText.isEmpty()) {
+            // Show all rows
+            refreshTableData();
+        } else {
+            // Filter logic would go here
+            System.out.println("Filtering table with search text: " + searchText);
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -335,81 +564,86 @@ public class Service extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jMenu1 = new javax.swing.JMenu();
-        jPanel1 = new javax.swing.JPanel();
+        panel1 = new java.awt.Panel();
+        jFormattedTextField1 = new javax.swing.JFormattedTextField();
+        panel2 = new java.awt.Panel();
+        jButton5 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        jTextField3 = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
+        backButton = new javax.swing.JButton();
 
-        jMenu1.setText("jMenu1");
+        javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
+        panel1.setLayout(panel1Layout);
+        panel1Layout.setHorizontalGroup(
+            panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        panel1Layout.setVerticalGroup(
+            panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+
+        jFormattedTextField1.setText("jFormattedTextField1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBackground(new java.awt.Color(204, 204, 204));
-        jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        panel2.setBackground(new java.awt.Color(153, 102, 255));
+        panel2.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
 
-        jLabel1.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 24)); // NOI18N
-        jLabel1.setText("Hamro Smart Gaun");
+        jButton5.setBackground(new java.awt.Color(0, 0, 255));
+        jButton5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gaumanagementsystem/view/plus (1).png"))); // NOI18N
+        jButton5.setText("ADD");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
-        // Fix image loading for jLabel2 - handle missing image gracefully
+        jLabel1.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 32)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("🏛️ Hamro Smart Gaun 🏛️");
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setToolTipText("");
+        
+        // Ensure emoji visibility by setting a Unicode-compatible font
         try {
-            java.net.URL imgUrl = getClass().getResource("/gaumanagementsystem/view/village_icon_180434.png");
-            if (imgUrl != null) {
-                jLabel2.setIcon(new javax.swing.ImageIcon(imgUrl));
+            java.awt.Font unicodeFont = new java.awt.Font("Segoe UI Emoji", java.awt.Font.BOLD, 32);
+            String testEmoji = "🏛️";
+            if (unicodeFont.canDisplayUpTo(testEmoji) == -1) {
+                jLabel1.setFont(unicodeFont);
             } else {
-                // If image not found, set a simple text or leave empty
-                jLabel2.setText("🏘️"); // Village emoji as fallback
-                jLabel2.setFont(new java.awt.Font("Arial", 0, 24));
+                // Fallback to system default font
+                jLabel1.setFont(new java.awt.Font(java.awt.Font.SANS_SERIF, java.awt.Font.BOLD, 32));
             }
         } catch (Exception e) {
-            jLabel2.setText("🏘️"); // Village emoji as fallback
-            jLabel2.setFont(new java.awt.Font("Arial", 0, 24));
+            // If emoji font fails, use text alternative
+            jLabel1.setText("⌂ Hamro Smart Gaun ⌂");
+            jLabel1.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 32));
         }
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(297, 297, 297)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel1)
-                .addContainerGap(337, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(29, 29, 29)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1))
-                .addContainerGap(27, Short.MAX_VALUE))
-        );
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel2.setText("Services");
 
-        jLabel3.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(102, 51, 255));
-        jLabel3.setText("Service");
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel3.setText("Requests");
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel4.setText("Service");
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null},
@@ -419,88 +653,54 @@ public class Service extends javax.swing.JFrame {
                 "Service_id", "ServiceName", "SubmittedAT", "NameOFCitizen", "Ward", "Description", "Status"
             }
         ));
-        jTable1.setGridColor(new java.awt.Color(102, 51, 255));
-        jTable1.setPreferredSize(new java.awt.Dimension(400, 200));
-        jTable1.setSelectionBackground(new java.awt.Color(255, 255, 255));
-        jTable1.setShowGrid(true);
         jScrollPane1.setViewportView(jTable1);
 
-        jButton2.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
-        jButton2.setText("Delete");
-        jButton2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButton2.setBackground(new java.awt.Color(0, 0, 204));
+        jButton2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jButton2.setText("DELETE");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
-        jButton3.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
-        jButton3.setText("Update");
-        jButton3.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButton3.setBackground(new java.awt.Color(0, 51, 204));
+        jButton3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jButton3.setText("UPDATE");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
-        jButton4.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
-        jButton4.setText("Refesh");
-        jButton4.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButton4.setBackground(new java.awt.Color(0, 51, 204));
+        jButton4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jButton4.setText("REFRESH");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
-        jButton5.setBackground(new java.awt.Color(51, 51, 255));
-        jButton5.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
-        jButton5.setText("+ Add Service");
-        jButton5.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel5.setText("Search");
 
-        backButton = new javax.swing.JButton("Back");
-        backButton.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel6.setText("Citizen");
+
+        backButton.setBackground(new java.awt.Color(0, 51, 204));
+        backButton.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         backButton.setText("Back");
-        backButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-
-        jLabel5.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(102, 51, 255));
-        jLabel5.setText("SEARCH");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(40, 40, 40)))
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(280, 280, 280)
-                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton2)
-                .addGap(23, 23, 23)
-                .addComponent(jButton3)
-                .addGap(18, 18, 18)
-                .addComponent(jButton4)
-                .addGap(18, 18, 18)
-                .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(panel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel5)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton5)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3)
-                    .addComponent(jButton4)
-                    .addComponent(backButton))
-                .addGap(54, 54, 54))
+            .addComponent(panel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -514,9 +714,9 @@ public class Service extends javax.swing.JFrame {
         // UPDATE functionality handled in constructor
     }//GEN-LAST:event_jButton3ActionPerformed
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+    }//GEN-LAST:event_jTextField3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // REFRESH functionality handled in constructor
@@ -569,14 +769,18 @@ public class Service extends javax.swing.JFrame {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton backButton;
+    private javax.swing.JFormattedTextField jFormattedTextField1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField3;
+    private java.awt.Panel panel1;
+    private java.awt.Panel panel2;
     // End of variables declaration//GEN-END:variables
 }

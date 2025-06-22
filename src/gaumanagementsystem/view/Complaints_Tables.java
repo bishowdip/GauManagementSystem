@@ -2,6 +2,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
+
+
 package gaumanagementsystem.view;
 
 import java.awt.Color;
@@ -21,11 +23,23 @@ public class Complaints_Tables extends javax.swing.JFrame {
 
     private static AtomicInteger idCounter = new AtomicInteger(1); // Auto-increment ID counter
     private String currentFilter = "All"; // Track current filter: "All", "Complaint", "Feedback"
+    private String userRole = "admin"; // Store user role for navigation
+    private String currentUserId = null; // Store current user ID for filtering
 
     /**
      * Creates new form Complaints_Tables
      */
     public Complaints_Tables() {
+        this("admin", null); // Default to admin for backward compatibility
+    }
+
+    public Complaints_Tables(String userRole) {
+        this(userRole, null); // Backward compatibility
+    }
+    
+    public Complaints_Tables(String userRole, String currentUserId) {
+        this.userRole = userRole; // Store the user role
+        this.currentUserId = currentUserId; // Store the user ID
         initComponents();
         
         // Make window fully responsive
@@ -47,7 +61,7 @@ public class Complaints_Tables extends javax.swing.JFrame {
         
         // Add action listener for Back button to ensure it works with absolute positioning
         Back1.addActionListener(e -> {
-            gaumanagementsystem.view.DashboardView dashboard = new gaumanagementsystem.view.DashboardView();
+            gaumanagementsystem.view.DashboardView dashboard = new gaumanagementsystem.view.DashboardView(userRole, currentUserId);
             dashboard.setVisible(true);
             dispose();
         });
@@ -86,6 +100,17 @@ public class Complaints_Tables extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Please select a complaint to update.", "No Selection", JOptionPane.WARNING_MESSAGE);
                 return;
             }
+            
+            // For users, check if they can edit this complaint
+            if (!"admin".equalsIgnoreCase(userRole)) {
+                String category = (String) ComplaintTable1.getValueAt(selectedRow, 5); // Category column
+                if (!"Complaint".equals(category)) {
+                    JOptionPane.showMessageDialog(this, "You can only update your own complaints, not feedbacks.", "Access Denied", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                // Additional check: verify this complaint belongs to the current user (implement later with database)
+            }
+            
             showComplaintForm(true, selectedRow);
         });
         
@@ -94,24 +119,28 @@ public class Complaints_Tables extends javax.swing.JFrame {
         refreshButton.setForeground(Color.BLACK);
         refreshButton.setBounds(510, 480, 100, 30);
         refreshButton.addActionListener(e -> {
-            // Implement refresh functionality - clear and reload table
+            // Implement refresh functionality - clear table
             javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) ComplaintTable1.getModel();
             model.setRowCount(0); // Clear all rows
             
-            // Add comprehensive sample data using getAllTableData method
-            Object[][] allData = getAllTableData();
-            for (Object[] row : allData) {
-                model.addRow(row);
-            }
-            
-            // Update the counter to continue from the last ID
-            idCounter.set(9);
+            // No sample data - data should be loaded from database via DAO
+            // Reset counter
+            idCounter.set(1);
             
             // Reset filter to "All"
             currentFilter = "All";
             
-            JOptionPane.showMessageDialog(this, "Table refreshed with sample data!");
+            JOptionPane.showMessageDialog(this, "Table refreshed!");
         });
+
+        // Update button visibility for mixed access:
+        // - Users can ADD complaints and UPDATE their own complaints
+        // - Users can see all feedbacks but cannot edit them
+        // - Only admins can DELETE anything
+        boolean isAdmin = "admin".equalsIgnoreCase(userRole);
+        addButton.setVisible(true);       // ADD - Visible for both (users can add complaints)
+        deleteButton.setVisible(isAdmin); // DELETE - Admin only
+        updateButton.setVisible(true);    // UPDATE - Visible for both (with restrictions for users)
         
         // Create responsive layout instead of absolute positioning
         setLayout(new java.awt.BorderLayout());
@@ -185,6 +214,28 @@ public class Complaints_Tables extends javax.swing.JFrame {
         filterPanel.add(feedbackBtn);
         titleFilterPanel.add(filterPanel, java.awt.BorderLayout.CENTER);
         
+        // Right side - search panel
+        javax.swing.JPanel searchPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+        
+        javax.swing.JLabel searchLabel = new javax.swing.JLabel("Search:");
+        searchLabel.setFont(new java.awt.Font("Arial", 1, 14));
+        searchLabel.setForeground(new Color(153, 0, 255));
+        
+        javax.swing.JTextField searchField = new javax.swing.JTextField(15);
+        searchField.setFont(new java.awt.Font("Arial", 0, 12));
+        searchField.setBorder(javax.swing.BorderFactory.createCompoundBorder(
+            javax.swing.BorderFactory.createLineBorder(new Color(153, 0, 255), 1),
+            javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        ));
+        
+        // Add real-time search functionality
+        setupSearchField(searchField);
+        
+        searchPanel.add(searchLabel);
+        searchPanel.add(javax.swing.Box.createHorizontalStrut(5));
+        searchPanel.add(searchField);
+        titleFilterPanel.add(searchPanel, java.awt.BorderLayout.EAST);
+        
         mainPanel.add(titleFilterPanel, java.awt.BorderLayout.NORTH);
         
         // Table panel (this will now resize with window)
@@ -210,14 +261,8 @@ public class Complaints_Tables extends javax.swing.JFrame {
 
     private void loadInitialData() {
         javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) ComplaintTable1.getModel();
-        // Load comprehensive sample data including both complaints and feedback
-        Object[][] allData = getAllTableData();
-        for (Object[] row : allData) {
-            model.addRow(row);
-        }
-        
-        // Update the counter to continue from the last ID
-        idCounter.set(9); // Set to 9 since we have 8 sample records
+        // No initial data - data should be loaded from database via DAO
+        // Table will be empty until real data is added
     }
 
     /**
@@ -277,32 +322,37 @@ public class Complaints_Tables extends javax.swing.JFrame {
         jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel1.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel1.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 24)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 32)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Hamro Smart Gaun");
+        jLabel1.setText("🏛️ Hamro Smart Gaun 🏛️");
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(15, 20, 15, 20));
+        
+        // Ensure emoji visibility by setting a Unicode-compatible font
+        try {
+            java.awt.Font unicodeFont = new java.awt.Font("Segoe UI Emoji", java.awt.Font.BOLD, 32);
+            String testEmoji = "🏛️";
+            if (unicodeFont.canDisplayUpTo(testEmoji) == -1) {
+                jLabel1.setFont(unicodeFont);
+            } else {
+                // Fallback to system default font
+                jLabel1.setFont(new java.awt.Font(java.awt.Font.SANS_SERIF, java.awt.Font.BOLD, 32));
+            }
+        } catch (Exception e) {
+            // If emoji font fails, use text alternative
+            jLabel1.setText("⌂ Hamro Smart Gaun ⌂");
+            jLabel1.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 32));
+        }
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(297, 297, 297)
-                        .addComponent(jLabel2))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(326, 326, 326)
-                        .addComponent(jLabel1)))
-                .addContainerGap(367, Short.MAX_VALUE))
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(29, 29, 29)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1))
-                .addContainerGap(14, Short.MAX_VALUE))
+            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         jLabel3.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
@@ -366,7 +416,7 @@ public class Complaints_Tables extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void Back1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Back1ActionPerformed
-        gaumanagementsystem.view.DashboardView dashboard = new gaumanagementsystem.view.DashboardView();
+        gaumanagementsystem.view.DashboardView dashboard = new gaumanagementsystem.view.DashboardView(userRole, null);
         dashboard.setVisible(true);
         dispose();
     }//GEN-LAST:event_Back1ActionPerformed
@@ -443,19 +493,56 @@ public class Complaints_Tables extends javax.swing.JFrame {
         }
     }
     
+    private void performSearch(String searchText) {
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) ComplaintTable1.getModel();
+        
+        // Get all data
+        Object[][] allData = getAllTableData();
+        
+        // Clear current table
+        model.setRowCount(0);
+        
+        // If search text is empty, show filtered results based on current filter
+        if (searchText == null || searchText.trim().isEmpty()) {
+            filterTable();
+            return;
+        }
+        
+        // Convert search text to lowercase for case-insensitive search
+        String searchLower = searchText.toLowerCase().trim();
+        
+        // Search through all columns and filter by current category filter
+        for (Object[] row : allData) {
+            String category = (String) row[5]; // Category is at index 5
+            
+            // First check if row matches current filter
+            boolean matchesFilter = currentFilter.equals("All") || 
+                (currentFilter.equals("Complaint") && category.equals("Complaint")) ||
+                (currentFilter.equals("Feedback") && category.equals("Suggestion"));
+            
+            if (!matchesFilter) {
+                continue; // Skip if doesn't match current filter
+            }
+            
+            // Check if any field contains the search text
+            boolean matchesSearch = false;
+            for (int i = 0; i < row.length; i++) {
+                if (row[i] != null && row[i].toString().toLowerCase().contains(searchLower)) {
+                    matchesSearch = true;
+                    break;
+                }
+            }
+            
+            if (matchesSearch) {
+                model.addRow(row);
+            }
+        }
+    }
+    
     private Object[][] getAllTableData() {
-        // This method should ideally get data from database
-        // For now, return the sample data including both complaints and feedback
-        return new Object[][] {
-            {1, "John Doe", "2024-01-15", "john@email.com", "Street light not working on Main Road", "Complaint", "Pending"},
-            {2, "Jane Smith", "2024-01-14", "jane@email.com", "Water supply issue in Ward 3", "Complaint", "In Progress"},
-            {3, "Bob Wilson", "2024-01-13", "bob@email.com", "Road repair needed near school", "Complaint", "Resolved"},
-            {4, "Alice Brown", "2024-01-12", "alice@email.com", "Garbage collection delayed", "Complaint", "Pending"},
-            {5, "Mike Johnson", "2024-01-11", "mike@email.com", "Suggestion for new park", "Suggestion", "Pending"},
-            {6, "Sarah Davis", "2024-01-10", "sarah@email.com", "Great job on road maintenance", "Suggestion", "Resolved"},
-            {7, "Tom Wilson", "2024-01-09", "tom@email.com", "Need better street cleaning", "Complaint", "In Progress"},
-            {8, "Lisa Chen", "2024-01-08", "lisa@email.com", "Appreciate the quick response", "Suggestion", "Closed"}
-        };
+        // This method should get data from database only
+        // Return empty array - data will be loaded from database via DAO
+        return new Object[][] {};
     }
 
     private void showComplaintForm(boolean isUpdate, int selectedRow) {
@@ -475,13 +562,23 @@ public class Complaints_Tables extends javax.swing.JFrame {
         javax.swing.JScrollPane descScrollPane = new javax.swing.JScrollPane(descriptionArea);
         descScrollPane.setPreferredSize(new java.awt.Dimension(250, 80));
         
-        // Category dropdown
-        String[] categories = {"Complaint", "Suggestion", "General", "Infrastructure", "Service", "Other"};
+        // Category dropdown - restrict for users
+        String[] categories;
+        if ("admin".equalsIgnoreCase(userRole)) {
+            categories = new String[]{"Complaint", "Suggestion", "General", "Infrastructure", "Service", "Other"};
+        } else {
+            categories = new String[]{"Complaint"}; // Users can only add complaints
+        }
         javax.swing.JComboBox<String> categoryCombo = new javax.swing.JComboBox<>(categories);
         categoryCombo.setPreferredSize(new java.awt.Dimension(250, 25));
         
-        // Status dropdown
-        String[] statuses = {"Pending", "In Progress", "Resolved", "Closed"};
+        // Status dropdown - restrict for users
+        String[] statuses;
+        if ("admin".equalsIgnoreCase(userRole)) {
+            statuses = new String[]{"Pending", "In Progress", "Resolved", "Closed"};
+        } else {
+            statuses = new String[]{"Pending"}; // Users can only set status to Pending
+        }
         javax.swing.JComboBox<String> statusCombo = new javax.swing.JComboBox<>(statuses);
         statusCombo.setPreferredSize(new java.awt.Dimension(250, 25));
         
@@ -807,5 +904,15 @@ public class Complaints_Tables extends javax.swing.JFrame {
         calendarDialog.setVisible(true);
         
         return selectedDate[0];
+    }
+
+    private void setupSearchField(javax.swing.JTextField searchField) {
+        // Add real-time search functionality
+        searchField.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                performSearch(searchField.getText());
+            }
+        });
     }
 }

@@ -2,6 +2,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
+
+
 package gaumanagementsystem.view;
 
 import gaumanagementsystem.model.BudgetAllocation;
@@ -15,11 +17,10 @@ import java.util.*;
 import java.util.List;
 
 /**
- * Budget Allocations View - Pure UI Component
- * Handles only UI display and user interactions
- * Business logic is handled by BudgetAllocationController
+ *
  * @author bisho
  */
+
 public class BugdgetAllocations extends javax.swing.JFrame {
     
     // UI Components
@@ -35,17 +36,32 @@ public class BugdgetAllocations extends javax.swing.JFrame {
     
     // Current data for display
     private List<BudgetAllocation> currentBudgetData;
+    
+    // Role-based fields
+    private String userRole = "admin"; // Default to admin for backward compatibility
+    private String currentUserId = null;
 
     /**
-     * Creates new form BugdgetAllocations
+     * Creates new form BugdgetAllocations (backward compatibility)
      */
     public BugdgetAllocations() {
+        this("admin", null);
+    }
+    
+    /**
+     * Creates new form BugdgetAllocations with role support
+     * @param userRole The user's role (user/admin)
+     * @param currentUserId The current user's ID
+     */
+    public BugdgetAllocations(String userRole, String currentUserId) {
+        this.userRole = userRole;
+        this.currentUserId = currentUserId;
         currentBudgetData = new ArrayList<>();
         // Don't call initComponents() as it overrides our custom layout
         initCustomComponents();
         
         // Initialize controller after view setup
-        controller = new BudgetAllocationController(this);
+        controller = new BudgetAllocationController(this, userRole, currentUserId);
     }
     
     /**
@@ -82,13 +98,31 @@ public class BugdgetAllocations extends javax.swing.JFrame {
      */
     private JPanel createHeaderPanel() {
         JPanel headerPanel = new JPanel();
-        headerPanel.setBackground(new Color(153, 153, 255));
+        headerPanel.setBackground(new Color(153, 102, 255));
+        headerPanel.setBorder(BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         headerPanel.setPreferredSize(new Dimension(1000, 80));
         
-        JLabel titleLabel = new JLabel("Budget Allocations Dashboard");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        JLabel titleLabel = new JLabel("🏛️ Hamro Smart Gaun 🏛️");
+        titleLabel.setFont(new Font("Arial Rounded MT Bold", Font.BOLD, 32));
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
+        
+        // Ensure emoji visibility by setting a Unicode-compatible font
+        try {
+            Font unicodeFont = new Font("Segoe UI Emoji", Font.BOLD, 32);
+            String testEmoji = "🏛️";
+            if (unicodeFont.canDisplayUpTo(testEmoji) == -1) {
+                titleLabel.setFont(unicodeFont);
+            } else {
+                // Fallback to system default font
+                titleLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 32));
+            }
+        } catch (Exception e) {
+            // If emoji font fails, use text alternative
+            titleLabel.setText("⌂ Hamro Smart Gaun ⌂");
+            titleLabel.setFont(new Font("Arial Rounded MT Bold", Font.BOLD, 32));
+        }
         
         headerPanel.add(titleLabel);
         return headerPanel;

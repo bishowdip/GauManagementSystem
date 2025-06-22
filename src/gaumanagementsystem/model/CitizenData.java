@@ -21,12 +21,13 @@ public class CitizenData {
     private String fatherName;
     private String motherName;
     private String imagePath;
+    private int ward;
 
     // Empty constructor
     public CitizenData() {}
 
     // Full constructor
-    public CitizenData(String citizenId, String name, String email, String dateOfBirth, String address, String gender, String phone, String fatherName, String motherName, String imagePath) {
+    public CitizenData(String citizenId, String name, String email, String dateOfBirth, String address, String gender, String phone, String fatherName, String motherName, String imagePath, int ward) {
         this.citizenId = citizenId;
         this.name = name;
         this.email = email;
@@ -37,6 +38,7 @@ public class CitizenData {
         this.fatherName = fatherName;
         this.motherName = motherName;
         this.imagePath = imagePath;
+        this.ward = ward;
     }
 
     // Getters and Setters
@@ -60,5 +62,7 @@ public class CitizenData {
     public void setMotherName(String motherName) { this.motherName = motherName; }
     public String getImagePath() { return imagePath; }
     public void setImagePath(String imagePath) { this.imagePath = imagePath; }
+    public int getWard() { return ward; }
+    public void setWard(int ward) { this.ward = ward; }
 }
 

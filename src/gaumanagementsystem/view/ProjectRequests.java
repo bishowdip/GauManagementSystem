@@ -10,6 +10,12 @@ import java.util.Date;
 import java.awt.Color;
 import java.util.Calendar;
 import javax.swing.SpinnerModel;
+import gaumanagementsystem.dao.ProjectRequestDAO;
+import gaumanagementsystem.dao.impl.ProjectRequestDAOImpl;
+import gaumanagementsystem.model.ProjectRequest;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  *
@@ -17,10 +23,19 @@ import javax.swing.SpinnerModel;
  */
 public class ProjectRequests extends JFrame {
 
+    private String userRole = "admin"; // Store user role for navigation
+    private ProjectRequestDAO projectRequestDAO; // DAO for database operations
+
     /**
      * Creates new form ProjectRequests
      */
     public ProjectRequests() {
+        this("admin"); // Default to admin for backward compatibility
+    }
+
+    public ProjectRequests(String userRole) {
+        this.userRole = userRole; // Store the user role
+        this.projectRequestDAO = new ProjectRequestDAOImpl(); // Initialize DAO
         setTitle("Project Requests");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -56,6 +71,12 @@ public class ProjectRequests extends JFrame {
         Back1.setBackground(lightBlue);
         Back1.setForeground(Color.BLACK);
         Back1.setText("Back");
+
+        // Hide CRUD buttons for non-admin users
+        boolean isAdmin = "admin".equalsIgnoreCase(userRole);
+        AddRequest.setVisible(isAdmin); // ADD
+        jButton2.setVisible(isAdmin); // DELETE
+        jButton3.setVisible(isAdmin); // UPDATE
         
         // Make AddRequest button functional
         AddRequest.addActionListener(e -> showAddProjectDialog());
@@ -68,10 +89,25 @@ public class ProjectRequests extends JFrame {
                 JOptionPane.showMessageDialog(this, "Please select a project to delete.", "No Selection", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this project?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
-            if (confirm == JOptionPane.YES_OPTION) {
-                ((javax.swing.table.DefaultTableModel) jTable1.getModel()).removeRow(selectedRow);
-                JOptionPane.showMessageDialog(this, "Project deleted successfully!");
+            
+            try {
+                // Get the request ID from the selected row
+                javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+                int requestId = (Integer) model.getValueAt(selectedRow, 0); // Request_ID is in column 0
+                
+                int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this project?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    boolean success = projectRequestDAO.deleteProjectRequest(requestId);
+                    if (success) {
+                        JOptionPane.showMessageDialog(this, "Project deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        refreshTableData(); // Refresh table to reflect changes
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Failed to delete project from database.", "Database Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error deleting project: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
             }
         });
         
@@ -87,19 +123,23 @@ public class ProjectRequests extends JFrame {
         });
         
         jButton4.addActionListener(e -> {
-            // REFRESH button
-            JOptionPane.showMessageDialog(this, "Table refreshed!");
+            // REFRESH button - reload data from database
+            refreshTableData();
+            JOptionPane.showMessageDialog(this, "Table refreshed with latest data from database!", "Refresh Complete", JOptionPane.INFORMATION_MESSAGE);
         });
         
         // Override the Back button action listener to ensure it works
         Back1.addActionListener(e -> {
-            DashboardView dashboard = new DashboardView();
+            DashboardView dashboard = new DashboardView(userRole, null);
             dashboard.setVisible(true);
             this.dispose();
         });
         
         // Add search functionality
         addSearchFunctionality();
+        
+        // Load data from database
+        refreshTableData();
     }
     
     private void makeLayoutResponsive() {
@@ -172,8 +212,7 @@ public class ProjectRequests extends JFrame {
             public void changedUpdate(javax.swing.event.DocumentEvent e) { performSearch(); }
         });
         
-        // Add some sample data for demonstration
-        populateTableWithSampleData();
+        // No initial sample data - data should be loaded from database via DAO
     }
     
     private void performSearch() {
@@ -181,27 +220,61 @@ public class ProjectRequests extends JFrame {
         javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
         
         if (searchText.isEmpty()) {
-            // If search is empty, show all data
-            populateTableWithSampleData();
+            // If search is empty, reload all data
+            refreshTableData();
             return;
         }
         
-        // Clear current data
-        model.setRowCount(0);
-        
-        // Filter and add matching rows
-        Object[][] sampleData = getSampleProjectData();
-        for (Object[] row : sampleData) {
-            boolean matches = false;
-            for (Object cell : row) {
-                if (cell != null && cell.toString().toLowerCase().contains(searchText)) {
-                    matches = true;
-                    break;
-                }
-            }
-            if (matches) {
+        try {
+            // Search in database by project name
+            List<ProjectRequest> searchResults = projectRequestDAO.searchByProjectName(searchText);
+            model.setRowCount(0); // Clear existing data
+            
+            for (ProjectRequest project : searchResults) {
+                Object[] row = {
+                    project.getRequestId(),
+                    project.getProjectsName(),
+                    project.getStartedDate(),
+                    project.getWard(),
+                    project.getCategory(),
+                    project.getExpectedToEnd(),
+                    project.getDescription(),
+                    project.getStatus(),
+                    project.getBudget()
+                };
                 model.addRow(row);
             }
+        } catch (Exception e) {
+            System.err.println("Error performing search: " + e.getMessage());
+            model.setRowCount(0);
+        }
+    }
+    
+    private void refreshTableData() {
+        try {
+            // Get all project requests from database
+            List<ProjectRequest> projects = projectRequestDAO.getAllProjectRequests();
+            javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+            model.setRowCount(0); // Clear existing data
+            
+            // Add data from database
+            for (ProjectRequest project : projects) {
+                Object[] row = {
+                    project.getRequestId(),
+                    project.getProjectsName(),
+                    project.getStartedDate(),
+                    project.getWard(),
+                    project.getCategory(),
+                    project.getExpectedToEnd(),
+                    project.getDescription(),
+                    project.getStatus(),
+                    project.getBudget()
+                };
+                model.addRow(row);
+            }
+        } catch (Exception e) {
+            System.err.println("Error refreshing table data: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error loading data from database: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -216,16 +289,8 @@ public class ProjectRequests extends JFrame {
     }
     
     private Object[][] getSampleProjectData() {
-        return new Object[][] {
-            {"REQ001", "Road Construction", "2024-01-15", "Ward 1", "Infrastructure", "2024-06-15", "Main road repair and expansion", "In Progress", 500000},
-            {"REQ002", "School Building", "2024-02-01", "Ward 2", "Education", "2024-12-01", "New primary school construction", "Approved", 1200000},
-            {"REQ003", "Water Supply", "2024-01-20", "Ward 3", "Utilities", "2024-08-20", "Clean water distribution system", "Planning", 800000},
-            {"REQ004", "Health Center", "2024-03-01", "Ward 1", "Healthcare", "2024-11-01", "Community health center establishment", "Pending", 1500000},
-            {"REQ005", "Bridge Construction", "2024-02-15", "Ward 4", "Infrastructure", "2024-09-15", "Suspension bridge over river", "In Progress", 2000000},
-            {"REQ006", "Solar Installation", "2024-03-10", "Ward 2", "Energy", "2024-07-10", "Solar panels for street lighting", "Approved", 600000},
-            {"REQ007", "Community Hall", "2024-01-25", "Ward 3", "Community", "2024-10-25", "Multi-purpose community center", "Planning", 900000},
-            {"REQ008", "Waste Management", "2024-02-20", "Ward 5", "Environment", "2024-08-20", "Waste collection and recycling system", "Pending", 400000}
-        };
+        // Return empty array - data should be loaded from database via DAO
+        return new Object[][] {};
     }
 
     /**
@@ -261,32 +326,37 @@ public class ProjectRequests extends JFrame {
         jPanel1.setBackground(new java.awt.Color(153, 102, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jLabel1.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 24)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 32)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Hamro Smart Gaun");
+        jLabel1.setText("🏛️ Hamro Smart Gaun 🏛️");
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(15, 20, 15, 20));
+        
+        // Ensure emoji visibility by setting a Unicode-compatible font
+        try {
+            java.awt.Font unicodeFont = new java.awt.Font("Segoe UI Emoji", java.awt.Font.BOLD, 32);
+            String testEmoji = "🏛️";
+            if (unicodeFont.canDisplayUpTo(testEmoji) == -1) {
+                jLabel1.setFont(unicodeFont);
+            } else {
+                // Fallback to system default font
+                jLabel1.setFont(new java.awt.Font(java.awt.Font.SANS_SERIF, java.awt.Font.BOLD, 32));
+            }
+        } catch (Exception e) {
+            // If emoji font fails, use text alternative
+            jLabel1.setText("⌂ Hamro Smart Gaun ⌂");
+            jLabel1.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 32));
+        }
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(297, 297, 297)
-                        .addComponent(jLabel2))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(289, 289, 289)
-                        .addComponent(jLabel1)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(29, 29, 29)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1))
-                .addContainerGap(27, Short.MAX_VALUE))
+            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         jLabel3.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
@@ -403,7 +473,7 @@ public class ProjectRequests extends JFrame {
     }//GEN-LAST:event_AddRequestActionPerformed
 
     private void Back1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Back1ActionPerformed
-        DashboardView dashboard = new DashboardView();
+        DashboardView dashboard = new DashboardView(userRole, null);
         dashboard.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_Back1ActionPerformed
@@ -498,7 +568,8 @@ public class ProjectRequests extends JFrame {
 
         int result = JOptionPane.showConfirmDialog(this, panel, "Add Project", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION) {
-            String[] row = new String[] {
+            // Validate input fields
+            String[] fields = {
                 requestIdField.getText(),
                 projectNameField.getText(),
                 startedDateField.getText(),
@@ -509,14 +580,48 @@ public class ProjectRequests extends JFrame {
                 statusField.getText(),
                 budgetField.getText()
             };
-            for (String s : row) {
-                if (s == null || s.trim().isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "All fields are required.");
+            
+            for (String field : fields) {
+                if (field == null || field.trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "All fields are required.", "Validation Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             }
-            javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
-            model.addRow(row);
+            
+            try {
+                // Create ProjectRequest object
+                ProjectRequest projectRequest = new ProjectRequest();
+                projectRequest.setProjectsName(projectNameField.getText().trim());
+                projectRequest.setStartedDate(java.sql.Date.valueOf(startedDateField.getText().trim()));
+                projectRequest.setWard(Integer.parseInt(wardField.getText().trim()));
+                projectRequest.setExpectedToEnd(java.sql.Date.valueOf(expectedEndDateField.getText().trim()));
+                projectRequest.setDescription(descriptionField.getText().trim());
+                projectRequest.setStatus(statusField.getText().trim());
+                projectRequest.setBudget(new BigDecimal(budgetField.getText().trim()));
+                projectRequest.setCategory((String) categoryComboBox.getSelectedItem());
+                projectRequest.setPriority("Medium"); // Default priority
+                projectRequest.setRequestedBy("Current User"); // TODO: Get from session
+                projectRequest.setFiscalYear("2024-25"); // TODO: Calculate current fiscal year
+                
+                // Save to database
+                boolean success = projectRequestDAO.createProjectRequest(projectRequest);
+                
+                if (success) {
+                    JOptionPane.showMessageDialog(this, "Project request saved successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    // Refresh the table to show the new data
+                    refreshTableData();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Failed to save project request to database.", "Database Error", JOptionPane.ERROR_MESSAGE);
+                }
+                
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Invalid number format in Ward or Budget field.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException e) {
+                JOptionPane.showMessageDialog(this, "Invalid date format. Please use YYYY-MM-DD format.", "Date Error", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Error saving project request: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
         }
     }
     

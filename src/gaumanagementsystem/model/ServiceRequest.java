@@ -6,7 +6,7 @@ package gaumanagementsystem.model;
 
 /**
  *
- * @author ASUS
+ * @author bishodip
  */
 public class ServiceRequest {
     private String citizen;

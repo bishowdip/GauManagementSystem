@@ -16,16 +16,22 @@ public class DashboardView extends javax.swing.JFrame {
     private javax.swing.JButton citizensButton;
     private javax.swing.JButton logoutButton;
     private String userRole = "admin";
+    private String currentUserId = null; // Add field to store current user ID
     
     public DashboardView() {
-        this("admin");
+        this("admin", null);
     }
     
     public DashboardView(String userRole) {
+        this(userRole, null);
+    }
+    
+    public DashboardView(String userRole, String currentUserId) {
         this.userRole = userRole;
+        this.currentUserId = currentUserId;
         initComponents();
         setLocationRelativeTo(null);
-        new gaumanagementsystem.controller.DashboardController(this, userRole);
+        new gaumanagementsystem.controller.DashboardController(this, userRole, currentUserId);
     }
     
     private void initComponents() {
@@ -64,7 +70,12 @@ public class DashboardView extends javax.swing.JFrame {
         
         newsButton.setText("News & Notices");
         
-        citizensButton.setText("Citizens");
+        // Set button text based on user role
+        if ("user".equalsIgnoreCase(userRole)) {
+            citizensButton.setText("My Profile");
+        } else {
+            citizensButton.setText("Citizens");
+        }
         
         logoutButton.setText("Logout");
         
@@ -171,7 +182,7 @@ public class DashboardView extends javax.swing.JFrame {
         }
         
         java.awt.EventQueue.invokeLater(() -> {
-            new DashboardView("admin").setVisible(true);
+            new DashboardView("admin", null).setVisible(true);
         });
     }
 
@@ -206,5 +217,9 @@ public class DashboardView extends javax.swing.JFrame {
 
     public String getUserRole() {
         return userRole;
+    }
+
+    public String getCurrentUserId() {
+        return currentUserId;
     }
 }

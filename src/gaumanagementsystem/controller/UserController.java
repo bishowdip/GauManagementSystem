@@ -1,16 +1,21 @@
 package gaumanagementsystem.controller;
 
 import gaumanagementsystem.dao.UserDAO;
+import gaumanagementsystem.dao.impl.UserDAOImpl;
 import gaumanagementsystem.model.User;
 import gaumanagementsystem.view.LoginView;
 import gaumanagementsystem.view.RegisterView;
 import javax.swing.JOptionPane;
 
+/**
+ *
+ * @author bishodip
+ */
 public class UserController {
     private final UserDAO userDAO;
 
     public UserController() {
-        this.userDAO = new UserDAO();
+        this.userDAO = new UserDAOImpl();
     }
 
     public void handleRegistration(RegisterView view) {
@@ -38,14 +43,15 @@ public class UserController {
         }
 
         try {
-            if (userDAO.checkUserExists(email)) {
+            if (userDAO.emailExists(email)) {
                 JOptionPane.showMessageDialog(view, "Email already exists", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             User user = new User();
             user.setEmail(email);
             user.setPassword(password);
-            if (userDAO.registerUser(user, role)) {
+            user.setRole(role);
+            if (userDAO.createUser(user)) {
                 JOptionPane.showMessageDialog(view, "Registration successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
                 LoginView loginView = new LoginView();
                 loginView.setVisible(true);
@@ -63,10 +69,13 @@ public class UserController {
             User user = userDAO.authenticateUser(email, password);
             if (user != null) {
                 JOptionPane.showMessageDialog(view, "Login Successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                new gaumanagementsystem.view.DashboardView().setVisible(true);
+                // Pass user role and ID to DashboardView for role-based functionality
+                String userRole = user.getRole() != null ? user.getRole() : "user"; // Default to user if role is null
+                String userId = String.valueOf(user.getId());
+                new gaumanagementsystem.view.DashboardView(userRole, userId).setVisible(true);
                 view.dispose();
             } else {
-                JOptionPane.showMessageDialog(view, "Invalid credentials", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(view, "Invalid email or password. Please check your credentials and try again.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

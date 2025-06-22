@@ -5,7 +5,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-
 public class LoginView extends javax.swing.JFrame {
     private javax.swing.JButton loginButton;
     private javax.swing.JButton showButton;
@@ -18,6 +17,11 @@ public class LoginView extends javax.swing.JFrame {
     private javax.swing.JPasswordField passwordField;
     private javax.swing.JTextField emailField;
 
+ /**
+ *
+ * @author bisho
+ */
+    
     public LoginView() {
         initComponents();
         setLocationRelativeTo(null);
@@ -59,14 +63,38 @@ public class LoginView extends javax.swing.JFrame {
         forgotLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         // Action Listeners
-        loginButton.addActionListener(this::loginAction);
-        showButton.addActionListener(this::togglePasswordVisibility);
-        registerLabel.addMouseListener(new MouseAdapter() {
+        loginButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                loginAction(evt);
+            }
+        });
+        
+        showButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                togglePasswordVisibility(evt);
+            }
+        });
+        
+        registerLabel.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 new RegisterView().setVisible(true);
                 dispose();
             }
+            
+            @Override
+            public void mousePressed(MouseEvent e) {}
+            
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+            
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+            
+            @Override
+            public void mouseExited(MouseEvent e) {}
         });
         
 

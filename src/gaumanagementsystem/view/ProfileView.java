@@ -26,6 +26,7 @@ public class ProfileView extends javax.swing.JFrame {
 
     // Calendar button for date of birth
     private JButton calendarButton;
+    private String userRole = "admin"; // Add field to track user role
 
     /**
      * Creates new form CitizenView 
@@ -59,6 +60,17 @@ public class ProfileView extends javax.swing.JFrame {
      * @param showEditButton True to show the edit button, false to hide it.
      */
     public ProfileView(String citizenId, boolean showEditButton) {
+        this(citizenId, showEditButton, "admin");
+    }
+
+    /**
+     * Creates new form CitizenView with role-based functionality
+     * @param citizenId The ID of the citizen to display.
+     * @param showEditButton True to show the edit button, false to hide it.
+     * @param userRole The role of the current user (admin/user)
+     */
+    public ProfileView(String citizenId, boolean showEditButton, String userRole) {
+        this.userRole = userRole;
         initComponents();
         // Initialize the controller and load citizen data
         gaumanagementsystem.controller.ProfileViewController controller = 
@@ -276,18 +288,26 @@ public class ProfileView extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void editActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editActionPerformed
-        // TODO add your handling code here:
-        EditProfileView update= new EditProfileView();
+        // Get current citizen ID and open EditProfileView with role information
+        String currentCitizenId = citizen_id.getText();
+        EditProfileView update = new EditProfileView(userRole, currentCitizenId, true);
         update.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_editActionPerformed
 
     private void CitizentoDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CitizentoDashboardActionPerformed
-        // TODO add your handling code here:
-        DashboardView goingtodash = new DashboardView(); 
-        goingtodash.setVisible(true);           
-        this.dispose();
-
+        if ("user".equalsIgnoreCase(userRole)) {
+            // For user role, pass the current user ID back to dashboard
+            String currentCitizenId = citizen_id.getText();
+            DashboardView goingtodash = new DashboardView(userRole, currentCitizenId); 
+            goingtodash.setVisible(true);           
+            this.dispose();
+        } else {
+            // For admin role, go back to regular dashboard with admin role
+            DashboardView goingtodash = new DashboardView(userRole, null); 
+            goingtodash.setVisible(true);           
+            this.dispose();
+        }
     }//GEN-LAST:event_CitizentoDashboardActionPerformed
 
     private void menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuActionPerformed

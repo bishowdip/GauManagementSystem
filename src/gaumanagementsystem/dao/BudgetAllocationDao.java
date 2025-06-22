@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Data Access Object for Budget Allocation operations
- * Handles only database operations - no business logic
- * @author bisho
+ *
+ * @author bishodip
  */
+
 public class BudgetAllocationDao {
     
     private MySqlConnection dbConnection;
@@ -27,15 +27,15 @@ public class BudgetAllocationDao {
     }
     
     /**
-     * Get budget allocations grouped by category from project data
+     * Get budget allocations grouped by category from project_requests data
      * @return List of BudgetAllocation objects
      * @throws SQLException if database operation fails
      */
     public List<BudgetAllocation> getBudgetAllocationsByCategory() throws SQLException {
         List<BudgetAllocation> allocations = new ArrayList<>();
-        String query = "SELECT category, SUM(amount) as total_amount, COUNT(*) as project_count " +
-                      "FROM projects " +
-                      "WHERE amount IS NOT NULL AND amount > 0 " +
+        String query = "SELECT category, SUM(budget) as total_amount, COUNT(*) as project_count " +
+                      "FROM project_requests " +
+                      "WHERE budget IS NOT NULL AND budget > 0 " +
                       "GROUP BY category " +
                       "ORDER BY total_amount DESC";
         
@@ -76,7 +76,7 @@ public class BudgetAllocationDao {
      * @throws SQLException if database operation fails
      */
     public Double getTotalBudgetAmount() throws SQLException {
-        String query = "SELECT SUM(amount) as total_budget FROM projects WHERE amount IS NOT NULL AND amount > 0";
+        String query = "SELECT SUM(budget) as total_budget FROM project_requests WHERE budget IS NOT NULL AND budget > 0";
         
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -112,9 +112,9 @@ public class BudgetAllocationDao {
      * @throws SQLException if database operation fails
      */
     public BudgetAllocation getBudgetAllocationByCategory(String category) throws SQLException {
-        String query = "SELECT category, SUM(amount) as total_amount, COUNT(*) as project_count " +
-                      "FROM projects " +
-                      "WHERE category = ? AND amount IS NOT NULL AND amount > 0 " +
+        String query = "SELECT category, SUM(budget) as total_amount, COUNT(*) as project_count " +
+                      "FROM project_requests " +
+                      "WHERE category = ? AND budget IS NOT NULL AND budget > 0 " +
                       "GROUP BY category";
         
         Connection conn = null;
@@ -156,9 +156,9 @@ public class BudgetAllocationDao {
      */
     public List<BudgetAllocation> getBudgetAllocationsByWard() throws SQLException {
         List<BudgetAllocation> allocations = new ArrayList<>();
-        String query = "SELECT ward as category, SUM(amount) as total_amount, COUNT(*) as project_count " +
-                      "FROM projects " +
-                      "WHERE amount IS NOT NULL AND amount > 0 " +
+        String query = "SELECT ward as category, SUM(budget) as total_amount, COUNT(*) as project_count " +
+                      "FROM project_requests " +
+                      "WHERE budget IS NOT NULL AND budget > 0 " +
                       "GROUP BY ward " +
                       "ORDER BY total_amount DESC";
         
@@ -200,9 +200,9 @@ public class BudgetAllocationDao {
      */
     public List<BudgetAllocation> getBudgetAllocationsByStatus() throws SQLException {
         List<BudgetAllocation> allocations = new ArrayList<>();
-        String query = "SELECT status as category, SUM(amount) as total_amount, COUNT(*) as project_count " +
-                      "FROM projects " +
-                      "WHERE amount IS NOT NULL AND amount > 0 " +
+        String query = "SELECT status as category, SUM(budget) as total_amount, COUNT(*) as project_count " +
+                      "FROM project_requests " +
+                      "WHERE budget IS NOT NULL AND budget > 0 " +
                       "GROUP BY status " +
                       "ORDER BY total_amount DESC";
         
@@ -238,11 +238,11 @@ public class BudgetAllocationDao {
     }
     
     /**
-     * Check if projects table exists and has required columns
+     * Check if project_requests table exists and has required columns
      * @return true if table structure is valid
      */
     public boolean validateProjectsTable() {
-        String query = "SHOW COLUMNS FROM projects";
+        String query = "SHOW COLUMNS FROM project_requests";
         
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -258,22 +258,22 @@ public class BudgetAllocationDao {
             rs = stmt.executeQuery();
             
             boolean hasCategory = false;
-            boolean hasAmount = false;
+            boolean hasBudget = false;
             
             while (rs.next()) {
                 String columnName = rs.getString("Field");
                 if ("category".equalsIgnoreCase(columnName)) {
                     hasCategory = true;
                 }
-                if ("amount".equalsIgnoreCase(columnName)) {
-                    hasAmount = true;
+                if ("budget".equalsIgnoreCase(columnName)) {
+                    hasBudget = true;
                 }
             }
             
-            return hasCategory && hasAmount;
+            return hasCategory && hasBudget;
             
         } catch (SQLException e) {
-            System.err.println("Error validating projects table: " + e.getMessage());
+            System.err.println("Error validating project_requests table: " + e.getMessage());
             return false;
         } finally {
             // Clean up resources
@@ -309,7 +309,7 @@ public class BudgetAllocationDao {
     public List<Object[]> getProjectCountByCategory() throws SQLException {
         List<Object[]> counts = new ArrayList<>();
         String query = "SELECT category, COUNT(*) as project_count " +
-                      "FROM projects " +
+                      "FROM project_requests " +
                       "GROUP BY category " +
                       "ORDER BY project_count DESC";
         

@@ -22,12 +22,28 @@ public class BudgetAllocationController {
     private BudgetAllocationDao dao;
     private List<BudgetAllocation> budgetData;
     
+    // Role-based fields
+    private String userRole = "admin";
+    private String currentUserId = null;
+    
     /**
-     * Constructor
+     * Constructor (backward compatibility)
      * @param view The budget allocation view
      */
     public BudgetAllocationController(BugdgetAllocations view) {
+        this(view, "admin", null);
+    }
+    
+    /**
+     * Constructor with role support
+     * @param view The budget allocation view
+     * @param userRole The user's role (user/admin)
+     * @param currentUserId The current user's ID
+     */
+    public BudgetAllocationController(BugdgetAllocations view, String userRole, String currentUserId) {
         this.view = view;
+        this.userRole = userRole;
+        this.currentUserId = currentUserId;
         this.dao = new BudgetAllocationDao();
         this.budgetData = new ArrayList<>();
         initController();
@@ -85,17 +101,8 @@ public class BudgetAllocationController {
      */
     private void loadSampleData() {
         budgetData = new ArrayList<>();
-        
-        // Sample budget allocations by category for demonstration
-        budgetData.add(new BudgetAllocation("Education", 3700000.0, 6));
-        budgetData.add(new BudgetAllocation("Health and Medical", 2700000.0, 4));
-        budgetData.add(new BudgetAllocation("Housing and Rent", 3200000.0, 4));
-        budgetData.add(new BudgetAllocation("Transportation", 3700000.0, 3));
-        budgetData.add(new BudgetAllocation("Food and Groceries", 800000.0, 1));
-        budgetData.add(new BudgetAllocation("Savings and Investments", 1800000.0, 2));
-        budgetData.add(new BudgetAllocation("Entertainment and Leisure", 2000000.0, 1));
-        
-        System.out.println("Sample data loaded with " + budgetData.size() + " categories.");
+        // No sample data - should be calculated from database
+        System.out.println("No sample data loaded - data should come from database.");
     }
     
     /**
@@ -194,13 +201,8 @@ public class BudgetAllocationController {
      * @return List of sample ward allocations
      */
     private List<BudgetAllocation> getSampleWardData() {
-        List<BudgetAllocation> wardData = new ArrayList<>();
-        wardData.add(new BudgetAllocation("Ward 1", 2500000.0, 3));
-        wardData.add(new BudgetAllocation("Ward 2", 3200000.0, 4));
-        wardData.add(new BudgetAllocation("Ward 3", 1800000.0, 2));
-        wardData.add(new BudgetAllocation("Ward 4", 2800000.0, 3));
-        wardData.add(new BudgetAllocation("Ward 5", 1900000.0, 2));
-        return wardData;
+        // Return empty list - data should be calculated from database
+        return new ArrayList<>();
     }
     
     /**
@@ -208,7 +210,7 @@ public class BudgetAllocationController {
      */
     public void navigateToDashboard() {
         try {
-            gaumanagementsystem.view.DashboardView dashboard = new gaumanagementsystem.view.DashboardView();
+            gaumanagementsystem.view.DashboardView dashboard = new gaumanagementsystem.view.DashboardView(userRole, currentUserId);
             dashboard.setVisible(true);
             view.dispose();
         } catch (Exception e) {

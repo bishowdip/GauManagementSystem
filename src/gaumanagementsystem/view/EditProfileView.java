@@ -102,6 +102,11 @@ public class EditProfileView extends javax.swing.JFrame {
         jLabel11.setText("Father's Name");
         getContentPane().add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(95, 457, -1, -1));
 
+        javax.swing.JLabel jLabel13 = new javax.swing.JLabel();
+        jLabel13.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabel13.setText("Ward");
+        getContentPane().add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(152, 528, -1, -1));
+
         name.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         getContentPane().add(name, new org.netbeans.lib.awtextra.AbsoluteConstraints(206, 247, 300, -1));
 
@@ -161,6 +166,10 @@ public class EditProfileView extends javax.swing.JFrame {
 
         phone.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         getContentPane().add(phone, new org.netbeans.lib.awtextra.AbsoluteConstraints(206, 419, 300, -1));
+
+        ward = new javax.swing.JTextField();
+        ward.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        getContentPane().add(ward, new org.netbeans.lib.awtextra.AbsoluteConstraints(206, 525, 300, -1));
 
         jLabel7.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel7.setText("Address");
@@ -334,6 +343,7 @@ public class EditProfileView extends javax.swing.JFrame {
     private javax.swing.JTextField mother_name;
     private javax.swing.JTextField name;
     private javax.swing.JTextField phone;
+    private javax.swing.JTextField ward;
     private javax.swing.JButton save;
     private javax.swing.JButton upload;
     // End of variables declaration//GEN-END:variables
@@ -376,6 +386,10 @@ public class EditProfileView extends javax.swing.JFrame {
 
     public javax.swing.JTextField getMotherNameField() {
         return mother_name;
+    }
+
+    public javax.swing.JTextField getWardField() {
+        return ward;
     }
 
     public javax.swing.JButton getEditButton() {
@@ -425,6 +439,7 @@ public class EditProfileView extends javax.swing.JFrame {
                 phone.setText(citizen.getPhone());
                 father_name.setText(citizen.getFatherName());
                 mother_name.setText(citizen.getMotherName());
+                ward.setText(String.valueOf(citizen.getWard()));
                 if ("Male".equalsIgnoreCase(citizen.getGender())) {
                     male.setSelected(true);
                 } else if ("Female".equalsIgnoreCase(citizen.getGender())) {
@@ -449,6 +464,7 @@ public class EditProfileView extends javax.swing.JFrame {
             phone.setText("");
             father_name.setText("");
             mother_name.setText("");
+            ward.setText("");
             buttonGroup1.clearSelection();
             ProfileImageLabel.setIcon(null);
             selectedImagePath = null;
@@ -483,7 +499,19 @@ public class EditProfileView extends javax.swing.JFrame {
         String mn = mother_name.getText().trim();
         String gender = male.isSelected() ? "Male" : (female.isSelected() ? "Female" : "");
         String imgPath = selectedImagePath;
-        gaumanagementsystem.model.CitizenData citizen = new gaumanagementsystem.model.CitizenData(id, nm, em, dob, addr, gender, ph, fn, mn, imgPath);
+        
+        // Parse ward from text field, default to 1 if invalid
+        int wardNumber = 1;
+        try {
+            String wardText = ward.getText().trim();
+            if (!wardText.isEmpty()) {
+                wardNumber = Integer.parseInt(wardText);
+            }
+        } catch (NumberFormatException e) {
+            wardNumber = 1; // Default to ward 1 if parsing fails
+        }
+        
+        gaumanagementsystem.model.CitizenData citizen = new gaumanagementsystem.model.CitizenData(id, nm, em, dob, addr, gender, ph, fn, mn, imgPath, wardNumber);
         gaumanagementsystem.controller.CitizenController controller = new gaumanagementsystem.controller.CitizenController();
         boolean success;
         if (isEditMode) {
@@ -493,18 +521,37 @@ public class EditProfileView extends javax.swing.JFrame {
         }
         if (success) {
             javax.swing.JOptionPane.showMessageDialog(this, "Citizen saved successfully!", "Success", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-            // Return to CitizenEdit
-            new CitizenEdit(role, id).setVisible(true);
-            this.dispose();
+            
+            // Handle role-based navigation after saving
+            if ("user".equalsIgnoreCase(role)) {
+                // For user role, open their profile view to show the saved data
+                gaumanagementsystem.view.ProfileView profileView = 
+                    new gaumanagementsystem.view.ProfileView(id, true, role);
+                profileView.setVisible(true);
+                this.dispose();
+            } else {
+                // For admin role, return to CitizenEdit
+                new CitizenEdit(role, id).setVisible(true);
+                this.dispose();
+            }
         } else {
             javax.swing.JOptionPane.showMessageDialog(this, "Failed to save citizen. Please check your inputs.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void backtoprofileActionPerformed(java.awt.event.ActionEvent evt) {
-        // Return to CitizenEdit
-        new CitizenEdit(role, userCitizenId).setVisible(true);
-        this.dispose();
+        // Handle role-based navigation for back button
+        if ("user".equalsIgnoreCase(role)) {
+            // For user role, go back to dashboard with their user ID
+            gaumanagementsystem.view.DashboardView dashboard = 
+                new gaumanagementsystem.view.DashboardView(role, userCitizenId);
+            dashboard.setVisible(true);
+            this.dispose();
+        } else {
+            // For admin role, return to CitizenEdit
+            new CitizenEdit(role, userCitizenId).setVisible(true);
+            this.dispose();
+        }
     }
 
     private void uploadActionPerformed(java.awt.event.ActionEvent evt) {

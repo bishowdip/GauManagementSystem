@@ -6,22 +6,27 @@ import gaumanagementsystem.view.BugdgetAllocations;
 import javax.swing.JOptionPane;
 
 /**
- * Dashboard Controller - Handles navigation between different modules
- * Follows MVC pattern with proper separation of concerns
- * @author bisho
+ *
+ * @author bishodip
  */
 public class DashboardController {
 
     private DashboardView view;
     private String userRole;
+    private String currentUserId;
 
     public DashboardController(DashboardView view) {
-        this(view, "admin"); // Default to admin for backward compatibility
+        this(view, "admin", null); // Default to admin for backward compatibility
     }
 
     public DashboardController(DashboardView view, String userRole) {
+        this(view, userRole, null); // Backward compatibility
+    }
+
+    public DashboardController(DashboardView view, String userRole, String currentUserId) {
         this.view = view;
         this.userRole = userRole;
+        this.currentUserId = currentUserId;
         initController();
     }
 
@@ -46,7 +51,7 @@ public class DashboardController {
     private void openServiceModule() {
         try {
             System.out.println("Opening Service module...");
-            Service serviceView = new Service();
+            Service serviceView = new Service(userRole, currentUserId);
             serviceView.setVisible(true);
             view.dispose();
         } catch (Exception e) {
@@ -60,7 +65,7 @@ public class DashboardController {
     private void openBudgetModule() {
         try {
             System.out.println("Opening Budget Allocations module...");
-            BugdgetAllocations budgetView = new BugdgetAllocations();
+            BugdgetAllocations budgetView = new BugdgetAllocations(userRole, currentUserId);
             budgetView.setVisible(true);
             view.dispose();
             System.out.println("Budget Allocations module opened successfully!");
@@ -76,7 +81,7 @@ public class DashboardController {
         try {
             System.out.println("Opening Complaints module...");
             gaumanagementsystem.view.Complaints_Tables complaintsTableView = 
-                new gaumanagementsystem.view.Complaints_Tables();
+                new gaumanagementsystem.view.Complaints_Tables(userRole, currentUserId);
             complaintsTableView.setVisible(true);
             view.dispose();
         } catch (Exception e) {
@@ -91,7 +96,7 @@ public class DashboardController {
         try {
             System.out.println("Opening Projects module...");
             gaumanagementsystem.view.ProjectRequests projectsView = 
-                new gaumanagementsystem.view.ProjectRequests();
+                new gaumanagementsystem.view.ProjectRequests(userRole);
             projectsView.setVisible(true);
             view.dispose();
         } catch (Exception e) {
@@ -115,17 +120,64 @@ public class DashboardController {
     }
 
     /**
-     * Open Citizens module
+     * Open Citizens module - role-based functionality
+     * Admin: Opens CitizenEdit to manage all citizens
+     * User: Opens ProfileView to view/edit their own profile
      */
     private void openCitizensModule() {
         try {
-            System.out.println("Opening Citizens module...");
-            gaumanagementsystem.view.CitizenEdit citizensView = 
-                new gaumanagementsystem.view.CitizenEdit();
-            citizensView.setVisible(true);
+            if ("user".equalsIgnoreCase(userRole)) {
+                System.out.println("Opening My Profile for user...");
+                
+                // Try to find user's existing profile data
+                gaumanagementsystem.controller.CitizenController citizenController = 
+                    new gaumanagementsystem.controller.CitizenController();
+                
+                gaumanagementsystem.model.CitizenData existingProfile = null;
+                
+                // First, try to find profile by currentUserId if available
+                if (currentUserId != null && !currentUserId.trim().isEmpty()) {
+                    existingProfile = citizenController.getCitizenById(currentUserId);
+                    System.out.println("Searching for profile with ID: " + currentUserId);
+                }
+                
+                // If no profile found by ID and we don't have currentUserId, 
+                // we could potentially search by other criteria in the future
+                // For now, we'll assume the user needs to create a profile
+                
+                // If profile found, open ProfileView with existing data
+                if (existingProfile != null) {
+                    System.out.println("Found existing profile for user: " + existingProfile.getName());
+                    gaumanagementsystem.view.ProfileView profileView = 
+                        new gaumanagementsystem.view.ProfileView(existingProfile.getCitizenId(), true, userRole);
+                    profileView.setVisible(true);
+                } else {
+                    // No existing profile found, open EditProfileView to create new profile
+                    System.out.println("No existing profile found. Opening profile creation form...");
+                    javax.swing.JOptionPane.showMessageDialog(
+                        view,
+                        "Welcome! It looks like you haven't created your profile yet.\n" +
+                        "Please fill in your details to create your profile.",
+                        "Create Your Profile",
+                        javax.swing.JOptionPane.INFORMATION_MESSAGE
+                    );
+                    gaumanagementsystem.view.EditProfileView editProfileView = 
+                        new gaumanagementsystem.view.EditProfileView("user", currentUserId, false);
+                    editProfileView.setVisible(true);
+                }
+            } else {
+                System.out.println("Opening Citizens module...");
+                // For admin role, open CitizenEdit to manage all citizens
+                gaumanagementsystem.view.CitizenEdit citizensView = 
+                    new gaumanagementsystem.view.CitizenEdit(userRole, currentUserId);
+                citizensView.setVisible(true);
+            }
             view.dispose();
         } catch (Exception e) {
-            handleNavigationError("Citizens", e);
+            handleNavigationError(
+                "user".equalsIgnoreCase(userRole) ? "My Profile" : "Citizens", 
+                e
+            );
         }
     }
 

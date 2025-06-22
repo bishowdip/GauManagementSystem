@@ -24,13 +24,14 @@ import javax.swing.SpinnerModel;
 
 /**
  *
- * @author ASUS
+ * @author bishowdip
  */
 public class NewsAndNotice extends javax.swing.JFrame {
 
     private final NewsAndNoticeController controller = new NewsAndNoticeController();
     private String currentTypeFilter = "";
     private JButton backButton;
+    private String userRole = "admin"; // Store user role for navigation
 
     /**
      * Creates new form NewsAndNotice
@@ -40,7 +41,9 @@ public class NewsAndNotice extends javax.swing.JFrame {
     }
 
     public NewsAndNotice(String userRole) {
+        this.userRole = userRole; // Store the user role
         initComponents();
+        setTitle("News and Notice - Hamro Smart Gaun");
         
         // Make window fully responsive
         setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH); // Start maximized
@@ -56,12 +59,15 @@ public class NewsAndNotice extends javax.swing.JFrame {
         backButton.setBackground(new Color(173, 216, 230));
         backButton.setForeground(Color.BLACK);
         backButton.addActionListener(e -> {
-            new DashboardView().setVisible(true);
+            new DashboardView(userRole, null).setVisible(true);
             this.dispose();
         });
         
         // Set up a simple layout for panel2 since the original was removed
         setupPanel2Layout();
+        
+        // Ensure emoji is visible in header
+        setupEmojiFont();
         
         loadTableData();
 
@@ -305,9 +311,8 @@ public class NewsAndNotice extends javax.swing.JFrame {
     private void loadTableData() {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0);
-        for (gaumanagementsystem.model.NewsAndNotice notice : controller.getAll()) {
-            model.addRow(notice.toTableRow());
-        }
+        // No data loading from controller - data should be loaded from database via DAO
+        // Table will be empty until real data is added
     }
 
     private void addRowToTable(gaumanagementsystem.model.NewsAndNotice notice) {
@@ -329,115 +334,64 @@ public class NewsAndNotice extends javax.swing.JFrame {
     }
     
     private void makeLayoutResponsive() {
-        // Remove the existing complex layout and create a simple responsive one
-        getContentPane().removeAll();
-        getContentPane().setLayout(new java.awt.BorderLayout());
+        // Set the window to start maximized
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         
-        // Create header panel
+        // Create header panel with beautiful design
         javax.swing.JPanel headerPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
-        headerPanel.setBackground(new java.awt.Color(204, 204, 255));
-        headerPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        headerPanel.setBackground(new java.awt.Color(153, 102, 255));
+        headerPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        headerPanel.setPreferredSize(new java.awt.Dimension(1000, 80));
         
-        // Title in center
-        javax.swing.JPanel titlePanel = new javax.swing.JPanel();
-        titlePanel.setBackground(new java.awt.Color(204, 204, 255));
-        titlePanel.add(jLabel4); // "News and Notice" label
-        headerPanel.add(titlePanel, java.awt.BorderLayout.CENTER);
+        // Center the main header title
+        jLabel1.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 32));
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("🏛️ Hamro Smart Gaun 🏛️");
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(15, 20, 15, 20));
         
-        // System title on right
-        javax.swing.JPanel systemTitlePanel = new javax.swing.JPanel();
-        systemTitlePanel.setBackground(new java.awt.Color(204, 204, 255));
-        systemTitlePanel.add(jLabel1); // "Hamro Smart Gaun" label
-        headerPanel.add(systemTitlePanel, java.awt.BorderLayout.EAST);
+        headerPanel.add(jLabel1, java.awt.BorderLayout.CENTER);
         
-        getContentPane().add(headerPanel, java.awt.BorderLayout.NORTH);
-        
-        // Create main content panel
-        javax.swing.JPanel mainPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
-        mainPanel.setBackground(new java.awt.Color(204, 204, 255));
-        mainPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        
-        // Top panel with search and controls
-        javax.swing.JPanel topPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
-        topPanel.setBackground(new java.awt.Color(204, 204, 255));
-        
-        // Search section - positioned at left quarter with single search field
-        javax.swing.JPanel searchPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
-        searchPanel.setBackground(new java.awt.Color(204, 204, 255));
-        searchPanel.add(javax.swing.Box.createHorizontalStrut(150)); // Left quarter spacing
-        searchPanel.add(jLabel5); // Search
-        searchPanel.add(javax.swing.Box.createHorizontalStrut(10)); // Gap between label and field
-        
-        // Make search field larger and responsive
-        jTextField3.setPreferredSize(new java.awt.Dimension(250, 25));
-        jTextField3.setMinimumSize(new java.awt.Dimension(200, 25));
-        searchPanel.add(jTextField3);
-        
-        // Right side - filter labels and add button
-        javax.swing.JPanel rightPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
-        rightPanel.setBackground(new java.awt.Color(204, 204, 255));
-        rightPanel.add(jLabel2); // News
-        rightPanel.add(jLabel3); // Notices
-        rightPanel.add(jButton1); // ADD
-        
-        topPanel.add(searchPanel, java.awt.BorderLayout.WEST);
-        topPanel.add(rightPanel, java.awt.BorderLayout.EAST);
-        
-        mainPanel.add(topPanel, java.awt.BorderLayout.NORTH);
-        
-        // Table panel (this will now resize with window)
-        mainPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
-        
-        getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
-        
-        // Button panel
-        javax.swing.JPanel buttonPanel = new javax.swing.JPanel(new java.awt.FlowLayout());
-        buttonPanel.setBackground(new java.awt.Color(204, 204, 255));
-        buttonPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        buttonPanel.add(jButton2); // DELETE
-        buttonPanel.add(jButton3); // UPDATE
-        buttonPanel.add(jButton4); // REFRESH
-        buttonPanel.add(javax.swing.Box.createHorizontalStrut(20)); // Add space
-        buttonPanel.add(backButton); // Back
-        
-        getContentPane().add(buttonPanel, java.awt.BorderLayout.SOUTH);
-        
-        // Refresh the layout
-        revalidate();
-        repaint();
+        // Call the setup method for the rest of the layout
+        setupPanel2Layout();
     }
     
     private void setupPanel2Layout() {
         // Set up a simple BorderLayout for panel2 to arrange components
         panel2.setLayout(new java.awt.BorderLayout());
         
-        // Create header panel
+        // Create beautiful header panel with our new design
         javax.swing.JPanel headerPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
-        headerPanel.setBackground(new java.awt.Color(204, 204, 255));
-        headerPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        headerPanel.setBackground(new java.awt.Color(153, 102, 255));
+        headerPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        headerPanel.setPreferredSize(new java.awt.Dimension(1000, 80));
         
-        // Left side - title
-        javax.swing.JPanel titlePanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
-        titlePanel.setBackground(new java.awt.Color(204, 204, 255));
-        titlePanel.add(jLabel4); // "News and Notice"
+        // Center the main header title
+        jLabel1.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 32));
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("🏛️ Hamro Smart Gaun 🏛️");
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(15, 20, 15, 20));
         
-        // Right side - system title
-        javax.swing.JPanel systemTitlePanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
-        systemTitlePanel.setBackground(new java.awt.Color(204, 204, 255));
-        systemTitlePanel.add(jLabel1); // "Hamro Smart Gaun"
-        
-        headerPanel.add(titlePanel, java.awt.BorderLayout.WEST);
-        headerPanel.add(systemTitlePanel, java.awt.BorderLayout.EAST);
+        headerPanel.add(jLabel1, java.awt.BorderLayout.CENTER);
         
         // Create control panel
         javax.swing.JPanel controlPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
-        controlPanel.setBackground(new java.awt.Color(204, 204, 255));
+        controlPanel.setBackground(new java.awt.Color(153, 102, 255));
         controlPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10));
         
-        // Search section - positioned at left quarter with single search field
-        javax.swing.JPanel searchPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
-        searchPanel.setBackground(new java.awt.Color(204, 204, 255));
-        searchPanel.add(javax.swing.Box.createHorizontalStrut(150)); // Left quarter spacing
+        // Left side - News and Notice title
+        javax.swing.JPanel titlePanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        titlePanel.setBackground(new java.awt.Color(153, 102, 255));
+        jLabel4.setFont(new java.awt.Font("Arial", 1, 24));
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        titlePanel.add(jLabel4); // "News and Notice"
+        
+        // Search section - positioned at center
+        javax.swing.JPanel searchPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER));
+        searchPanel.setBackground(new java.awt.Color(153, 102, 255));
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setFont(new java.awt.Font("Arial", 1, 14));
         searchPanel.add(jLabel5); // Search
         searchPanel.add(javax.swing.Box.createHorizontalStrut(10)); // Gap between label and field
         
@@ -448,17 +402,20 @@ public class NewsAndNotice extends javax.swing.JFrame {
         
         // Right side - filter labels and add button
         javax.swing.JPanel rightControlPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
-        rightControlPanel.setBackground(new java.awt.Color(204, 204, 255));
+        rightControlPanel.setBackground(new java.awt.Color(153, 102, 255));
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         rightControlPanel.add(jLabel2); // News
         rightControlPanel.add(jLabel3); // Notices
         rightControlPanel.add(jButton1); // ADD
         
-        controlPanel.add(searchPanel, java.awt.BorderLayout.WEST);
+        controlPanel.add(titlePanel, java.awt.BorderLayout.WEST);
+        controlPanel.add(searchPanel, java.awt.BorderLayout.CENTER);
         controlPanel.add(rightControlPanel, java.awt.BorderLayout.EAST);
         
         // Create main content panel
         javax.swing.JPanel mainPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
-        mainPanel.setBackground(new java.awt.Color(204, 204, 255));
+        mainPanel.setBackground(new java.awt.Color(240, 240, 240));
         mainPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 10, 10, 10));
         
         // Add table (this will now resize with window)
@@ -479,7 +436,7 @@ public class NewsAndNotice extends javax.swing.JFrame {
         
         // Create center panel to hold controls and table
         javax.swing.JPanel centerPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
-        centerPanel.setBackground(new java.awt.Color(204, 204, 255));
+        centerPanel.setBackground(new java.awt.Color(240, 240, 240));
         centerPanel.add(controlPanel, java.awt.BorderLayout.NORTH);
         centerPanel.add(mainPanel, java.awt.BorderLayout.CENTER);
         
@@ -489,6 +446,43 @@ public class NewsAndNotice extends javax.swing.JFrame {
         // Refresh the layout
         panel2.revalidate();
         panel2.repaint();
+    }
+    
+    private void setupEmojiFont() {
+        // Multiple approaches to ensure emoji visibility in all instances
+        try {
+            // Try different fonts that support emojis
+            java.awt.Font[] emojiCompatibleFonts = {
+                new java.awt.Font("Segoe UI Emoji", java.awt.Font.BOLD, 32),
+                new java.awt.Font("Apple Color Emoji", java.awt.Font.BOLD, 32),
+                new java.awt.Font("Noto Color Emoji", java.awt.Font.BOLD, 32),
+                new java.awt.Font("Symbola", java.awt.Font.BOLD, 32),
+                new java.awt.Font(java.awt.Font.SANS_SERIF, java.awt.Font.BOLD, 32)
+            };
+            
+            boolean emojiSet = false;
+            for (java.awt.Font font : emojiCompatibleFonts) {
+                if (font.canDisplayUpTo("🏛️") == -1) {
+                    jLabel1.setFont(font);
+                    emojiSet = true;
+                    break;
+                }
+            }
+            
+            if (!emojiSet) {
+                // If no emoji font works, use a clear text alternative
+                jLabel1.setText("⌂ Hamro Smart Gaun ⌂");
+                jLabel1.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 32));
+            }
+            
+            // Force repaint to ensure changes are visible
+            jLabel1.repaint();
+            
+        } catch (Exception e) {
+            // Ultimate fallback
+            jLabel1.setText("HAMRO SMART GAUN");
+            jLabel1.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 28));
+        }
     }
 
     private Date showCalendarDialog(String currentDate, String title) {
@@ -683,7 +677,7 @@ public class NewsAndNotice extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        panel2.setBackground(new java.awt.Color(204, 204, 255));
+        panel2.setBackground(new java.awt.Color(153, 102, 255));
         panel2.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
 
         jButton1.setBackground(new java.awt.Color(0, 0, 255));
@@ -696,9 +690,27 @@ public class NewsAndNotice extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel1.setText("Hamro Smart Gaun");
+        jLabel1.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 32)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("🏛️ Hamro Smart Gaun 🏛️");
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setToolTipText("");
+        
+        // Ensure emoji visibility by setting a Unicode-compatible font
+        try {
+            java.awt.Font unicodeFont = new java.awt.Font("Segoe UI Emoji", java.awt.Font.BOLD, 32);
+            String testEmoji = "🏛️";
+            if (unicodeFont.canDisplayUpTo(testEmoji) == -1) {
+                jLabel1.setFont(unicodeFont);
+            } else {
+                // Fallback to system default font
+                jLabel1.setFont(new java.awt.Font(java.awt.Font.SANS_SERIF, java.awt.Font.BOLD, 32));
+            }
+        } catch (Exception e) {
+            // If emoji font fails, use text alternative
+            jLabel1.setText("⌂ Hamro Smart Gaun ⌂");
+            jLabel1.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 32));
+        }
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setText("News");

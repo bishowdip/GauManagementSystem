@@ -6,7 +6,7 @@ package gaumanagementsystem.model;
 
 /**
  *
- * @author bisho
+ * @author bishodip
  */
 public class BudgetAllocation {
     private String category;
