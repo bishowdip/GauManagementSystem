@@ -33,3 +33,6 @@ Thumbs.db
 *.tmp
 *.temp
 *~
+
+# Documentation files (if you want to ignore them)
+*.md

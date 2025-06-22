@@ -129,11 +129,8 @@ public class ForgotPasswordController {
             
             User user = userOpt.get();
             
-            // Hash the new password
-            String hashedPassword = PasswordUtil.hashPassword(newPassword);
-            
-            // Update password in database
-            boolean success = userDAO.updatePassword(user.getId(), hashedPassword);
+            // Update password in database (DAO will handle hashing)
+            boolean success = userDAO.updatePassword(user.getId(), newPassword);
             
             if (success) {
                 System.out.println("Password reset successfully for user: " + email);

@@ -1,6 +1,6 @@
 package gaumanagementsystem.view;
 
-import gaumanagementsystem.controller.ForgotPasswordControllerDemo;
+import gaumanagementsystem.controller.ForgotPasswordController;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -35,10 +35,10 @@ public class ForgotPasswordView extends JFrame {
     // State management
     private String currentEmail;
     private int currentStep = 1; // 1: Email, 2: Code, 3: Password
-    private ForgotPasswordControllerDemo controller;
+    private ForgotPasswordController controller;
     
     public ForgotPasswordView() {
-        this.controller = new ForgotPasswordControllerDemo(this);
+        this.controller = new ForgotPasswordController(this);
         initComponents();
         setLocationRelativeTo(null);
         showStep1(); // Start with email input
