@@ -2,12 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
+
+
 package gaumanagementsystem.view;
 
 import gaumanagementsystem.controller.CitizenController;
 import gaumanagementsystem.model.CitizenData;
-import gaumanagementsystem.database.MySqlConnection;
-import gaumanagementsystem.view.ProfileView;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.table.DefaultTableModel;
@@ -24,6 +24,17 @@ import java.awt.Image; // For image scaling
 import javax.swing.ImageIcon; // For image icons
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Color;
+import javax.swing.JButton;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerDateModel;
+import javax.swing.JPanel;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.awt.GridLayout;
+import java.awt.Dimension;
+import java.util.Calendar;
+import javax.swing.SpinnerModel;
 
 /**
  *
@@ -33,6 +44,7 @@ public class CitizenEdit extends javax.swing.JFrame {
 
     private String userRole = "user"; // default
     private CitizenController citizenController; // Declare CitizenController
+    private String currentCitizenNumber; // Add this to track the logged-in user's citizen number
 
     // Declare new UI components for Citizen Data
     private JTextField citizenIdField;
@@ -53,32 +65,52 @@ public class CitizenEdit extends javax.swing.JFrame {
      */
     public CitizenEdit() {
         initComponents();
-        setCrudButtonsVisible(false); // Hide by default
-        // Initialize CitizenController
+        
+        // Make window responsive
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH); // Start maximized
+        setMinimumSize(new Dimension(800, 600)); // Set minimum size
+        
+        // Override the generated layout to make it truly responsive
+        makeLayoutResponsive();
+        
         citizenController = new CitizenController();
-        loadCitizenTableData(); // Load data when the form initializes
-        addTableDoubleClickListener(); // Add double-click listener
-
-        // Initialize custom components after initComponents
-        initializeCustomComponents();
+        loadCitizenTableData();
+        addTableDoubleClickListener();
+        
+        // Standardize button styling to match NewsAndNotice
+        Color lightBlue = new Color(173, 216, 230);
+        add.setBackground(lightBlue); 
+        add.setForeground(Color.BLACK);
+        add.setText("ADD");
+        
+        remove.setBackground(lightBlue); 
+        remove.setForeground(Color.BLACK);
+        remove.setText("DELETE");
+        
+        update.setBackground(lightBlue); 
+        update.setForeground(Color.BLACK);
+        update.setText("UPDATE");
+        
+        CitizentoDashboard.setBackground(lightBlue); 
+        CitizentoDashboard.setForeground(Color.BLACK);
+        CitizentoDashboard.setText("Back");
+        
+        // Add search functionality
+        addSearchFunctionality();
     }
 
     // New constructor with role
-    public CitizenEdit(String userRole) {
+    public CitizenEdit(String userRole, String currentCitizenNumber) {
         this();
         this.userRole = userRole;
-        if ("admin".equalsIgnoreCase(userRole)) {
-            setCrudButtonsVisible(true);
+        this.currentCitizenNumber = currentCitizenNumber;
+        
+        // Load data based on role
+        if ("user".equalsIgnoreCase(userRole)) {
+            loadCitizenTableDataForUser();
         } else {
-            setCrudButtonsVisible(false);
+            loadCitizenTableData();
         }
-    }
-
-    private void setCrudButtonsVisible(boolean visible) {
-        add.setVisible(visible);
-        update.setVisible(visible);
-        remove.setVisible(visible);
-        save.setVisible(visible);
     }
 
     // Method to load data into the table
@@ -91,6 +123,24 @@ public class CitizenEdit extends javax.swing.JFrame {
                 citizen.getCitizenId(),
                 citizen.getName(),
                 "Ward", // Placeholder, assuming this will be filled or derived
+                citizen.getGender(),
+                citizen.getPhone(),
+                citizen.getAddress(),
+                citizen.getEmail()
+            });
+        }
+    }
+
+    // Load only the current user's data for user role
+    private void loadCitizenTableDataForUser() {
+        DefaultTableModel model = (DefaultTableModel) citizen_table.getModel();
+        model.setRowCount(0);
+        CitizenData citizen = citizenController.getCitizenById(currentCitizenNumber);
+        if (citizen != null) {
+            model.addRow(new Object[]{
+                citizen.getCitizenId(),
+                citizen.getName(),
+                "Ward",
                 citizen.getGender(),
                 citizen.getPhone(),
                 citizen.getAddress(),
@@ -119,131 +169,6 @@ public class CitizenEdit extends javax.swing.JFrame {
                 }
             }
         });
-    }
-
-    // Method to initialize and layout custom components (dummy implementation for now)
-    private void initializeCustomComponents() {
-        // Initialize components
-        citizenIdField = new JTextField();
-        nameField = new JTextField();
-        emailField = new JTextField();
-        dateOfBirthField = new JTextField();
-        addressField = new JTextField();
-        phoneField = new JTextField();
-        fatherNameField = new JTextField();
-        motherNameField = new JTextField();
-        maleRadioButton = new JRadioButton("Male");
-        femaleRadioButton = new JRadioButton("Female");
-        genderButtonGroup = new ButtonGroup();
-        genderButtonGroup.add(maleRadioButton);
-        genderButtonGroup.add(femaleRadioButton);
-        profileImageLabel = new JLabel();
-        profileImageLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        // Add components to panel (placeholder layout, adjust as needed in .form layout)
-        // You would typically use NetBeans GUI builder for this, or manually adjust layout managers
-        // For now, let's add them to jPanel2 (your main content panel) with absolute positions for demonstration
-        // You will need to manually adjust these in the design view or edit the generated code for a proper layout.
-        jPanel2.add(new JLabel("ID:"));
-        jPanel2.add(citizenIdField);
-        jPanel2.add(new JLabel("Name:"));
-        jPanel2.add(nameField);
-        jPanel2.add(new JLabel("Email:"));
-        jPanel2.add(emailField);
-        jPanel2.add(new JLabel("DOB:"));
-        jPanel2.add(dateOfBirthField);
-        jPanel2.add(new JLabel("Address:"));
-        jPanel2.add(addressField);
-        jPanel2.add(new JLabel("Phone:"));
-        jPanel2.add(phoneField);
-        jPanel2.add(new JLabel("Father:"));
-        jPanel2.add(fatherNameField);
-        jPanel2.add(new JLabel("Mother:"));
-        jPanel2.add(motherNameField);
-        jPanel2.add(new JLabel("Gender:"));
-        jPanel2.add(maleRadioButton);
-        jPanel2.add(femaleRadioButton);
-        jPanel2.add(new JLabel("Image:"));
-        jPanel2.add(profileImageLabel);
-
-        // Example absolute positioning (you will need to adjust these carefully)
-        // These coordinates are just placeholders and will likely overlap or be incorrect
-        // You should use the NetBeans GUI builder to arrange these visually.
-        int yPos = 10; // Starting Y position for input fields
-        int labelWidth = 100;
-        int fieldWidth = 200;
-        int rowHeight = 30;
-        int spacing = 5;
-        
-        // Adjust position based on existing components in jPanel2, or add a dedicated panel for these fields.
-        // For now, I'm placing them below the existing table and search area in jPanel2 for illustration.
-        // This will likely require manual adjustment in the GUI builder.
-
-        // Citizen ID
-        jPanel2.add(new JLabel("Citizen-number:")).setBounds(10, yPos, labelWidth, rowHeight);
-        citizenIdField.setBounds(10 + labelWidth + spacing, yPos, fieldWidth, rowHeight);
-        jPanel2.add(citizenIdField);
-        yPos += rowHeight + spacing;
-
-        // Name
-        jPanel2.add(new JLabel("Name:")).setBounds(10, yPos, labelWidth, rowHeight);
-        nameField.setBounds(10 + labelWidth + spacing, yPos, fieldWidth, rowHeight);
-        jPanel2.add(nameField);
-        yPos += rowHeight + spacing;
-        
-        // Email
-        jPanel2.add(new JLabel("Email:")).setBounds(10, yPos, labelWidth, rowHeight);
-        emailField.setBounds(10 + labelWidth + spacing, yPos, fieldWidth, rowHeight);
-        jPanel2.add(emailField);
-        yPos += rowHeight + spacing;
-
-        // Date of Birth
-        jPanel2.add(new JLabel("Date of Birth:")).setBounds(10, yPos, labelWidth, rowHeight);
-        dateOfBirthField.setBounds(10 + labelWidth + spacing, yPos, fieldWidth, rowHeight);
-        jPanel2.add(dateOfBirthField);
-        yPos += rowHeight + spacing;
-
-        // Address
-        jPanel2.add(new JLabel("Address:")).setBounds(10, yPos, labelWidth, rowHeight);
-        addressField.setBounds(10 + labelWidth + spacing, yPos, fieldWidth, rowHeight);
-        jPanel2.add(addressField);
-        yPos += rowHeight + spacing;
-
-        // Gender
-        jPanel2.add(new JLabel("Gender:")).setBounds(10, yPos, labelWidth, rowHeight);
-        maleRadioButton.setBounds(10 + labelWidth + spacing, yPos, 70, rowHeight);
-        femaleRadioButton.setBounds(10 + labelWidth + spacing + 70, yPos, 80, rowHeight);
-        jPanel2.add(maleRadioButton);
-        jPanel2.add(femaleRadioButton);
-        yPos += rowHeight + spacing;
-        
-        // Phone
-        jPanel2.add(new JLabel("Phone:")).setBounds(10, yPos, labelWidth, rowHeight);
-        phoneField.setBounds(10 + labelWidth + spacing, yPos, fieldWidth, rowHeight);
-        jPanel2.add(phoneField);
-        yPos += rowHeight + spacing;
-
-        // Father's Name
-        jPanel2.add(new JLabel("Father's Name:")).setBounds(10, yPos, labelWidth, rowHeight);
-        fatherNameField.setBounds(10 + labelWidth + spacing, yPos, fieldWidth, rowHeight);
-        jPanel2.add(fatherNameField);
-        yPos += rowHeight + spacing;
-
-        // Mother's Name
-        jPanel2.add(new JLabel("Mother's Name:")).setBounds(10, yPos, labelWidth, rowHeight);
-        motherNameField.setBounds(10 + labelWidth + spacing, yPos, fieldWidth, rowHeight);
-        jPanel2.add(motherNameField);
-        yPos += rowHeight + spacing;
-
-        // Profile Image Label (adjust position and size as needed)
-        jPanel2.add(new JLabel("Profile Image:")).setBounds(10, yPos, labelWidth, rowHeight);
-        profileImageLabel.setBounds(10 + labelWidth + spacing, yPos, 90, 90); // Example size
-        jPanel2.add(profileImageLabel);
-        yPos += 90 + spacing;
-
-        // Revalidate and repaint the panel to ensure new components are displayed
-        jPanel2.revalidate();
-        jPanel2.repaint();
     }
 
     // Method to load citizen details into the fields for editing
@@ -301,6 +226,165 @@ public class CitizenEdit extends javax.swing.JFrame {
         profileImageLabel.setIcon(null);
     }
     
+    // Method to open date picker dialog
+    private void openDatePickerForField(JTextField dateField) {
+        Date selectedDate = showCalendarDialog(dateField.getText(), "Select Date of Birth");
+        if (selectedDate != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            dateField.setText(sdf.format(selectedDate));
+        }
+    }
+    
+    private Date showCalendarDialog(String currentDate, String title) {
+        // Parse current date
+        Date initialDate = new Date();
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            if (currentDate != null && !currentDate.trim().isEmpty()) {
+                initialDate = sdf.parse(currentDate);
+            }
+        } catch (Exception e) {
+            // Use current date if parsing fails
+            initialDate = new Date();
+        }
+        
+        // Create calendar dialog
+        javax.swing.JDialog calendarDialog = new javax.swing.JDialog(this, title, true);
+        calendarDialog.setDefaultCloseOperation(javax.swing.JDialog.DISPOSE_ON_CLOSE);
+        calendarDialog.setLayout(new java.awt.BorderLayout());
+        
+        // Create calendar panel
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(initialDate);
+        
+        // Year spinner
+        SpinnerModel yearModel = new javax.swing.SpinnerNumberModel(cal.get(Calendar.YEAR), 1900, 2100, 1);
+        javax.swing.JSpinner yearSpinner = new javax.swing.JSpinner(yearModel);
+        
+        // Month combo box
+        String[] months = {"January", "February", "March", "April", "May", "June",
+                          "July", "August", "September", "October", "November", "December"};
+        javax.swing.JComboBox<String> monthCombo = new javax.swing.JComboBox<>(months);
+        monthCombo.setSelectedIndex(cal.get(Calendar.MONTH));
+        
+        // Day spinner
+        SpinnerModel dayModel = new javax.swing.SpinnerNumberModel(cal.get(Calendar.DAY_OF_MONTH), 1, 31, 1);
+        javax.swing.JSpinner daySpinner = new javax.swing.JSpinner(dayModel);
+        
+        // Update day spinner when month/year changes
+        Runnable updateDaySpinner = () -> {
+            int year = (Integer) yearSpinner.getValue();
+            int month = monthCombo.getSelectedIndex();
+            Calendar tempCal = Calendar.getInstance();
+            tempCal.set(year, month, 1);
+            int maxDay = tempCal.getActualMaximum(Calendar.DAY_OF_MONTH);
+            int currentDay = (Integer) daySpinner.getValue();
+            if (currentDay > maxDay) {
+                daySpinner.setValue(maxDay);
+            }
+            ((javax.swing.SpinnerNumberModel) daySpinner.getModel()).setMaximum(maxDay);
+        };
+        
+        yearSpinner.addChangeListener(e -> updateDaySpinner.run());
+        monthCombo.addActionListener(e -> updateDaySpinner.run());
+        
+        // Create top panel for date selection
+        javax.swing.JPanel datePanel = new javax.swing.JPanel(new java.awt.GridBagLayout());
+        datePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select Date"));
+        java.awt.GridBagConstraints gbc = new java.awt.GridBagConstraints();
+        gbc.insets = new java.awt.Insets(5, 5, 5, 5);
+        
+        gbc.gridx = 0; gbc.gridy = 0;
+        datePanel.add(new javax.swing.JLabel("Year:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(yearSpinner, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 1;
+        datePanel.add(new javax.swing.JLabel("Month:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(monthCombo, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 2;
+        datePanel.add(new javax.swing.JLabel("Day:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(daySpinner, gbc);
+        
+        // Create preview label
+        javax.swing.JLabel previewLabel = new javax.swing.JLabel();
+        previewLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        previewLabel.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected Date"));
+        
+        // Update preview
+        Runnable updatePreview = () -> {
+            try {
+                int year = (Integer) yearSpinner.getValue();
+                int month = monthCombo.getSelectedIndex();
+                int day = (Integer) daySpinner.getValue();
+                Calendar previewCal = Calendar.getInstance();
+                previewCal.set(year, month, day);
+                SimpleDateFormat displayFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
+                previewLabel.setText(displayFormat.format(previewCal.getTime()));
+            } catch (Exception e) {
+                previewLabel.setText("Invalid Date");
+            }
+        };
+        
+        yearSpinner.addChangeListener(e -> updatePreview.run());
+        monthCombo.addActionListener(e -> updatePreview.run());
+        daySpinner.addChangeListener(e -> updatePreview.run());
+        updatePreview.run(); // Initial update
+        
+        // Create button panel
+        javax.swing.JPanel buttonPanel = new javax.swing.JPanel(new java.awt.FlowLayout());
+        javax.swing.JButton okButton = new javax.swing.JButton("OK");
+        javax.swing.JButton cancelButton = new javax.swing.JButton("Cancel");
+        javax.swing.JButton todayButton = new javax.swing.JButton("Today");
+        
+        final Date[] selectedDate = {null};
+        
+        okButton.addActionListener(e -> {
+            try {
+                int year = (Integer) yearSpinner.getValue();
+                int month = monthCombo.getSelectedIndex();
+                int day = (Integer) daySpinner.getValue();
+                Calendar resultCal = Calendar.getInstance();
+                resultCal.set(year, month, day);
+                selectedDate[0] = resultCal.getTime();
+                calendarDialog.dispose();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(calendarDialog, "Please select a valid date!");
+            }
+        });
+        
+        cancelButton.addActionListener(e -> {
+            selectedDate[0] = null;
+            calendarDialog.dispose();
+        });
+        
+        todayButton.addActionListener(e -> {
+            Calendar today = Calendar.getInstance();
+            yearSpinner.setValue(today.get(Calendar.YEAR));
+            monthCombo.setSelectedIndex(today.get(Calendar.MONTH));
+            daySpinner.setValue(today.get(Calendar.DAY_OF_MONTH));
+        });
+        
+        buttonPanel.add(todayButton);
+        buttonPanel.add(okButton);
+        buttonPanel.add(cancelButton);
+        
+        // Assemble dialog
+        calendarDialog.add(datePanel, java.awt.BorderLayout.NORTH);
+        calendarDialog.add(previewLabel, java.awt.BorderLayout.CENTER);
+        calendarDialog.add(buttonPanel, java.awt.BorderLayout.SOUTH);
+        
+        // Set dialog properties
+        calendarDialog.setSize(300, 250);
+        calendarDialog.setLocationRelativeTo(this);
+        calendarDialog.setVisible(true);
+        
+        return selectedDate[0];
+    }
+    
     // Method to get CitizenData from fields (for Add/Update)
     private CitizenData getCitizenDataFromFields() {
         String citizenId = citizenIdField.getText();
@@ -317,7 +401,7 @@ public class CitizenEdit extends javax.swing.JFrame {
         String imagePath = (profileImageLabel.getIcon() != null && profileImageLabel.getIcon() instanceof ImageIcon)
                            ? ((ImageIcon) profileImageLabel.getIcon()).getDescription() : null; // This might need refinement for actual file path
 
-        return new CitizenData(citizenId, name, email, dateOfBirth, address, gender, phone, fatherName, motherName, imagePath);
+        return new CitizenData(citizenId, name, email, dateOfBirth, address, gender, phone, fatherName, motherName, imagePath, 1);
     }
 
     // Show right-click context menu
@@ -339,6 +423,124 @@ public class CitizenEdit extends javax.swing.JFrame {
         popupMenu.add(viewProfileItem);
         popupMenu.show(citizen_table, x, y);
     }
+    
+    private void addSearchFunctionality() {
+        // Add real-time search functionality
+        search.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { performSearch(); }
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { performSearch(); }
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { performSearch(); }
+        });
+    }
+    
+    private void performSearch() {
+        String searchText = search.getText().toLowerCase().trim();
+        
+        if (searchText.isEmpty()) {
+            // If search is empty, reload all data
+            if ("user".equalsIgnoreCase(userRole)) {
+                loadCitizenTableDataForUser();
+            } else {
+                loadCitizenTableData();
+            }
+            return;
+        }
+        
+        // Filter existing data
+        DefaultTableModel model = (DefaultTableModel) citizen_table.getModel();
+        DefaultTableModel filteredModel = new DefaultTableModel(
+            new String[]{"Citizen-number", "Name", "Ward", "Gender", "Phone", "Address", "Email"}, 0
+        );
+        
+        // Get all citizens and filter
+        List<CitizenData> allCitizens;
+        if ("user".equalsIgnoreCase(userRole)) {
+            allCitizens = new java.util.ArrayList<>();
+            CitizenData citizen = citizenController.getCitizenById(currentCitizenNumber);
+            if (citizen != null) {
+                allCitizens.add(citizen);
+            }
+        } else {
+            allCitizens = citizenController.getAllCitizens();
+        }
+        
+        for (CitizenData citizen : allCitizens) {
+            boolean matches = false;
+            
+            // Check if search text matches any field
+            if (citizen.getCitizenId().toLowerCase().contains(searchText) ||
+                citizen.getName().toLowerCase().contains(searchText) ||
+                citizen.getGender().toLowerCase().contains(searchText) ||
+                citizen.getPhone().toLowerCase().contains(searchText) ||
+                citizen.getAddress().toLowerCase().contains(searchText) ||
+                citizen.getEmail().toLowerCase().contains(searchText)) {
+                matches = true;
+            }
+            
+            if (matches) {
+                filteredModel.addRow(new Object[]{
+                    citizen.getCitizenId(),
+                    citizen.getName(),
+                    "Ward", // Placeholder
+                    citizen.getGender(),
+                    citizen.getPhone(),
+                    citizen.getAddress(),
+                    citizen.getEmail()
+                });
+            }
+        }
+        
+        citizen_table.setModel(filteredModel);
+    }
+    
+    private void makeLayoutResponsive() {
+        // Remove the existing layout and create a new responsive one
+        getContentPane().removeAll();
+        setLayout(new java.awt.BorderLayout());
+        
+        // Header panel
+        add(jPanel1, java.awt.BorderLayout.NORTH);
+        
+        // Main content panel with search and table
+        javax.swing.JPanel mainPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
+        mainPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        // Search panel - positioned at left quarter with search field to the right
+        javax.swing.JPanel searchPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        searchPanel.add(javax.swing.Box.createHorizontalStrut(200)); // Left quarter spacing
+        searchPanel.add(jLabel2);
+        searchPanel.add(javax.swing.Box.createHorizontalStrut(10)); // Small gap between label and field
+        
+        // Make search field larger and responsive
+        search.setPreferredSize(new java.awt.Dimension(300, 25));
+        search.setMinimumSize(new java.awt.Dimension(250, 25));
+        searchPanel.add(search);
+        
+        mainPanel.add(searchPanel, java.awt.BorderLayout.NORTH);
+        
+        // Table panel (this will now resize with window)
+        mainPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+        
+        add(mainPanel, java.awt.BorderLayout.CENTER);
+        
+        // Button panel
+        javax.swing.JPanel buttonPanel = new javax.swing.JPanel(new java.awt.FlowLayout());
+        buttonPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        buttonPanel.add(add);
+        buttonPanel.add(remove);
+        buttonPanel.add(update);
+        buttonPanel.add(javax.swing.Box.createHorizontalStrut(20)); // Add space
+        buttonPanel.add(CitizentoDashboard);
+        
+        add(buttonPanel, java.awt.BorderLayout.SOUTH);
+        
+        // Refresh the layout
+        revalidate();
+        repaint();
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -350,7 +552,6 @@ public class CitizenEdit extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel3 = new javax.swing.JLabel();
-        menu = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -362,47 +563,54 @@ public class CitizenEdit extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         citizen_table = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
-        save = new javax.swing.JButton();
 
         jLabel3.setText("jLabel3");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        getContentPane().setLayout(new java.awt.BorderLayout());
 
-        menu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuActionPerformed(evt);
+        jPanel1.setBackground(new java.awt.Color(153, 102, 255));
+        jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
+        jLabel1.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 32)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("🏛️ Hamro Smart Gaun 🏛️");
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(15, 20, 15, 20));
+        
+        // Ensure emoji visibility by setting a Unicode-compatible font
+        try {
+            java.awt.Font unicodeFont = new java.awt.Font("Segoe UI Emoji", java.awt.Font.BOLD, 32);
+            String testEmoji = "🏛️";
+            if (unicodeFont.canDisplayUpTo(testEmoji) == -1) {
+                jLabel1.setFont(unicodeFont);
+            } else {
+                // Fallback to system default font
+                jLabel1.setFont(new java.awt.Font(java.awt.Font.SANS_SERIF, java.awt.Font.BOLD, 32));
             }
-        });
-        getContentPane().add(menu, new org.netbeans.lib.awtextra.AbsoluteConstraints(810, 10, 54, 55));
-
-        jPanel1.setBackground(new java.awt.Color(153, 153, 255));
-
-        jLabel1.setFont(new java.awt.Font("Arial", 1, 36)); // NOI18N
-        jLabel1.setText("Hamro Smart Gaun");
+        } catch (Exception e) {
+            // If emoji font fails, use text alternative
+            jLabel1.setText("⌂ Hamro Smart Gaun ⌂");
+            jLabel1.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 32));
+        }
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(285, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(267, 267, 267))
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(23, Short.MAX_VALUE))
+            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 880, 80));
+        getContentPane().add(jPanel1, java.awt.BorderLayout.NORTH);
 
         jPanel2.setBackground(new java.awt.Color(204, 204, 255));
 
         CitizentoDashboard.setBackground(new java.awt.Color(102, 102, 255));
+        CitizentoDashboard.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         CitizentoDashboard.setForeground(new java.awt.Color(255, 255, 255));
         CitizentoDashboard.setText("Back");
         CitizentoDashboard.addActionListener(new java.awt.event.ActionListener() {
@@ -412,6 +620,7 @@ public class CitizenEdit extends javax.swing.JFrame {
         });
 
         update.setBackground(new java.awt.Color(102, 102, 255));
+        update.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         update.setForeground(new java.awt.Color(255, 255, 255));
         update.setText("Update");
         update.addActionListener(new java.awt.event.ActionListener() {
@@ -421,8 +630,9 @@ public class CitizenEdit extends javax.swing.JFrame {
         });
 
         remove.setBackground(new java.awt.Color(102, 102, 255));
+        remove.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         remove.setForeground(new java.awt.Color(255, 255, 255));
-        remove.setText("Remove");
+        remove.setText("Delete");
         remove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removeActionPerformed(evt);
@@ -430,6 +640,7 @@ public class CitizenEdit extends javax.swing.JFrame {
         });
 
         add.setBackground(new java.awt.Color(102, 102, 255));
+        add.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         add.setForeground(new java.awt.Color(255, 255, 255));
         add.setText("Add");
         add.addActionListener(new java.awt.event.ActionListener() {
@@ -476,112 +687,82 @@ public class CitizenEdit extends javax.swing.JFrame {
             }
         });
         citizen_table.setShowGrid(true);
+        
+        // Make table responsive
+        citizen_table.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        citizen_table.setFillsViewportHeight(true);
+        
         jScrollPane1.setViewportView(citizen_table);
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setText(" Search Citizen");
-
-        save.setBackground(new java.awt.Color(102, 102, 255));
-        save.setForeground(new java.awt.Color(255, 255, 255));
-        save.setText("Save");
-        save.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(17, 17, 17)
-                .addComponent(CitizentoDashboard)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(add)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(remove)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(update)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(save)
-                .addGap(10, 10, 10))
-            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 880, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 880, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(add, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(31, 31, 31)
+                        .addComponent(remove, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(32, 32, 32)
+                        .addComponent(update, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(115, 115, 115)
+                        .addComponent(CitizentoDashboard)
+                        .addGap(29, 29, 29)))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(CitizentoDashboard)
-                    .addComponent(update)
-                    .addComponent(remove)
-                    .addComponent(add)
-                    .addComponent(save))
-                .addContainerGap())
+                    .addComponent(CitizentoDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(update, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(remove, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(add, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(46, 46, 46))
         );
 
-        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 80, 880, 460));
+        getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateActionPerformed
-        // TODO add your handling code here:
-        CitizenEdit update = new CitizenEdit();
-        update.setVisible(true);
+        int selectedRow = citizen_table.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a citizen from the table to update.", "No Citizen Selected", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        String citizenId = (String) citizen_table.getValueAt(selectedRow, 0); // Citizen-number is the primary key
+        // Open EditProfileView in edit mode with selected citizen's number
+        EditProfileView editProfileView = new EditProfileView(userRole, citizenId, true);
+        editProfileView.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_updateActionPerformed
 
     private void CitizentoDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CitizentoDashboardActionPerformed
         // TODO add your handling code here:
-        DashboardView goingtodash = new DashboardView();
+        DashboardView goingtodash = new DashboardView(userRole, currentCitizenNumber);
         goingtodash.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_CitizentoDashboardActionPerformed
-
-    private void menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_menuActionPerformed
-
-    private void saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveActionPerformed
-        // Get data from input fields
-        CitizenData citizenToSave = getCitizenDataFromFields();
-
-        // Determine if it's a create or update operation
-        boolean success = false;
-        if (citizenToSave.getCitizenId() == null || citizenToSave.getCitizenId().trim().isEmpty()) {
-            // Citizen ID is empty, so it's a new citizen (CREATE operation)
-            JOptionPane.showMessageDialog(this, "Citizen ID cannot be empty for saving.", "Validation Error", JOptionPane.WARNING_MESSAGE);
-            return;
-        } else {
-            // Citizen ID is present, check if it exists in the database
-            if (citizenController.citizenExists(citizenToSave.getCitizenId())) {
-                // Citizen exists, so it's an UPDATE operation
-                success = citizenController.updateCitizen(citizenToSave);
-            } else {
-                // Citizen does not exist, so it's a CREATE operation
-                success = citizenController.createCitizen(citizenToSave);
-            }
-        }
-
-        if (success) {
-            JOptionPane.showMessageDialog(this, "Citizen saved successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-            loadCitizenTableData(); // Refresh the table after saving
-            clearInputFields(); // Clear fields after successful save
-        } else {
-            JOptionPane.showMessageDialog(this, "Failed to save citizen. Please check your inputs.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }//GEN-LAST:event_saveActionPerformed
 
     private void removeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeActionPerformed
         int selectedRow = citizen_table.getSelectedRow();
@@ -606,9 +787,10 @@ public class CitizenEdit extends javax.swing.JFrame {
     }//GEN-LAST:event_removeActionPerformed
 
     private void addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addActionPerformed
-        // Clear all input fields to prepare for adding a new citizen
-        clearInputFields();
-        JOptionPane.showMessageDialog(this, "Form cleared. Enter details for a new citizen and click Save.", "Ready to Add", JOptionPane.INFORMATION_MESSAGE);
+        // Open EditProfileView in add mode (empty fields)
+        EditProfileView editProfileView = new EditProfileView(userRole, null, false);
+        editProfileView.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_addActionPerformed
 
     /**
@@ -641,7 +823,7 @@ public class CitizenEdit extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CitizenEdit().setVisible(true);
+                new CitizenEdit("admin", "admin").setVisible(true);
             }
         });
     }
@@ -656,9 +838,7 @@ public class CitizenEdit extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JButton menu;
     private javax.swing.JButton remove;
-    private javax.swing.JButton save;
     private javax.swing.JTextField search;
     private javax.swing.JButton update;
     // End of variables declaration//GEN-END:variables

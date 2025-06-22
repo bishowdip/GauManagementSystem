@@ -120,6 +120,17 @@ public class ProfileController {
         // Use the uploaded image path if available, otherwise use the selected path
         String imagePath = (uploadedImagePath != null) ? uploadedImagePath : selectedImagePath;
 
+        // Parse ward from text field, default to 1 if invalid
+        int wardNumber = 1;
+        try {
+            String wardText = view.getWardField().getText().trim();
+            if (!wardText.isEmpty()) {
+                wardNumber = Integer.parseInt(wardText);
+            }
+        } catch (NumberFormatException e) {
+            wardNumber = 1; // Default to ward 1 if parsing fails
+        }
+
         CitizenData citizen = new CitizenData(
                 view.getCitizenIdField().getText(),
                 view.getNameField().getText(),
@@ -130,7 +141,8 @@ public class ProfileController {
                 view.getPhoneField().getText(),
                 view.getFatherNameField().getText(),
                 view.getMotherNameField().getText(),
-                imagePath
+                imagePath,
+                wardNumber
         );
 
         boolean success = dao.updateCitizen(citizen);

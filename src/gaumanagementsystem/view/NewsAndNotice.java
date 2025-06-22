@@ -16,16 +16,22 @@ import java.util.Date;
 import java.awt.BorderLayout;
 import javax.swing.JComboBox;
 import java.awt.Color;
+import javax.swing.JSpinner;
+
+import java.awt.GridLayout;
+import java.util.Calendar;
+import javax.swing.SpinnerModel;
 
 /**
  *
- * @author ASUS
+ * @author bishowdip
  */
 public class NewsAndNotice extends javax.swing.JFrame {
 
     private final NewsAndNoticeController controller = new NewsAndNoticeController();
     private String currentTypeFilter = "";
     private JButton backButton;
+    private String userRole = "admin"; // Store user role for navigation
 
     /**
      * Creates new form NewsAndNotice
@@ -35,9 +41,34 @@ public class NewsAndNotice extends javax.swing.JFrame {
     }
 
     public NewsAndNotice(String userRole) {
+        this.userRole = userRole; // Store the user role
         initComponents();
-        setSize(900, 600); // Set preferred window size
+        setTitle("News and Notice - Hamro Smart Gaun");
+        
+        // Make window fully responsive
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH); // Start maximized
+        setMinimumSize(new java.awt.Dimension(800, 600)); // Set minimum size
         setLocationRelativeTo(null); // Center the window
+        
+        // Make table responsive
+        jTable1.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        jTable1.setFillsViewportHeight(true);
+        
+        // Create and style the back button BEFORE setting up layout
+        backButton = new JButton("Back");
+        backButton.setBackground(new Color(173, 216, 230));
+        backButton.setForeground(Color.BLACK);
+        backButton.addActionListener(e -> {
+            new DashboardView(userRole, null).setVisible(true);
+            this.dispose();
+        });
+        
+        // Set up a simple layout for panel2 since the original was removed
+        setupPanel2Layout();
+        
+        // Ensure emoji is visible in header
+        setupEmojiFont();
+        
         loadTableData();
 
         // Hide add, delete, update buttons for non-admin users
@@ -64,84 +95,7 @@ public class NewsAndNotice extends javax.swing.JFrame {
             }
         });
 
-        // Create and style the back button
-        backButton = new JButton("Back");
-        backButton.setBackground(new Color(173, 216, 230));
-        backButton.setForeground(Color.BLACK);
-        backButton.addActionListener(e -> {
-            new DashboardView().setVisible(true);
-            this.dispose();
-        });
-        // Set panel2's layout to GroupLayout before using it
-        panel2.setLayout(new javax.swing.GroupLayout(panel2));
-        javax.swing.GroupLayout panel2Layout = (javax.swing.GroupLayout) panel2.getLayout();
-        panel2Layout.setHorizontalGroup(
-            panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(panel2Layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(panel2Layout.createSequentialGroup()
-                            .addGap(192, 192, 192)
-                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(33, 33, 33)
-                            .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(26, 26, 26)
-                            .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(26, 26, 26)
-                            .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
-                            .addComponent(jLabel4)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(264, 264, 264))))
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 784, Short.MAX_VALUE)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
-                    .addGap(30, 30, 30)
-                    .addComponent(jLabel5)
-                    .addGap(18, 18, 18)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(39, 39, 39)
-                    .addComponent(jLabel6)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel2)
-                    .addGap(18, 18, 18)
-                    .addComponent(jLabel3)
-                    .addGap(18, 18, 18)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(18, 18, 18))
-        );
-        panel2Layout.setVerticalGroup(
-            panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(panel2Layout.createSequentialGroup()
-                    .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(panel2Layout.createSequentialGroup()
-                            .addGap(24, 24, 24)
-                            .addComponent(jLabel4)))
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton1)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3))
-                        .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel6)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 313, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(24, 24, 24)
-                    .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton4)
-                        .addComponent(jButton3)
-                        .addComponent(jButton2)
-                        .addComponent(backButton))
-                    .addContainerGap(67, Short.MAX_VALUE))
-        );
+        // Back button already created earlier
 
         // Set button colors for visibility
         Color lightBlue = new Color(173, 216, 230);
@@ -152,26 +106,59 @@ public class NewsAndNotice extends javax.swing.JFrame {
 
         // ADD button
         jButton1.addActionListener(e -> {
-            JTextField dateField = new JTextField(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-            dateField.setEditable(false);
+            // Create date field with calendar picker
+            javax.swing.JTextField dateField = new javax.swing.JTextField();
+            javax.swing.JButton calendarButton1 = new javax.swing.JButton("📅");
+            javax.swing.JPanel datePanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            dateField.setText(sdf.format(new Date()));
+            dateField.setPreferredSize(new java.awt.Dimension(120, 25));
+            calendarButton1.setPreferredSize(new java.awt.Dimension(30, 25));
+            datePanel.add(dateField);
+            datePanel.add(calendarButton1);
+            
+            // Create expiry date field with calendar picker
+            javax.swing.JTextField expiryDateField = new javax.swing.JTextField();
+            javax.swing.JButton calendarButton2 = new javax.swing.JButton("📅");
+            javax.swing.JPanel expiryDatePanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+            expiryDateField.setText(sdf.format(new Date()));
+            expiryDateField.setPreferredSize(new java.awt.Dimension(120, 25));
+            calendarButton2.setPreferredSize(new java.awt.Dimension(30, 25));
+            expiryDatePanel.add(expiryDateField);
+            expiryDatePanel.add(calendarButton2);
+            
+            // Calendar button actions
+            calendarButton1.addActionListener(evt -> {
+                Date selectedDate = showCalendarDialog(dateField.getText(), "Select Date");
+                if (selectedDate != null) {
+                    dateField.setText(sdf.format(selectedDate));
+                }
+            });
+            
+            calendarButton2.addActionListener(evt -> {
+                Date selectedDate = showCalendarDialog(expiryDateField.getText(), "Select Expiry Date");
+                if (selectedDate != null) {
+                    expiryDateField.setText(sdf.format(selectedDate));
+                }
+            });
+            
             JTextField audienceField = new JTextField();
             JTextField subjectField = new JTextField();
             JTextField descriptionField = new JTextField();
-            JTextField expiryDateField = new JTextField();
             String[] types = {"News", "Notice"};
             JComboBox<String> typeCombo = new JComboBox<>(types);
 
-            JPanel panel = new JPanel(new java.awt.GridLayout(0, 1));
-            panel.add(new JLabel("Date (auto):"));
-            panel.add(dateField);
+            JPanel panel = new JPanel(new GridLayout(0, 1));
+            panel.add(new JLabel("Date:"));
+            panel.add(datePanel);
             panel.add(new JLabel("Audience:"));
             panel.add(audienceField);
             panel.add(new JLabel("Subject:"));
             panel.add(subjectField);
             panel.add(new JLabel("Description:"));
             panel.add(descriptionField);
-            panel.add(new JLabel("Expiry Date (YYYY-MM-DD):"));
-            panel.add(expiryDateField);
+            panel.add(new JLabel("Expiry Date:"));
+            panel.add(expiryDatePanel);
             panel.add(new JLabel("Type:"));
             panel.add(typeCombo);
 
@@ -222,37 +209,68 @@ public class NewsAndNotice extends javax.swing.JFrame {
                 String expiryDate = (String) model.getValueAt(selectedRow, 4);
                 String type = (String) model.getValueAt(selectedRow, 5);
 
-                JTextField dateField = new JTextField(date);
-                dateField.setEditable(false);
                 JTextField audienceField = new JTextField(audience);
                 JTextField subjectField = new JTextField(subject);
                 JTextField descriptionField = new JTextField(description);
-                JTextField expiryDateField = new JTextField(expiryDate);
                 String[] types = {"News", "Notice"};
                 JComboBox<String> typeCombo = new JComboBox<>(types);
                 typeCombo.setSelectedItem(type);
 
-                JPanel panel = new JPanel(new java.awt.GridLayout(0, 1));
-                panel.add(new JLabel("Date (auto):"));
-                panel.add(dateField);
+                // Create date field with calendar picker for update
+                javax.swing.JTextField dateFieldUpdate = new javax.swing.JTextField(date);
+                javax.swing.JButton calendarButton1Update = new javax.swing.JButton("📅");
+                javax.swing.JPanel datePanelUpdate = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+                dateFieldUpdate.setPreferredSize(new java.awt.Dimension(120, 25));
+                calendarButton1Update.setPreferredSize(new java.awt.Dimension(30, 25));
+                datePanelUpdate.add(dateFieldUpdate);
+                datePanelUpdate.add(calendarButton1Update);
+                
+                // Create expiry date field with calendar picker for update
+                javax.swing.JTextField expiryDateFieldUpdate = new javax.swing.JTextField(expiryDate);
+                javax.swing.JButton calendarButton2Update = new javax.swing.JButton("📅");
+                javax.swing.JPanel expiryDatePanelUpdate = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+                expiryDateFieldUpdate.setPreferredSize(new java.awt.Dimension(120, 25));
+                calendarButton2Update.setPreferredSize(new java.awt.Dimension(30, 25));
+                expiryDatePanelUpdate.add(expiryDateFieldUpdate);
+                expiryDatePanelUpdate.add(calendarButton2Update);
+                
+                // Calendar button actions for update
+                SimpleDateFormat sdfUpdate = new SimpleDateFormat("yyyy-MM-dd");
+                calendarButton1Update.addActionListener(evt -> {
+                    Date selectedDate = showCalendarDialog(dateFieldUpdate.getText(), "Select Date");
+                    if (selectedDate != null) {
+                        dateFieldUpdate.setText(sdfUpdate.format(selectedDate));
+                    }
+                });
+                
+                calendarButton2Update.addActionListener(evt -> {
+                    Date selectedDate = showCalendarDialog(expiryDateFieldUpdate.getText(), "Select Expiry Date");
+                    if (selectedDate != null) {
+                        expiryDateFieldUpdate.setText(sdfUpdate.format(selectedDate));
+                    }
+                });
+
+                JPanel panel = new JPanel(new GridLayout(0, 1));
+                panel.add(new JLabel("Date:"));
+                panel.add(datePanelUpdate);
                 panel.add(new JLabel("Audience:"));
                 panel.add(audienceField);
                 panel.add(new JLabel("Subject:"));
                 panel.add(subjectField);
                 panel.add(new JLabel("Description:"));
                 panel.add(descriptionField);
-                panel.add(new JLabel("Expiry Date (YYYY-MM-DD):"));
-                panel.add(expiryDateField);
+                panel.add(new JLabel("Expiry Date:"));
+                panel.add(expiryDatePanelUpdate);
                 panel.add(new JLabel("Type:"));
                 panel.add(typeCombo);
 
                 int result = JOptionPane.showConfirmDialog(this, panel, "Update News/Notice", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (result == JOptionPane.OK_OPTION) {
-                    String newDate = dateField.getText();
+                    String newDate = dateFieldUpdate.getText();
                     String newAudience = audienceField.getText();
                     String newSubject = subjectField.getText();
                     String newDescription = descriptionField.getText();
-                    String newExpiryDate = expiryDateField.getText();
+                    String newExpiryDate = expiryDateFieldUpdate.getText();
                     String newType = (String) typeCombo.getSelectedItem();
                     if (newDate.isEmpty() || newAudience.isEmpty() || newSubject.isEmpty() || newDescription.isEmpty() || newExpiryDate.isEmpty() || newType.isEmpty()) {
                         JOptionPane.showMessageDialog(this, "All fields are required!");
@@ -278,18 +296,12 @@ public class NewsAndNotice extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Table refreshed successfully!");
         });
 
-        // SEARCH and AUDIENCE filter (fix logic)
+        // SEARCH filter (single search field)
         ActionListener filterListener = (ActionEvent e) -> {
             filterTable(getSearchText(), currentTypeFilter);
         };
         jTextField3.addActionListener(filterListener);
-        jTextField1.addActionListener(filterListener);
         jTextField3.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-            public void insertUpdate(javax.swing.event.DocumentEvent e) { filterTable(getSearchText(), currentTypeFilter); }
-            public void removeUpdate(javax.swing.event.DocumentEvent e) { filterTable(getSearchText(), currentTypeFilter); }
-            public void changedUpdate(javax.swing.event.DocumentEvent e) { filterTable(getSearchText(), currentTypeFilter); }
-        });
-        jTextField1.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             public void insertUpdate(javax.swing.event.DocumentEvent e) { filterTable(getSearchText(), currentTypeFilter); }
             public void removeUpdate(javax.swing.event.DocumentEvent e) { filterTable(getSearchText(), currentTypeFilter); }
             public void changedUpdate(javax.swing.event.DocumentEvent e) { filterTable(getSearchText(), currentTypeFilter); }
@@ -299,9 +311,8 @@ public class NewsAndNotice extends javax.swing.JFrame {
     private void loadTableData() {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0);
-        for (gaumanagementsystem.model.NewsAndNotice notice : controller.getAll()) {
-            model.addRow(notice.toTableRow());
-        }
+        // No data loading from controller - data should be loaded from database via DAO
+        // Table will be empty until real data is added
     }
 
     private void addRowToTable(gaumanagementsystem.model.NewsAndNotice notice) {
@@ -319,9 +330,309 @@ public class NewsAndNotice extends javax.swing.JFrame {
     }
 
     private String getSearchText() {
-        String search = jTextField3.getText().trim();
-        String audience = jTextField1.getText().trim();
-        return (search + " " + audience).trim();
+        return jTextField3.getText().trim();
+    }
+    
+    private void makeLayoutResponsive() {
+        // Set the window to start maximized
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
+        
+        // Create header panel with beautiful design
+        javax.swing.JPanel headerPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
+        headerPanel.setBackground(new java.awt.Color(153, 102, 255));
+        headerPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        headerPanel.setPreferredSize(new java.awt.Dimension(1000, 80));
+        
+        // Center the main header title
+        jLabel1.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 32));
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("🏛️ Hamro Smart Gaun 🏛️");
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(15, 20, 15, 20));
+        
+        headerPanel.add(jLabel1, java.awt.BorderLayout.CENTER);
+        
+        // Call the setup method for the rest of the layout
+        setupPanel2Layout();
+    }
+    
+    private void setupPanel2Layout() {
+        // Set up a simple BorderLayout for panel2 to arrange components
+        panel2.setLayout(new java.awt.BorderLayout());
+        
+        // Create beautiful header panel with our new design
+        javax.swing.JPanel headerPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
+        headerPanel.setBackground(new java.awt.Color(153, 102, 255));
+        headerPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        headerPanel.setPreferredSize(new java.awt.Dimension(1000, 80));
+        
+        // Center the main header title
+        jLabel1.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 32));
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("🏛️ Hamro Smart Gaun 🏛️");
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(15, 20, 15, 20));
+        
+        headerPanel.add(jLabel1, java.awt.BorderLayout.CENTER);
+        
+        // Create control panel
+        javax.swing.JPanel controlPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
+        controlPanel.setBackground(new java.awt.Color(153, 102, 255));
+        controlPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        
+        // Left side - News and Notice title
+        javax.swing.JPanel titlePanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        titlePanel.setBackground(new java.awt.Color(153, 102, 255));
+        jLabel4.setFont(new java.awt.Font("Arial", 1, 24));
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        titlePanel.add(jLabel4); // "News and Notice"
+        
+        // Search section - positioned at center
+        javax.swing.JPanel searchPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER));
+        searchPanel.setBackground(new java.awt.Color(153, 102, 255));
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setFont(new java.awt.Font("Arial", 1, 14));
+        searchPanel.add(jLabel5); // Search
+        searchPanel.add(javax.swing.Box.createHorizontalStrut(10)); // Gap between label and field
+        
+        // Make search field larger and responsive
+        jTextField3.setPreferredSize(new java.awt.Dimension(250, 25));
+        jTextField3.setMinimumSize(new java.awt.Dimension(200, 25));
+        searchPanel.add(jTextField3);
+        
+        // Right side - filter labels and add button
+        javax.swing.JPanel rightControlPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+        rightControlPanel.setBackground(new java.awt.Color(153, 102, 255));
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        rightControlPanel.add(jLabel2); // News
+        rightControlPanel.add(jLabel3); // Notices
+        rightControlPanel.add(jButton1); // ADD
+        
+        controlPanel.add(titlePanel, java.awt.BorderLayout.WEST);
+        controlPanel.add(searchPanel, java.awt.BorderLayout.CENTER);
+        controlPanel.add(rightControlPanel, java.awt.BorderLayout.EAST);
+        
+        // Create main content panel
+        javax.swing.JPanel mainPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
+        mainPanel.setBackground(new java.awt.Color(240, 240, 240));
+        mainPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 10, 10, 10));
+        
+        // Add table (this will now resize with window)
+        mainPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+        
+        // Create button panel
+        javax.swing.JPanel buttonPanel = new javax.swing.JPanel(new java.awt.FlowLayout());
+        buttonPanel.setBackground(new java.awt.Color(204, 204, 255));
+        buttonPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 10, 10, 10));
+        buttonPanel.add(jButton2); // DELETE
+        buttonPanel.add(jButton3); // UPDATE
+        buttonPanel.add(jButton4); // REFRESH
+        buttonPanel.add(javax.swing.Box.createHorizontalStrut(20));
+        buttonPanel.add(backButton); // Back
+        
+        // Assemble the layout
+        panel2.add(headerPanel, java.awt.BorderLayout.NORTH);
+        
+        // Create center panel to hold controls and table
+        javax.swing.JPanel centerPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
+        centerPanel.setBackground(new java.awt.Color(240, 240, 240));
+        centerPanel.add(controlPanel, java.awt.BorderLayout.NORTH);
+        centerPanel.add(mainPanel, java.awt.BorderLayout.CENTER);
+        
+        panel2.add(centerPanel, java.awt.BorderLayout.CENTER);
+        panel2.add(buttonPanel, java.awt.BorderLayout.SOUTH);
+        
+        // Refresh the layout
+        panel2.revalidate();
+        panel2.repaint();
+    }
+    
+    private void setupEmojiFont() {
+        // Multiple approaches to ensure emoji visibility in all instances
+        try {
+            // Try different fonts that support emojis
+            java.awt.Font[] emojiCompatibleFonts = {
+                new java.awt.Font("Segoe UI Emoji", java.awt.Font.BOLD, 32),
+                new java.awt.Font("Apple Color Emoji", java.awt.Font.BOLD, 32),
+                new java.awt.Font("Noto Color Emoji", java.awt.Font.BOLD, 32),
+                new java.awt.Font("Symbola", java.awt.Font.BOLD, 32),
+                new java.awt.Font(java.awt.Font.SANS_SERIF, java.awt.Font.BOLD, 32)
+            };
+            
+            boolean emojiSet = false;
+            for (java.awt.Font font : emojiCompatibleFonts) {
+                if (font.canDisplayUpTo("🏛️") == -1) {
+                    jLabel1.setFont(font);
+                    emojiSet = true;
+                    break;
+                }
+            }
+            
+            if (!emojiSet) {
+                // If no emoji font works, use a clear text alternative
+                jLabel1.setText("⌂ Hamro Smart Gaun ⌂");
+                jLabel1.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 32));
+            }
+            
+            // Force repaint to ensure changes are visible
+            jLabel1.repaint();
+            
+        } catch (Exception e) {
+            // Ultimate fallback
+            jLabel1.setText("HAMRO SMART GAUN");
+            jLabel1.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 28));
+        }
+    }
+
+    private Date showCalendarDialog(String currentDate, String title) {
+        // Parse current date
+        Date initialDate = new Date();
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            if (currentDate != null && !currentDate.trim().isEmpty()) {
+                initialDate = sdf.parse(currentDate);
+            }
+        } catch (Exception e) {
+            // Use current date if parsing fails
+            initialDate = new Date();
+        }
+        
+        // Create calendar dialog
+        javax.swing.JDialog calendarDialog = new javax.swing.JDialog(this, title, true);
+        calendarDialog.setDefaultCloseOperation(javax.swing.JDialog.DISPOSE_ON_CLOSE);
+        calendarDialog.setLayout(new java.awt.BorderLayout());
+        
+        // Create calendar panel
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(initialDate);
+        
+        // Year spinner
+        SpinnerModel yearModel = new javax.swing.SpinnerNumberModel(cal.get(Calendar.YEAR), 1900, 2100, 1);
+        javax.swing.JSpinner yearSpinner = new javax.swing.JSpinner(yearModel);
+        
+        // Month combo box
+        String[] months = {"January", "February", "March", "April", "May", "June",
+                          "July", "August", "September", "October", "November", "December"};
+        javax.swing.JComboBox<String> monthCombo = new javax.swing.JComboBox<>(months);
+        monthCombo.setSelectedIndex(cal.get(Calendar.MONTH));
+        
+        // Day spinner
+        SpinnerModel dayModel = new javax.swing.SpinnerNumberModel(cal.get(Calendar.DAY_OF_MONTH), 1, 31, 1);
+        javax.swing.JSpinner daySpinner = new javax.swing.JSpinner(dayModel);
+        
+        // Update day spinner when month/year changes
+        Runnable updateDaySpinner = () -> {
+            int year = (Integer) yearSpinner.getValue();
+            int month = monthCombo.getSelectedIndex();
+            Calendar tempCal = Calendar.getInstance();
+            tempCal.set(year, month, 1);
+            int maxDay = tempCal.getActualMaximum(Calendar.DAY_OF_MONTH);
+            int currentDay = (Integer) daySpinner.getValue();
+            if (currentDay > maxDay) {
+                daySpinner.setValue(maxDay);
+            }
+            ((javax.swing.SpinnerNumberModel) daySpinner.getModel()).setMaximum(maxDay);
+        };
+        
+        yearSpinner.addChangeListener(e -> updateDaySpinner.run());
+        monthCombo.addActionListener(e -> updateDaySpinner.run());
+        
+        // Create top panel for date selection
+        javax.swing.JPanel datePanel = new javax.swing.JPanel(new java.awt.GridBagLayout());
+        datePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select Date"));
+        java.awt.GridBagConstraints gbc = new java.awt.GridBagConstraints();
+        gbc.insets = new java.awt.Insets(5, 5, 5, 5);
+        
+        gbc.gridx = 0; gbc.gridy = 0;
+        datePanel.add(new javax.swing.JLabel("Year:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(yearSpinner, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 1;
+        datePanel.add(new javax.swing.JLabel("Month:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(monthCombo, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 2;
+        datePanel.add(new javax.swing.JLabel("Day:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(daySpinner, gbc);
+        
+        // Create preview label
+        javax.swing.JLabel previewLabel = new javax.swing.JLabel();
+        previewLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        previewLabel.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected Date"));
+        
+        // Update preview
+        Runnable updatePreview = () -> {
+            try {
+                int year = (Integer) yearSpinner.getValue();
+                int month = monthCombo.getSelectedIndex();
+                int day = (Integer) daySpinner.getValue();
+                Calendar previewCal = Calendar.getInstance();
+                previewCal.set(year, month, day);
+                SimpleDateFormat displayFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
+                previewLabel.setText(displayFormat.format(previewCal.getTime()));
+            } catch (Exception e) {
+                previewLabel.setText("Invalid Date");
+            }
+        };
+        
+        yearSpinner.addChangeListener(e -> updatePreview.run());
+        monthCombo.addActionListener(e -> updatePreview.run());
+        daySpinner.addChangeListener(e -> updatePreview.run());
+        updatePreview.run(); // Initial update
+        
+        // Create button panel
+        javax.swing.JPanel buttonPanel = new javax.swing.JPanel(new java.awt.FlowLayout());
+        javax.swing.JButton okButton = new javax.swing.JButton("OK");
+        javax.swing.JButton cancelButton = new javax.swing.JButton("Cancel");
+        javax.swing.JButton todayButton = new javax.swing.JButton("Today");
+        
+        final Date[] selectedDate = {null};
+        
+        okButton.addActionListener(e -> {
+            try {
+                int year = (Integer) yearSpinner.getValue();
+                int month = monthCombo.getSelectedIndex();
+                int day = (Integer) daySpinner.getValue();
+                Calendar resultCal = Calendar.getInstance();
+                resultCal.set(year, month, day);
+                selectedDate[0] = resultCal.getTime();
+                calendarDialog.dispose();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(calendarDialog, "Please select a valid date!");
+            }
+        });
+        
+        cancelButton.addActionListener(e -> {
+            selectedDate[0] = null;
+            calendarDialog.dispose();
+        });
+        
+        todayButton.addActionListener(e -> {
+            Calendar today = Calendar.getInstance();
+            yearSpinner.setValue(today.get(Calendar.YEAR));
+            monthCombo.setSelectedIndex(today.get(Calendar.MONTH));
+            daySpinner.setValue(today.get(Calendar.DAY_OF_MONTH));
+        });
+        
+        buttonPanel.add(todayButton);
+        buttonPanel.add(okButton);
+        buttonPanel.add(cancelButton);
+        
+        // Assemble dialog
+        calendarDialog.add(datePanel, java.awt.BorderLayout.NORTH);
+        calendarDialog.add(previewLabel, java.awt.BorderLayout.CENTER);
+        calendarDialog.add(buttonPanel, java.awt.BorderLayout.SOUTH);
+        
+        // Set dialog properties
+        calendarDialog.setSize(300, 250);
+        calendarDialog.setLocationRelativeTo(this);
+        calendarDialog.setVisible(true);
+        
+        return selectedDate[0];
     }
 
     /**
@@ -366,7 +677,7 @@ public class NewsAndNotice extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        panel2.setBackground(new java.awt.Color(204, 204, 255));
+        panel2.setBackground(new java.awt.Color(153, 102, 255));
         panel2.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
 
         jButton1.setBackground(new java.awt.Color(0, 0, 255));
@@ -379,9 +690,27 @@ public class NewsAndNotice extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel1.setText("Hamro Smart Gaun");
+        jLabel1.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 32)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("🏛️ Hamro Smart Gaun 🏛️");
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setToolTipText("");
+        
+        // Ensure emoji visibility by setting a Unicode-compatible font
+        try {
+            java.awt.Font unicodeFont = new java.awt.Font("Segoe UI Emoji", java.awt.Font.BOLD, 32);
+            String testEmoji = "🏛️";
+            if (unicodeFont.canDisplayUpTo(testEmoji) == -1) {
+                jLabel1.setFont(unicodeFont);
+            } else {
+                // Fallback to system default font
+                jLabel1.setFont(new java.awt.Font(java.awt.Font.SANS_SERIF, java.awt.Font.BOLD, 32));
+            }
+        } catch (Exception e) {
+            // If emoji font fails, use text alternative
+            jLabel1.setText("⌂ Hamro Smart Gaun ⌂");
+            jLabel1.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 32));
+        }
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setText("News");

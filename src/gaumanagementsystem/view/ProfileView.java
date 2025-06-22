@@ -3,11 +3,30 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package gaumanagementsystem.view;
+
+import javax.swing.JButton;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerDateModel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.awt.GridLayout;
+import java.awt.Color;
+import java.util.Calendar;
+import javax.swing.SpinnerModel;
+
+
 /**
  *
  * @author wange
  */
 public class ProfileView extends javax.swing.JFrame {
+
+    // Calendar button for date of birth
+    private JButton calendarButton;
+    private String userRole = "admin"; // Add field to track user role
 
     /**
      * Creates new form CitizenView 
@@ -16,6 +35,9 @@ public class ProfileView extends javax.swing.JFrame {
         initComponents();
         // Initialize the controller for viewing citizen data
         new gaumanagementsystem.controller.ProfileViewController(this);
+        
+        // Add calendar button functionality
+        addCalendarButton();
     }
 
     /**
@@ -27,6 +49,9 @@ public class ProfileView extends javax.swing.JFrame {
         gaumanagementsystem.controller.ProfileViewController controller = 
             new gaumanagementsystem.controller.ProfileViewController(this);
         controller.loadCitizenData(citizenId);
+        
+        // Add calendar button functionality
+        addCalendarButton();
     }
 
     /**
@@ -35,6 +60,17 @@ public class ProfileView extends javax.swing.JFrame {
      * @param showEditButton True to show the edit button, false to hide it.
      */
     public ProfileView(String citizenId, boolean showEditButton) {
+        this(citizenId, showEditButton, "admin");
+    }
+
+    /**
+     * Creates new form CitizenView with role-based functionality
+     * @param citizenId The ID of the citizen to display.
+     * @param showEditButton True to show the edit button, false to hide it.
+     * @param userRole The role of the current user (admin/user)
+     */
+    public ProfileView(String citizenId, boolean showEditButton, String userRole) {
+        this.userRole = userRole;
         initComponents();
         // Initialize the controller and load citizen data
         gaumanagementsystem.controller.ProfileViewController controller = 
@@ -43,6 +79,9 @@ public class ProfileView extends javax.swing.JFrame {
         
         // Control the visibility of the edit button
         getEditButton().setVisible(showEditButton);
+        
+        // Add calendar button functionality
+        addCalendarButton();
     }
 
     /**
@@ -249,18 +288,26 @@ public class ProfileView extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void editActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editActionPerformed
-        // TODO add your handling code here:
-        EditProfileView update= new EditProfileView();
+        // Get current citizen ID and open EditProfileView with role information
+        String currentCitizenId = citizen_id.getText();
+        EditProfileView update = new EditProfileView(userRole, currentCitizenId, true);
         update.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_editActionPerformed
 
     private void CitizentoDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CitizentoDashboardActionPerformed
-        // TODO add your handling code here:
-        DashboardView goingtodash = new DashboardView(); 
-        goingtodash.setVisible(true);           
-        this.dispose();
-
+        if ("user".equalsIgnoreCase(userRole)) {
+            // For user role, pass the current user ID back to dashboard
+            String currentCitizenId = citizen_id.getText();
+            DashboardView goingtodash = new DashboardView(userRole, currentCitizenId); 
+            goingtodash.setVisible(true);           
+            this.dispose();
+        } else {
+            // For admin role, go back to regular dashboard with admin role
+            DashboardView goingtodash = new DashboardView(userRole, null); 
+            goingtodash.setVisible(true);           
+            this.dispose();
+        }
     }//GEN-LAST:event_CitizentoDashboardActionPerformed
 
     private void menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuActionPerformed
@@ -282,6 +329,178 @@ public class ProfileView extends javax.swing.JFrame {
     private void dateofbirthActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateofbirthActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_dateofbirthActionPerformed
+
+    private void addCalendarButton() {
+        // Create calendar button
+        calendarButton = new JButton("📅");
+        calendarButton.setFont(new java.awt.Font("Arial", 0, 12));
+        calendarButton.setBounds(516, 304, 30, 22); // Position next to date field
+        calendarButton.setToolTipText("Select Date");
+        
+        // Add action listener
+        calendarButton.addActionListener(e -> openDatePicker());
+        
+        // Add to content pane
+        getContentPane().add(calendarButton);
+    }
+    
+    private void openDatePicker() {
+        Date selectedDate = showCalendarDialog(dateofbirth.getText());
+        if (selectedDate != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            dateofbirth.setText(sdf.format(selectedDate));
+        }
+    }
+    
+    private Date showCalendarDialog(String currentDate) {
+        // Parse current date
+        Date initialDate = new Date();
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            if (currentDate != null && !currentDate.trim().isEmpty()) {
+                initialDate = sdf.parse(currentDate);
+            }
+        } catch (Exception e) {
+            // Use current date if parsing fails
+            initialDate = new Date();
+        }
+        
+        // Create calendar dialog
+        javax.swing.JDialog calendarDialog = new javax.swing.JDialog(this, "Select Date of Birth", true);
+        calendarDialog.setDefaultCloseOperation(javax.swing.JDialog.DISPOSE_ON_CLOSE);
+        calendarDialog.setLayout(new java.awt.BorderLayout());
+        
+        // Create calendar panel
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(initialDate);
+        
+        // Year spinner
+        SpinnerModel yearModel = new javax.swing.SpinnerNumberModel(cal.get(Calendar.YEAR), 1900, 2100, 1);
+        javax.swing.JSpinner yearSpinner = new javax.swing.JSpinner(yearModel);
+        
+        // Month combo box
+        String[] months = {"January", "February", "March", "April", "May", "June",
+                          "July", "August", "September", "October", "November", "December"};
+        javax.swing.JComboBox<String> monthCombo = new javax.swing.JComboBox<>(months);
+        monthCombo.setSelectedIndex(cal.get(Calendar.MONTH));
+        
+        // Day spinner
+        SpinnerModel dayModel = new javax.swing.SpinnerNumberModel(cal.get(Calendar.DAY_OF_MONTH), 1, 31, 1);
+        javax.swing.JSpinner daySpinner = new javax.swing.JSpinner(dayModel);
+        
+        // Update day spinner when month/year changes
+        Runnable updateDaySpinner = () -> {
+            int year = (Integer) yearSpinner.getValue();
+            int month = monthCombo.getSelectedIndex();
+            Calendar tempCal = Calendar.getInstance();
+            tempCal.set(year, month, 1);
+            int maxDay = tempCal.getActualMaximum(Calendar.DAY_OF_MONTH);
+            int currentDay = (Integer) daySpinner.getValue();
+            if (currentDay > maxDay) {
+                daySpinner.setValue(maxDay);
+            }
+            ((javax.swing.SpinnerNumberModel) daySpinner.getModel()).setMaximum(maxDay);
+        };
+        
+        yearSpinner.addChangeListener(e -> updateDaySpinner.run());
+        monthCombo.addActionListener(e -> updateDaySpinner.run());
+        
+        // Create top panel for date selection
+        javax.swing.JPanel datePanel = new javax.swing.JPanel(new java.awt.GridBagLayout());
+        datePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select Date"));
+        java.awt.GridBagConstraints gbc = new java.awt.GridBagConstraints();
+        gbc.insets = new java.awt.Insets(5, 5, 5, 5);
+        
+        gbc.gridx = 0; gbc.gridy = 0;
+        datePanel.add(new javax.swing.JLabel("Year:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(yearSpinner, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 1;
+        datePanel.add(new javax.swing.JLabel("Month:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(monthCombo, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 2;
+        datePanel.add(new javax.swing.JLabel("Day:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(daySpinner, gbc);
+        
+        // Create preview label
+        javax.swing.JLabel previewLabel = new javax.swing.JLabel();
+        previewLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        previewLabel.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected Date"));
+        
+        // Update preview
+        Runnable updatePreview = () -> {
+            try {
+                int year = (Integer) yearSpinner.getValue();
+                int month = monthCombo.getSelectedIndex();
+                int day = (Integer) daySpinner.getValue();
+                Calendar previewCal = Calendar.getInstance();
+                previewCal.set(year, month, day);
+                SimpleDateFormat displayFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
+                previewLabel.setText(displayFormat.format(previewCal.getTime()));
+            } catch (Exception e) {
+                previewLabel.setText("Invalid Date");
+            }
+        };
+        
+        yearSpinner.addChangeListener(e -> updatePreview.run());
+        monthCombo.addActionListener(e -> updatePreview.run());
+        daySpinner.addChangeListener(e -> updatePreview.run());
+        updatePreview.run(); // Initial update
+        
+        // Create button panel
+        javax.swing.JPanel buttonPanel = new javax.swing.JPanel(new java.awt.FlowLayout());
+        javax.swing.JButton okButton = new javax.swing.JButton("OK");
+        javax.swing.JButton cancelButton = new javax.swing.JButton("Cancel");
+        javax.swing.JButton todayButton = new javax.swing.JButton("Today");
+        
+        final Date[] selectedDate = {null};
+        
+        okButton.addActionListener(e -> {
+            try {
+                int year = (Integer) yearSpinner.getValue();
+                int month = monthCombo.getSelectedIndex();
+                int day = (Integer) daySpinner.getValue();
+                Calendar resultCal = Calendar.getInstance();
+                resultCal.set(year, month, day);
+                selectedDate[0] = resultCal.getTime();
+                calendarDialog.dispose();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(calendarDialog, "Please select a valid date!");
+            }
+        });
+        
+        cancelButton.addActionListener(e -> {
+            selectedDate[0] = null;
+            calendarDialog.dispose();
+        });
+        
+        todayButton.addActionListener(e -> {
+            Calendar today = Calendar.getInstance();
+            yearSpinner.setValue(today.get(Calendar.YEAR));
+            monthCombo.setSelectedIndex(today.get(Calendar.MONTH));
+            daySpinner.setValue(today.get(Calendar.DAY_OF_MONTH));
+        });
+        
+        buttonPanel.add(todayButton);
+        buttonPanel.add(okButton);
+        buttonPanel.add(cancelButton);
+        
+        // Assemble dialog
+        calendarDialog.add(datePanel, java.awt.BorderLayout.NORTH);
+        calendarDialog.add(previewLabel, java.awt.BorderLayout.CENTER);
+        calendarDialog.add(buttonPanel, java.awt.BorderLayout.SOUTH);
+        
+        // Set dialog properties
+        calendarDialog.setSize(300, 250);
+        calendarDialog.setLocationRelativeTo(this);
+        calendarDialog.setVisible(true);
+        
+        return selectedDate[0];
+    }
 
     /**
      * @param args the command line arguments

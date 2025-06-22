@@ -4,16 +4,15 @@
  */
 package gaumanagementsystem.controller;
 import gaumanagementsystem.dao.UserDAO;
+import gaumanagementsystem.dao.impl.UserDAOImpl;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-
-
+import java.util.Optional;
 
 /**
  *
- * @author ASUS
+ * @author bishodip
  */
 public class ForgotController {
 
@@ -39,53 +38,54 @@ public class ForgotController {
         }
     }
 
+    public class ForgotPasswordController {
 
-
-public class ForgotPasswordController {
-
-    private ForgotPasswordView forgotView;
+        private ForgotPasswordView forgotView;
 
         /**
          *
          * @param forgotView
          */
         public ForgotPasswordController(ForgotPasswordView forgotView) {
-        this.forgotView = forgotView;
+            this.forgotView = forgotView;
 
-        // Add listener to the Reset Password button
-        this.forgotView.addResetButtonListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                handlePasswordReset();
+            // Add listener to the Reset Password button
+            this.forgotView.addResetButtonListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    handlePasswordReset();
+                }
+            });
+        }
+
+        private void handlePasswordReset() {
+            String email = forgotView.getEmail();
+            String newPassword = forgotView.getNewPassword();
+
+            if (email.isEmpty() || newPassword.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Please fill in all fields.");
+                return;
             }
-        });
-    }
 
-    private void handlePasswordReset() {
-        String email = forgotView.getEmail();
-        String newPassword = forgotView.getNewPassword();
-
-        if (email.isEmpty() || newPassword.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Please fill in all fields.");
-            return;
+            try {
+                UserDAO dao = new UserDAOImpl();
+                Optional<gaumanagementsystem.model.User> userOpt = dao.findByEmail(email);
+                
+                if (userOpt.isPresent()) {
+                    boolean success = dao.updatePassword(userOpt.get().getId(), newPassword);
+                    
+                    if (success) {
+                        JOptionPane.showMessageDialog(null, "Password reset successfully.");
+                        forgotView.dispose(); // Close the forgot password window
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Failed to reset password. Please try again.");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Email not found. Please check your email address.");
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+            }
         }
-
-        UserDAO dao = new UserDAO();
-        boolean success = dao.forgotPassword(email, newPassword);
-
-        if (success) {
-            JOptionPane.showMessageDialog(null, "Password reset successfully.");
-            forgotView.dispose(); // Close the forgot password window
-        } else {
-            JOptionPane.showMessageDialog(null, "Failed to reset password. Please check your email.");
-        }
     }
-    }
-
-
-  
-
-
-
-    
 }

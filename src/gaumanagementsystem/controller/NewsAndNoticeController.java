@@ -10,19 +10,13 @@ import java.util.List;
 
 /**
  *
- * @author ASUS
+ * @author bishodip
  */
 public class NewsAndNoticeController {
     private final List<NewsAndNotice> dataList = new ArrayList<>();
 
     public NewsAndNoticeController() {
-        // Sample data
-        dataList.add(new NewsAndNotice("2024-03-20", "All Citizens", "Road Maintenance", "Annual road maintenance work will begin next week", "2024-04-20", "Notice"));
-        dataList.add(new NewsAndNotice("2024-03-19", "Students", "School Holiday", "School will remain closed for spring break", "2024-03-25", "Notice"));
-        dataList.add(new NewsAndNotice("2024-03-18", "Farmers", "Agricultural Workshop", "Free workshop on modern farming techniques", "2024-03-30", "News"));
-        dataList.add(new NewsAndNotice("2024-03-17", "Business Owners", "Tax Filing", "Last date for tax filing is approaching", "2024-03-31", "Notice"));
-        dataList.add(new NewsAndNotice("2024-03-16", "All Citizens", "Water Supply", "Water supply will be affected due to maintenance", "2024-03-18", "News"));
-        // ... add more as needed
+        // No sample data - data should be loaded from database via DAO
     }
 
     public List<NewsAndNotice> getAll() {

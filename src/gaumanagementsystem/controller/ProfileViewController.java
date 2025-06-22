@@ -174,7 +174,7 @@ public class ProfileViewController {
     // Go back to dashboard
     private void goBackToDashboard() {
         try {
-            DashboardView dashboard = new DashboardView();
+            DashboardView dashboard = new DashboardView("admin", null);
             dashboard.setVisible(true);
             view.dispose();
         } catch (Exception e) {

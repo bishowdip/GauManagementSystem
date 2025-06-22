@@ -5,12 +5,24 @@
 package gaumanagementsystem.view;
 
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerDateModel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.awt.GridLayout;
 
 /**
  *
  * @author wangel
  */
 public class EditProfileView extends javax.swing.JFrame {
+
+    // Calendar button for date of birth
+    private JButton calendarButton;
 
     /**
      * Creates new form EditProfileView
@@ -20,6 +32,9 @@ public class EditProfileView extends javax.swing.JFrame {
         ButtonGroup gender = new ButtonGroup();
         gender.add(male);
         gender.add(female);
+        
+        // Make date field clickable for calendar
+        setupDateFieldCalendar();
     }
 
     /**
@@ -87,6 +102,11 @@ public class EditProfileView extends javax.swing.JFrame {
         jLabel11.setText("Father's Name");
         getContentPane().add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(95, 457, -1, -1));
 
+        javax.swing.JLabel jLabel13 = new javax.swing.JLabel();
+        jLabel13.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabel13.setText("Ward");
+        getContentPane().add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(152, 528, -1, -1));
+
         name.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         getContentPane().add(name, new org.netbeans.lib.awtextra.AbsoluteConstraints(206, 247, 300, -1));
 
@@ -146,6 +166,10 @@ public class EditProfileView extends javax.swing.JFrame {
 
         phone.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         getContentPane().add(phone, new org.netbeans.lib.awtextra.AbsoluteConstraints(206, 419, 300, -1));
+
+        ward = new javax.swing.JTextField();
+        ward.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        getContentPane().add(ward, new org.netbeans.lib.awtextra.AbsoluteConstraints(206, 525, 300, -1));
 
         jLabel7.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel7.setText("Address");
@@ -237,11 +261,6 @@ public class EditProfileView extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveActionPerformed
-        // TODO add your handling code here:
-        
-    }//GEN-LAST:event_saveActionPerformed
-
     private void emailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emailActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_emailActionPerformed
@@ -324,6 +343,7 @@ public class EditProfileView extends javax.swing.JFrame {
     private javax.swing.JTextField mother_name;
     private javax.swing.JTextField name;
     private javax.swing.JTextField phone;
+    private javax.swing.JTextField ward;
     private javax.swing.JButton save;
     private javax.swing.JButton upload;
     // End of variables declaration//GEN-END:variables
@@ -368,6 +388,10 @@ public class EditProfileView extends javax.swing.JFrame {
         return mother_name;
     }
 
+    public javax.swing.JTextField getWardField() {
+        return ward;
+    }
+
     public javax.swing.JButton getEditButton() {
         return save;
     }
@@ -384,5 +408,333 @@ public class EditProfileView extends javax.swing.JFrame {
         return upload;
     }
 
+    private String selectedImagePath = null; // To store the uploaded image path
+    private String role = "admin";
+    private String userCitizenId = null;
+    private boolean isEditMode = false;
+
+    public EditProfileView(String role, String citizenId, boolean isEditMode) {
+        this();
+        this.role = role;
+        this.userCitizenId = citizenId;
+        this.isEditMode = isEditMode;
+        // Role-based button visibility
+        if ("admin".equalsIgnoreCase(role)) {
+            save.setVisible(true);
+            backtoprofile.setVisible(true);
+        } else if ("user".equalsIgnoreCase(role)) {
+            save.setVisible(true);
+            backtoprofile.setVisible(true);
+        }
+        // Data loading logic
+        if (isEditMode && citizenId != null) {
+            gaumanagementsystem.controller.CitizenController controller = new gaumanagementsystem.controller.CitizenController();
+            gaumanagementsystem.model.CitizenData citizen = controller.getCitizenById(citizenId);
+            if (citizen != null) {
+                citizen_id.setText(citizen.getCitizenId());
+                name.setText(citizen.getName());
+                email.setText(citizen.getEmail());
+                dateofbirth.setText(citizen.getDateOfBirth());
+                address.setText(citizen.getAddress());
+                phone.setText(citizen.getPhone());
+                father_name.setText(citizen.getFatherName());
+                mother_name.setText(citizen.getMotherName());
+                ward.setText(String.valueOf(citizen.getWard()));
+                if ("Male".equalsIgnoreCase(citizen.getGender())) {
+                    male.setSelected(true);
+                } else if ("Female".equalsIgnoreCase(citizen.getGender())) {
+                    female.setSelected(true);
+                } else {
+                    buttonGroup1.clearSelection();
+                }
+                // Load image if available
+                if (citizen.getImagePath() != null && !citizen.getImagePath().isEmpty()) {
+                    javax.swing.ImageIcon originalIcon = new javax.swing.ImageIcon(citizen.getImagePath());
+                    java.awt.Image scaledImage = originalIcon.getImage().getScaledInstance(90, 90, java.awt.Image.SCALE_SMOOTH);
+                    ProfileImageLabel.setIcon(new javax.swing.ImageIcon(scaledImage));
+                    selectedImagePath = citizen.getImagePath();
+                }
+            }
+        } else {
+            citizen_id.setText("");
+            name.setText("");
+            email.setText("");
+            dateofbirth.setText("");
+            address.setText("");
+            phone.setText("");
+            father_name.setText("");
+            mother_name.setText("");
+            ward.setText("");
+            buttonGroup1.clearSelection();
+            ProfileImageLabel.setIcon(null);
+            selectedImagePath = null;
+        }
+        // Add action listeners for buttons
+        save.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveActionPerformed(evt);
+            }
+        });
+        backtoprofile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backtoprofileActionPerformed(evt);
+            }
+        });
+        upload.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                uploadActionPerformed(evt);
+            }
+        });
+    }
+
+    private void saveActionPerformed(java.awt.event.ActionEvent evt) {
+        // Gather data from fields
+        String id = citizen_id.getText().trim();
+        String nm = name.getText().trim();
+        String em = email.getText().trim();
+        String dob = dateofbirth.getText().trim();
+        String addr = address.getText().trim();
+        String ph = phone.getText().trim();
+        String fn = father_name.getText().trim();
+        String mn = mother_name.getText().trim();
+        String gender = male.isSelected() ? "Male" : (female.isSelected() ? "Female" : "");
+        String imgPath = selectedImagePath;
+        
+        // Parse ward from text field, default to 1 if invalid
+        int wardNumber = 1;
+        try {
+            String wardText = ward.getText().trim();
+            if (!wardText.isEmpty()) {
+                wardNumber = Integer.parseInt(wardText);
+            }
+        } catch (NumberFormatException e) {
+            wardNumber = 1; // Default to ward 1 if parsing fails
+        }
+        
+        gaumanagementsystem.model.CitizenData citizen = new gaumanagementsystem.model.CitizenData(id, nm, em, dob, addr, gender, ph, fn, mn, imgPath, wardNumber);
+        gaumanagementsystem.controller.CitizenController controller = new gaumanagementsystem.controller.CitizenController();
+        boolean success;
+        if (isEditMode) {
+            success = controller.updateCitizen(citizen);
+        } else {
+            success = controller.createCitizen(citizen);
+        }
+        if (success) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Citizen saved successfully!", "Success", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            
+            // Handle role-based navigation after saving
+            if ("user".equalsIgnoreCase(role)) {
+                // For user role, open their profile view to show the saved data
+                gaumanagementsystem.view.ProfileView profileView = 
+                    new gaumanagementsystem.view.ProfileView(id, true, role);
+                profileView.setVisible(true);
+                this.dispose();
+            } else {
+                // For admin role, return to CitizenEdit
+                new CitizenEdit(role, id).setVisible(true);
+                this.dispose();
+            }
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "Failed to save citizen. Please check your inputs.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void backtoprofileActionPerformed(java.awt.event.ActionEvent evt) {
+        // Handle role-based navigation for back button
+        if ("user".equalsIgnoreCase(role)) {
+            // For user role, go back to dashboard with their user ID
+            gaumanagementsystem.view.DashboardView dashboard = 
+                new gaumanagementsystem.view.DashboardView(role, userCitizenId);
+            dashboard.setVisible(true);
+            this.dispose();
+        } else {
+            // For admin role, return to CitizenEdit
+            new CitizenEdit(role, userCitizenId).setVisible(true);
+            this.dispose();
+        }
+    }
+
+    private void uploadActionPerformed(java.awt.event.ActionEvent evt) {
+        javax.swing.JFileChooser fileChooser = new javax.swing.JFileChooser();
+        int result = fileChooser.showOpenDialog(this);
+        if (result == javax.swing.JFileChooser.APPROVE_OPTION) {
+            java.io.File selectedFile = fileChooser.getSelectedFile();
+            selectedImagePath = selectedFile.getAbsolutePath();
+            javax.swing.ImageIcon icon = new javax.swing.ImageIcon(new javax.swing.ImageIcon(selectedImagePath).getImage().getScaledInstance(90, 90, java.awt.Image.SCALE_SMOOTH));
+            ProfileImageLabel.setIcon(icon);
+        }
+    }
+
+    private void setupDateFieldCalendar() {
+        // Make date field clickable for calendar selection
+        if (dateofbirth != null) {
+            dateofbirth.setEditable(false);
+            dateofbirth.setToolTipText("Click to select date");
+            dateofbirth.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    openDatePicker();
+                }
+            });
+        }
+    }
+    
+    private void openDatePicker() {
+        Date selectedDate = showCalendarDialog(dateofbirth.getText(), "Select Date of Birth");
+        if (selectedDate != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            dateofbirth.setText(sdf.format(selectedDate));
+        }
+    }
+    
+    private Date showCalendarDialog(String currentDate, String title) {
+        // Parse current date
+        Date initialDate = new Date();
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            if (currentDate != null && !currentDate.trim().isEmpty()) {
+                initialDate = sdf.parse(currentDate);
+            }
+        } catch (Exception e) {
+            // Use current date if parsing fails
+            initialDate = new Date();
+        }
+        
+        // Create calendar dialog
+        javax.swing.JDialog calendarDialog = new javax.swing.JDialog(this, title, true);
+        calendarDialog.setDefaultCloseOperation(javax.swing.JDialog.DISPOSE_ON_CLOSE);
+        calendarDialog.setLayout(new java.awt.BorderLayout());
+        
+        // Create calendar panel
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.setTime(initialDate);
+        
+        // Year spinner
+        javax.swing.SpinnerModel yearModel = new javax.swing.SpinnerNumberModel(cal.get(java.util.Calendar.YEAR), 1900, 2100, 1);
+        javax.swing.JSpinner yearSpinner = new javax.swing.JSpinner(yearModel);
+        
+        // Month combo box
+        String[] months = {"January", "February", "March", "April", "May", "June",
+                          "July", "August", "September", "October", "November", "December"};
+        javax.swing.JComboBox<String> monthCombo = new javax.swing.JComboBox<>(months);
+        monthCombo.setSelectedIndex(cal.get(java.util.Calendar.MONTH));
+        
+        // Day spinner
+        javax.swing.SpinnerModel dayModel = new javax.swing.SpinnerNumberModel(cal.get(java.util.Calendar.DAY_OF_MONTH), 1, 31, 1);
+        javax.swing.JSpinner daySpinner = new javax.swing.JSpinner(dayModel);
+        
+        // Update day spinner when month/year changes
+        Runnable updateDaySpinner = () -> {
+            int year = (Integer) yearSpinner.getValue();
+            int month = monthCombo.getSelectedIndex();
+            java.util.Calendar tempCal = java.util.Calendar.getInstance();
+            tempCal.set(year, month, 1);
+            int maxDay = tempCal.getActualMaximum(java.util.Calendar.DAY_OF_MONTH);
+            int currentDay = (Integer) daySpinner.getValue();
+            if (currentDay > maxDay) {
+                daySpinner.setValue(maxDay);
+            }
+            ((javax.swing.SpinnerNumberModel) daySpinner.getModel()).setMaximum(maxDay);
+        };
+        
+        yearSpinner.addChangeListener(e -> updateDaySpinner.run());
+        monthCombo.addActionListener(e -> updateDaySpinner.run());
+        
+        // Create top panel for date selection
+        javax.swing.JPanel datePanel = new javax.swing.JPanel(new java.awt.GridBagLayout());
+        datePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select Date"));
+        java.awt.GridBagConstraints gbc = new java.awt.GridBagConstraints();
+        gbc.insets = new java.awt.Insets(5, 5, 5, 5);
+        
+        gbc.gridx = 0; gbc.gridy = 0;
+        datePanel.add(new javax.swing.JLabel("Year:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(yearSpinner, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 1;
+        datePanel.add(new javax.swing.JLabel("Month:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(monthCombo, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 2;
+        datePanel.add(new javax.swing.JLabel("Day:"), gbc);
+        gbc.gridx = 1;
+        datePanel.add(daySpinner, gbc);
+        
+        // Create preview label
+        javax.swing.JLabel previewLabel = new javax.swing.JLabel();
+        previewLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        previewLabel.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected Date"));
+        
+        // Update preview
+        Runnable updatePreview = () -> {
+            try {
+                int year = (Integer) yearSpinner.getValue();
+                int month = monthCombo.getSelectedIndex();
+                int day = (Integer) daySpinner.getValue();
+                java.util.Calendar previewCal = java.util.Calendar.getInstance();
+                previewCal.set(year, month, day);
+                SimpleDateFormat displayFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
+                previewLabel.setText(displayFormat.format(previewCal.getTime()));
+            } catch (Exception e) {
+                previewLabel.setText("Invalid Date");
+            }
+        };
+        
+        yearSpinner.addChangeListener(e -> updatePreview.run());
+        monthCombo.addActionListener(e -> updatePreview.run());
+        daySpinner.addChangeListener(e -> updatePreview.run());
+        updatePreview.run(); // Initial update
+        
+        // Create button panel
+        javax.swing.JPanel buttonPanel = new javax.swing.JPanel(new java.awt.FlowLayout());
+        javax.swing.JButton okButton = new javax.swing.JButton("OK");
+        javax.swing.JButton cancelButton = new javax.swing.JButton("Cancel");
+        javax.swing.JButton todayButton = new javax.swing.JButton("Today");
+        
+        final Date[] selectedDate = {null};
+        
+        okButton.addActionListener(e -> {
+            try {
+                int year = (Integer) yearSpinner.getValue();
+                int month = monthCombo.getSelectedIndex();
+                int day = (Integer) daySpinner.getValue();
+                java.util.Calendar resultCal = java.util.Calendar.getInstance();
+                resultCal.set(year, month, day);
+                selectedDate[0] = resultCal.getTime();
+                calendarDialog.dispose();
+            } catch (Exception ex) {
+                javax.swing.JOptionPane.showMessageDialog(calendarDialog, "Please select a valid date!");
+            }
+        });
+        
+        cancelButton.addActionListener(e -> {
+            selectedDate[0] = null;
+            calendarDialog.dispose();
+        });
+        
+        todayButton.addActionListener(e -> {
+            java.util.Calendar today = java.util.Calendar.getInstance();
+            yearSpinner.setValue(today.get(java.util.Calendar.YEAR));
+            monthCombo.setSelectedIndex(today.get(java.util.Calendar.MONTH));
+            daySpinner.setValue(today.get(java.util.Calendar.DAY_OF_MONTH));
+        });
+        
+        buttonPanel.add(todayButton);
+        buttonPanel.add(okButton);
+        buttonPanel.add(cancelButton);
+        
+        // Assemble dialog
+        calendarDialog.add(datePanel, java.awt.BorderLayout.NORTH);
+        calendarDialog.add(previewLabel, java.awt.BorderLayout.CENTER);
+        calendarDialog.add(buttonPanel, java.awt.BorderLayout.SOUTH);
+        
+        // Set dialog properties
+        calendarDialog.setSize(300, 250);
+        calendarDialog.setLocationRelativeTo(this);
+        calendarDialog.setVisible(true);
+        
+        return selectedDate[0];
+    }
 
 }
