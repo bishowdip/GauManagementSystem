@@ -69,10 +69,14 @@ public class UserController {
             User user = userDAO.authenticateUser(email, password);
             if (user != null) {
                 JOptionPane.showMessageDialog(view, "Login Successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                // Pass user role and ID to DashboardView for role-based functionality
+                // Pass user role, ID, and email to DashboardView for role-based functionality
                 String userRole = user.getRole() != null ? user.getRole() : "user"; // Default to user if role is null
                 String userId = String.valueOf(user.getId());
-                new gaumanagementsystem.view.DashboardView(userRole, userId).setVisible(true);
+                // Create a custom DashboardView that accepts user email for profile lookup
+                gaumanagementsystem.view.DashboardView dashboard = new gaumanagementsystem.view.DashboardView(userRole, userId);
+                // Store user email for profile lookup - we'll need to add this to DashboardView
+                dashboard.setUserEmail(email);
+                dashboard.setVisible(true);
                 view.dispose();
             } else {
                 JOptionPane.showMessageDialog(view, "Invalid email or password. Please check your credentials and try again.", "Error", JOptionPane.ERROR_MESSAGE);

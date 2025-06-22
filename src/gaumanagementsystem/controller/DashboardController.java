@@ -129,21 +129,24 @@ public class DashboardController {
             if ("user".equalsIgnoreCase(userRole)) {
                 System.out.println("Opening My Profile for user...");
                 
-                // Try to find user's existing profile data
+                // Try to find user's existing profile data using email
                 gaumanagementsystem.controller.CitizenController citizenController = 
                     new gaumanagementsystem.controller.CitizenController();
                 
                 gaumanagementsystem.model.CitizenData existingProfile = null;
+                String userEmail = view.getUserEmail(); // Get email from dashboard view
                 
-                // First, try to find profile by currentUserId if available
-                if (currentUserId != null && !currentUserId.trim().isEmpty()) {
-                    existingProfile = citizenController.getCitizenById(currentUserId);
-                    System.out.println("Searching for profile with ID: " + currentUserId);
+                // First, try to find profile by email (most reliable method)
+                if (userEmail != null && !userEmail.trim().isEmpty()) {
+                    existingProfile = citizenController.getCitizenByEmail(userEmail);
+                    System.out.println("Searching for profile with email: " + userEmail);
                 }
                 
-                // If no profile found by ID and we don't have currentUserId, 
-                // we could potentially search by other criteria in the future
-                // For now, we'll assume the user needs to create a profile
+                // Fallback: try to find profile by currentUserId if email search fails
+                if (existingProfile == null && currentUserId != null && !currentUserId.trim().isEmpty()) {
+                    existingProfile = citizenController.getCitizenById(currentUserId);
+                    System.out.println("Fallback: Searching for profile with ID: " + currentUserId);
+                }
                 
                 // If profile found, open ProfileView with existing data
                 if (existingProfile != null) {
@@ -163,6 +166,8 @@ public class DashboardController {
                     );
                     gaumanagementsystem.view.EditProfileView editProfileView = 
                         new gaumanagementsystem.view.EditProfileView("user", currentUserId, false);
+                    // TODO: Pre-fill the email field with the logged-in user's email
+                    // editProfileView.setUserEmail(userEmail);
                     editProfileView.setVisible(true);
                 }
             } else {

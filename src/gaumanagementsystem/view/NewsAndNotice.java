@@ -95,6 +95,12 @@ public class NewsAndNotice extends javax.swing.JFrame {
             }
         });
 
+        // REFRESH button
+        jButton4.addActionListener(e -> {
+            loadTableData();
+            JOptionPane.showMessageDialog(this, "Data refreshed from database!");
+        });
+
         // Back button already created earlier
 
         // Set button colors for visibility
@@ -142,7 +148,19 @@ public class NewsAndNotice extends javax.swing.JFrame {
                 }
             });
             
-            JTextField audienceField = new JTextField();
+            // Create audience dropdown with predefined options
+            String[] audiences = {
+                "Local Citizens / Residents",
+                "Ward Officials and Members", 
+                "Local Businesses and Entrepreneurs",
+                "Educational Institutions",
+                "Health Post and Medical Staff",
+                "Non-Governmental Organizations (NGOs) and Development Partners",
+                "Government and Administrative Staff",
+                "Students"
+            };
+            JComboBox<String> audienceCombo = new JComboBox<>(audiences);
+            
             JTextField subjectField = new JTextField();
             JTextField descriptionField = new JTextField();
             String[] types = {"News", "Notice"};
@@ -152,7 +170,7 @@ public class NewsAndNotice extends javax.swing.JFrame {
             panel.add(new JLabel("Date:"));
             panel.add(datePanel);
             panel.add(new JLabel("Audience:"));
-            panel.add(audienceField);
+            panel.add(audienceCombo);
             panel.add(new JLabel("Subject:"));
             panel.add(subjectField);
             panel.add(new JLabel("Description:"));
@@ -165,7 +183,7 @@ public class NewsAndNotice extends javax.swing.JFrame {
             int result = JOptionPane.showConfirmDialog(this, panel, "Add News/Notice", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
             if (result == JOptionPane.OK_OPTION) {
                 String date = dateField.getText();
-                String audience = audienceField.getText();
+                String audience = (String) audienceCombo.getSelectedItem();
                 String subject = subjectField.getText();
                 String description = descriptionField.getText();
                 String expiryDate = expiryDateField.getText();
@@ -175,8 +193,14 @@ public class NewsAndNotice extends javax.swing.JFrame {
                     return;
                 }
                 gaumanagementsystem.model.NewsAndNotice newNotice = new gaumanagementsystem.model.NewsAndNotice(date, audience, subject, description, expiryDate, type);
-                controller.add(newNotice);
-                addRowToTable(newNotice);
+                boolean success = controller.add(newNotice);
+                if (success) {
+                    JOptionPane.showMessageDialog(this, "News/Notice added successfully!");
+                    loadTableData(); // Refresh table from database
+                } else {
+                    JOptionPane.showMessageDialog(this, "Failed to add news/notice to database!", 
+                                                "Database Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
 
@@ -189,8 +213,27 @@ public class NewsAndNotice extends javax.swing.JFrame {
                         "Confirm Delete",
                         JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
-                    controller.delete(selectedRow);
-                    ((DefaultTableModel) jTable1.getModel()).removeRow(selectedRow);
+                    // Get subject from selected row to find ID for deletion
+                    DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+                    String subject = (String) model.getValueAt(selectedRow, 2); // Subject is column 2
+                    
+                    // Get ID using the DAO helper method
+                    gaumanagementsystem.dao.impl.NewsAndNoticeDAOImpl dao = new gaumanagementsystem.dao.impl.NewsAndNoticeDAOImpl();
+                    int id = dao.getIdBySubject(subject);
+                    
+                    if (id != -1) {
+                        boolean success = controller.delete(id);
+                        if (success) {
+                            JOptionPane.showMessageDialog(this, "News/Notice deleted successfully!");
+                            loadTableData(); // Refresh table from database
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Failed to delete news/notice!", 
+                                                        "Database Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Could not find news/notice to delete!", 
+                                                    "Error", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "Please select a row to delete.");
@@ -209,7 +252,19 @@ public class NewsAndNotice extends javax.swing.JFrame {
                 String expiryDate = (String) model.getValueAt(selectedRow, 4);
                 String type = (String) model.getValueAt(selectedRow, 5);
 
-                JTextField audienceField = new JTextField(audience);
+                // Create audience dropdown with predefined options for update
+                String[] audiences = {
+                    "Local Citizens / Residents",
+                    "Ward Officials and Members", 
+                    "Local Businesses and Entrepreneurs",
+                    "Educational Institutions",
+                    "Health Post and Medical Staff",
+                    "Non-Governmental Organizations (NGOs) and Development Partners",
+                    "Government and Administrative Staff",
+                    "Students"
+                };
+                JComboBox<String> audienceCombo = new JComboBox<>(audiences);
+                audienceCombo.setSelectedItem(audience); // Set current value
                 JTextField subjectField = new JTextField(subject);
                 JTextField descriptionField = new JTextField(description);
                 String[] types = {"News", "Notice"};
@@ -254,7 +309,7 @@ public class NewsAndNotice extends javax.swing.JFrame {
                 panel.add(new JLabel("Date:"));
                 panel.add(datePanelUpdate);
                 panel.add(new JLabel("Audience:"));
-                panel.add(audienceField);
+                panel.add(audienceCombo);
                 panel.add(new JLabel("Subject:"));
                 panel.add(subjectField);
                 panel.add(new JLabel("Description:"));
@@ -267,7 +322,7 @@ public class NewsAndNotice extends javax.swing.JFrame {
                 int result = JOptionPane.showConfirmDialog(this, panel, "Update News/Notice", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (result == JOptionPane.OK_OPTION) {
                     String newDate = dateFieldUpdate.getText();
-                    String newAudience = audienceField.getText();
+                    String newAudience = (String) audienceCombo.getSelectedItem();
                     String newSubject = subjectField.getText();
                     String newDescription = descriptionField.getText();
                     String newExpiryDate = expiryDateFieldUpdate.getText();
@@ -277,13 +332,25 @@ public class NewsAndNotice extends javax.swing.JFrame {
                         return;
                     }
                     gaumanagementsystem.model.NewsAndNotice updatedNotice = new gaumanagementsystem.model.NewsAndNotice(newDate, newAudience, newSubject, newDescription, newExpiryDate, newType);
-                    controller.update(selectedRow, updatedNotice);
-                    model.setValueAt(newDate, selectedRow, 0);
-                    model.setValueAt(newAudience, selectedRow, 1);
-                    model.setValueAt(newSubject, selectedRow, 2);
-                    model.setValueAt(newDescription, selectedRow, 3);
-                    model.setValueAt(newExpiryDate, selectedRow, 4);
-                    model.setValueAt(newType, selectedRow, 5);
+                    
+                    // Get the original subject to find the database ID for update
+                    String originalSubject = subject;
+                    gaumanagementsystem.dao.impl.NewsAndNoticeDAOImpl dao = new gaumanagementsystem.dao.impl.NewsAndNoticeDAOImpl();
+                    int id = dao.getIdBySubject(originalSubject);
+                    
+                    if (id != -1) {
+                        boolean success = controller.update(id, updatedNotice);
+                        if (success) {
+                            JOptionPane.showMessageDialog(this, "News/Notice updated successfully!");
+                            loadTableData(); // Refresh table from database
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Failed to update news/notice in database!", 
+                                                        "Database Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Could not find news/notice to update!", 
+                                                    "Error", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "Please select a row to update.");
@@ -311,8 +378,17 @@ public class NewsAndNotice extends javax.swing.JFrame {
     private void loadTableData() {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0);
-        // No data loading from controller - data should be loaded from database via DAO
-        // Table will be empty until real data is added
+        try {
+            List<gaumanagementsystem.model.NewsAndNotice> allNews = controller.getAll();
+            for (gaumanagementsystem.model.NewsAndNotice notice : allNews) {
+                model.addRow(notice.toTableRow());
+            }
+            System.out.println("Successfully loaded " + allNews.size() + " news/notices from database.");
+        } catch (Exception e) {
+            System.err.println("Error loading news/notices from database: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error loading data from database: " + e.getMessage(), 
+                                        "Database Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void addRowToTable(gaumanagementsystem.model.NewsAndNotice notice) {
