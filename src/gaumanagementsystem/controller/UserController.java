@@ -3,6 +3,7 @@ package gaumanagementsystem.controller;
 import gaumanagementsystem.dao.UserDAO;
 import gaumanagementsystem.dao.impl.UserDAOImpl;
 import gaumanagementsystem.model.User;
+import gaumanagementsystem.util.PasswordUtil;
 import gaumanagementsystem.view.LoginView;
 import gaumanagementsystem.view.RegisterView;
 import javax.swing.JOptionPane;
@@ -42,14 +43,25 @@ public class UserController {
             return;
         }
 
+        // Validate password strength
+        if (!PasswordUtil.isPasswordStrong(password)) {
+            String strengthMessage = PasswordUtil.getPasswordStrengthMessage(password);
+            JOptionPane.showMessageDialog(view, strengthMessage, "Weak Password", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         try {
             if (userDAO.emailExists(email)) {
                 JOptionPane.showMessageDialog(view, "Email already exists", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            
+            // Hash the password before storing
+            String hashedPassword = PasswordUtil.hashPassword(password);
+            
             User user = new User();
             user.setEmail(email);
-            user.setPassword(password);
+            user.setPassword(hashedPassword);
             user.setRole(role);
             if (userDAO.createUser(user)) {
                 JOptionPane.showMessageDialog(view, "Registration successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -69,10 +81,14 @@ public class UserController {
             User user = userDAO.authenticateUser(email, password);
             if (user != null) {
                 JOptionPane.showMessageDialog(view, "Login Successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                // Pass user role and ID to DashboardView for role-based functionality
+                // Pass user role, ID, and email to DashboardView for role-based functionality
                 String userRole = user.getRole() != null ? user.getRole() : "user"; // Default to user if role is null
                 String userId = String.valueOf(user.getId());
-                new gaumanagementsystem.view.DashboardView(userRole, userId).setVisible(true);
+                // Create a custom DashboardView that accepts user email for profile lookup
+                gaumanagementsystem.view.DashboardView dashboard = new gaumanagementsystem.view.DashboardView(userRole, userId);
+                // Store user email for profile lookup - we'll need to add this to DashboardView
+                dashboard.setUserEmail(email);
+                dashboard.setVisible(true);
                 view.dispose();
             } else {
                 JOptionPane.showMessageDialog(view, "Invalid email or password. Please check your credentials and try again.", "Error", JOptionPane.ERROR_MESSAGE);

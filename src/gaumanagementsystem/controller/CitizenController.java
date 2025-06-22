@@ -99,6 +99,18 @@ public class CitizenController {
         }
     }
     
+    public CitizenData getCitizenByEmail(String email) {
+        try {
+            if (email == null || email.trim().isEmpty()) {
+                return null;
+            }
+            return citizenDao.getCitizenByEmail(email.trim());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
     public List<CitizenData> getAllCitizens() {
         try {
             return citizenDao.getAllCitizens();

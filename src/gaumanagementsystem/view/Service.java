@@ -92,64 +92,30 @@ public class Service extends javax.swing.JFrame {
         // Add search functionality to match News and Notice
         addSearchFunctionality();
 
-        // Add functional button listeners with row selection validation
-        jButton2.addActionListener(e -> {
-            // DELETE button - check if row is selected
-            int selectedRow = jTable1.getSelectedRow();
-            if (selectedRow == -1) {
-                JOptionPane.showMessageDialog(this, "Please select a service to delete.", "No Selection", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-            int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this service?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
-            if (confirm == JOptionPane.YES_OPTION) {
-                ((javax.swing.table.DefaultTableModel) jTable1.getModel()).removeRow(selectedRow);
-                JOptionPane.showMessageDialog(this, "Service deleted successfully!");
-            }
-        });
-        
-        jButton3.addActionListener(e -> {
-            // UPDATE button - check if row is selected
-            int selectedRow = jTable1.getSelectedRow();
-            if (selectedRow == -1) {
-                JOptionPane.showMessageDialog(this, "Please select a service to update.", "No Selection", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-            // TODO: Implement update service functionality
-            JOptionPane.showMessageDialog(this, "Update Service functionality to be implemented for selected row: " + (selectedRow + 1));
-        });
-        
-        jButton4.addActionListener(e -> {
-            // REFRESH button
-            JOptionPane.showMessageDialog(this, "Table refreshed!");
-        });
-        
-        jButton5.addActionListener(e -> {
-            // ADD button functionality - open service form dialog
-            showAddServiceDialog();
-        });
+        // Remove duplicate event handlers - they are already handled in the generated code section
+        // The generated code section handles all button actions properly
 
-        // Fix image loading for jLabel2
-        try {
-            java.net.URL imgUrl = getClass().getResource("/gaumanagementsystem/view/village_icon_180434.png");
-        if (imgUrl != null) {
-            jLabel2.setIcon(new javax.swing.ImageIcon(imgUrl));
-        } else {
-                // If image not found, set a simple text or leave empty
-                jLabel2.setText("🏘️"); // Village emoji as fallback
-                jLabel2.setFont(new java.awt.Font("Arial", 0, 24));
-            }
-        } catch (Exception e) {
-            jLabel2.setText("🏘️"); // Village emoji as fallback
-            jLabel2.setFont(new java.awt.Font("Arial", 0, 24));
-        }
+        // jLabel2 and jLabel3 are no longer used since we removed Services/Requests labels
     }
 
     /**
      * Show dialog to add new service
      */
     private void showAddServiceDialog() {
-        // Create form fields
-        JTextField serviceNameField = new JTextField(20);
+        // Create form fields with predefined service names
+        String[] serviceNames = {
+            "Birth Registration & Certificate Issuance",
+            "Death Registration & Certificate Issuance", 
+            "Marriage Registration & Certificate Issuance",
+            "Social Security Allowance Processing",
+            "Residential Building Permit Issuance",
+            "Property (Land/House) Tax Assessment & Payment",
+            "Household Waste Collection Service",
+            "Drinking Water Connection & Billing",
+            "Basic Health Services",
+            "Local Recommendation for Citizenship Certificate"
+        };
+        JComboBox<String> serviceNameCombo = new JComboBox<>(serviceNames);
         JTextField citizenNameField = new JTextField(20);
         JTextField wardField = new JTextField(10);
         JTextArea descriptionArea = new JTextArea(4, 20);
@@ -172,7 +138,7 @@ public class Service extends javax.swing.JFrame {
         gbc.gridx = 0; gbc.gridy = 0;
         panel.add(new JLabel("Service Name:"), gbc);
         gbc.gridx = 1;
-        panel.add(serviceNameField, gbc);
+        panel.add(serviceNameCombo, gbc);
 
         gbc.gridx = 0; gbc.gridy = 1;
         panel.add(new JLabel("Citizen Name:"), gbc);
@@ -205,13 +171,13 @@ public class Service extends javax.swing.JFrame {
 
         if (result == JOptionPane.OK_OPTION) {
             // Validate input
-            String serviceName = serviceNameField.getText().trim();
+            String serviceName = (String) serviceNameCombo.getSelectedItem();
             String citizenName = citizenNameField.getText().trim();
             String ward = wardField.getText().trim();
             String description = descriptionArea.getText().trim();
             String status = (String) statusCombo.getSelectedItem();
 
-            if (serviceName.isEmpty() || citizenName.isEmpty() || ward.isEmpty()) {
+            if (serviceName == null || serviceName.isEmpty() || citizenName.isEmpty() || ward.isEmpty()) {
                 JOptionPane.showMessageDialog(this, 
                     "Please fill in all required fields (Service Name, Citizen Name, Ward).", 
                     "Validation Error", 
@@ -230,6 +196,137 @@ public class Service extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, 
                     "Failed to add service. Please try again.", 
                     "Error", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    /**
+     * Show dialog to update existing service
+     */
+    private void showUpdateServiceDialog(int selectedRow) {
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        
+        // Get current values from selected row - handle type conversions properly
+        // Table columns: "Service_id", "ServiceName", "SubmittedAT", "NameOFCitizen", "Ward", "Description", "Status"
+        String currentServiceName = (String) model.getValueAt(selectedRow, 1); // ServiceName column
+        String currentCitizenName = (String) model.getValueAt(selectedRow, 3); // NameOFCitizen column
+        // Ward might be Integer or String, convert safely
+        Object wardObj = model.getValueAt(selectedRow, 4); // Ward column
+        String currentWard = wardObj != null ? wardObj.toString() : "";
+        String currentDescription = (String) model.getValueAt(selectedRow, 5); // Description column
+        String currentStatus = (String) model.getValueAt(selectedRow, 6); // Status column
+        
+        // Create form fields with predefined service names
+        String[] serviceNames = {
+            "Birth Registration & Certificate Issuance",
+            "Death Registration & Certificate Issuance", 
+            "Marriage Registration & Certificate Issuance",
+            "Social Security Allowance Processing",
+            "Residential Building Permit Issuance",
+            "Property (Land/House) Tax Assessment & Payment",
+            "Household Waste Collection Service",
+            "Drinking Water Connection & Billing",
+            "Basic Health Services",
+            "Local Recommendation for Citizenship Certificate"
+        };
+        JComboBox<String> serviceNameCombo = new JComboBox<>(serviceNames);
+        serviceNameCombo.setSelectedItem(currentServiceName); // Set current value
+        
+        JTextField citizenNameField = new JTextField(currentCitizenName, 20);
+        JTextField wardField = new JTextField(currentWard, 10);
+        JTextArea descriptionArea = new JTextArea(currentDescription, 4, 20);
+        JScrollPane descScrollPane = new JScrollPane(descriptionArea);
+        descriptionArea.setLineWrap(true);
+        descriptionArea.setWrapStyleWord(true);
+        
+        JComboBox<String> statusCombo = new JComboBox<>(new String[]{
+            "Pending", "In Progress", "Completed", "Rejected"
+        });
+        statusCombo.setSelectedItem(currentStatus); // Set current value
+
+        // Create panel with form layout
+        JPanel panel = new JPanel(new java.awt.GridBagLayout());
+        java.awt.GridBagConstraints gbc = new java.awt.GridBagConstraints();
+        gbc.insets = new java.awt.Insets(5, 5, 5, 5);
+        gbc.anchor = java.awt.GridBagConstraints.WEST;
+
+        // Add form fields
+        gbc.gridx = 0; gbc.gridy = 0;
+        panel.add(new JLabel("Service Name:"), gbc);
+        gbc.gridx = 1;
+        panel.add(serviceNameCombo, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 1;
+        panel.add(new JLabel("Citizen Name:"), gbc);
+        gbc.gridx = 1;
+        panel.add(citizenNameField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 2;
+        panel.add(new JLabel("Ward:"), gbc);
+        gbc.gridx = 1;
+        panel.add(wardField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 3;
+        panel.add(new JLabel("Description:"), gbc);
+        gbc.gridx = 1;
+        panel.add(descScrollPane, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 4;
+        panel.add(new JLabel("Status:"), gbc);
+        gbc.gridx = 1;
+        panel.add(statusCombo, gbc);
+
+        // Show dialog
+        int result = JOptionPane.showConfirmDialog(
+            this, 
+            panel, 
+            "Update Service", 
+            JOptionPane.OK_CANCEL_OPTION,
+            JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (result == JOptionPane.OK_OPTION) {
+            // Validate input
+            String serviceName = (String) serviceNameCombo.getSelectedItem();
+            String citizenName = citizenNameField.getText().trim();
+            String ward = wardField.getText().trim();
+            String description = descriptionArea.getText().trim();
+            String status = (String) statusCombo.getSelectedItem();
+
+            if (serviceName == null || serviceName.isEmpty() || citizenName.isEmpty() || ward.isEmpty()) {
+                JOptionPane.showMessageDialog(this, 
+                    "Please fill in all required fields (Service Name, Citizen Name, Ward).", 
+                    "Validation Error", 
+                    JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // Get the service ID from the first column (hidden or visible)
+            // We need to identify the service by citizen name and original service name for now
+            boolean success = updateServiceInDatabase(currentCitizenName, currentServiceName, 
+                                                    serviceName, citizenName, ward, description, status);
+            
+            if (success) {
+                // Update the table display only if database update was successful
+                // Table columns: "Service_id", "ServiceName", "SubmittedAT", "NameOFCitizen", "Ward", "Description", "Status"
+                model.setValueAt(serviceName, selectedRow, 1); // ServiceName column
+                model.setValueAt(citizenName, selectedRow, 3); // NameOFCitizen column
+                model.setValueAt(ward, selectedRow, 4); // Ward column
+                model.setValueAt(description, selectedRow, 5); // Description column
+                model.setValueAt(status, selectedRow, 6); // Status column
+                
+                JOptionPane.showMessageDialog(this, 
+                    "Service updated successfully in database!", 
+                    "Success", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                    
+                // Refresh table to show updated data from database
+                refreshTableData();
+            } else {
+                JOptionPane.showMessageDialog(this, 
+                    "Failed to update service in database!", 
+                    "Database Error", 
                     JOptionPane.ERROR_MESSAGE);
             }
         }
@@ -271,6 +368,106 @@ public class Service extends javax.swing.JFrame {
 
         } catch (SQLException e) {
             System.err.println("Database error: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+                if (conn != null) dbConnection.closeConnection(conn);
+            } catch (SQLException e) {
+                System.err.println("Error closing database resources: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Delete service from database
+     */
+    private boolean deleteServiceFromDatabase(String citizenName, String serviceName) {
+        MySqlConnection dbConnection = new MySqlConnection();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        
+        try {
+            conn = dbConnection.openConnection();
+            if (conn == null) {
+                System.err.println("Failed to establish database connection");
+                return false;
+            }
+
+            // Delete the service record using citizen name and service name as identifiers
+            String sql = "DELETE FROM services WHERE name_of_citizen = ? AND service_name = ?";
+            
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, citizenName);
+            stmt.setString(2, serviceName);
+
+            int rowsAffected = stmt.executeUpdate();
+            
+            if (rowsAffected > 0) {
+                System.out.println("Service deleted successfully from database. Rows affected: " + rowsAffected);
+                return true;
+            } else {
+                System.err.println("No service found to delete with citizen: " + citizenName + " and service: " + serviceName);
+                return false;
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Database error during delete: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+                if (conn != null) dbConnection.closeConnection(conn);
+            } catch (SQLException e) {
+                System.err.println("Error closing database resources: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Update service in database
+     */
+    private boolean updateServiceInDatabase(String originalCitizenName, String originalServiceName,
+                                          String newServiceName, String newCitizenName, String newWard, 
+                                          String newDescription, String newStatus) {
+        MySqlConnection dbConnection = new MySqlConnection();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        
+        try {
+            conn = dbConnection.openConnection();
+            if (conn == null) {
+                System.err.println("Failed to establish database connection");
+                return false;
+            }
+
+            // Update the service record using original citizen name and service name as identifiers
+            String sql = "UPDATE services SET service_name = ?, name_of_citizen = ?, ward = ?, description = ?, status = ?, updated_at = CURRENT_TIMESTAMP " +
+                        "WHERE name_of_citizen = ? AND service_name = ?";
+            
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, newServiceName);
+            stmt.setString(2, newCitizenName);
+            stmt.setString(3, newWard);
+            stmt.setString(4, newDescription);
+            stmt.setString(5, newStatus);
+            stmt.setString(6, originalCitizenName);  // WHERE condition
+            stmt.setString(7, originalServiceName);   // WHERE condition
+
+            int rowsAffected = stmt.executeUpdate();
+            
+            if (rowsAffected > 0) {
+                System.out.println("Service updated successfully in database. Rows affected: " + rowsAffected);
+                return true;
+            } else {
+                System.err.println("No service found to update with citizen: " + originalCitizenName + " and service: " + originalServiceName);
+                return false;
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Database error during update: " + e.getMessage());
             e.printStackTrace();
             return false;
         } finally {
@@ -387,14 +584,12 @@ public class Service extends javax.swing.JFrame {
     }
 
     private void setupPanel2Layout() {
-        // Create a GroupLayout for panel2 to match NewsAndNotice layout
+        // Create a GroupLayout for panel2 with clean layout
         javax.swing.GroupLayout panel2Layout = new javax.swing.GroupLayout(panel2);
         panel2.setLayout(panel2Layout);
         
-        // Add components to panel2
+        // Add components to panel2 (removed jLabel2 and jLabel3 - Services and Requests labels)
         panel2.add(jLabel1);
-        panel2.add(jLabel2);
-        panel2.add(jLabel3);
         panel2.add(jLabel4);
         panel2.add(jLabel5);
         panel2.add(jLabel6);
@@ -407,7 +602,7 @@ public class Service extends javax.swing.JFrame {
         panel2.add(jButton4);
         panel2.add(backButton);
         
-        // Set up horizontal layout
+        // Set up horizontal layout - both search fields on same line
         panel2Layout.setHorizontalGroup(
             panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel2Layout.createSequentialGroup()
@@ -420,15 +615,11 @@ public class Service extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(panel2Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
+                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jButton5)
@@ -443,7 +634,7 @@ public class Service extends javax.swing.JFrame {
                 .addContainerGap())
         );
         
-        // Set up vertical layout
+        // Set up vertical layout - single row for both search fields
         panel2Layout.setVerticalGroup(
             panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel2Layout.createSequentialGroup()
@@ -451,17 +642,13 @@ public class Service extends javax.swing.JFrame {
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel5)
+                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton5)
@@ -494,15 +681,15 @@ public class Service extends javax.swing.JFrame {
         jTextField1.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             @Override
             public void insertUpdate(javax.swing.event.DocumentEvent e) { 
-                filterTable(jTextField3.getText().trim()); 
+                filterTable(jTextField1.getText().trim()); 
             }
             @Override
             public void removeUpdate(javax.swing.event.DocumentEvent e) { 
-                filterTable(jTextField3.getText().trim()); 
+                filterTable(jTextField1.getText().trim()); 
             }
             @Override
             public void changedUpdate(javax.swing.event.DocumentEvent e) { 
-                filterTable(jTextField3.getText().trim()); 
+                filterTable(jTextField1.getText().trim()); 
             }
         });
     }
@@ -545,13 +732,40 @@ public class Service extends javax.swing.JFrame {
     }
     
     private void filterTable(String searchText) {
-        // Simple filter implementation - in a real app this would filter the table model
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        
         if (searchText.isEmpty()) {
-            // Show all rows
+            // Show all rows - reload from database
             refreshTableData();
         } else {
-            // Filter logic would go here
-            System.out.println("Filtering table with search text: " + searchText);
+            // Filter the current table data
+            DefaultTableModel filteredModel = new DefaultTableModel();
+            // Copy column structure
+            for (int i = 0; i < model.getColumnCount(); i++) {
+                filteredModel.addColumn(model.getColumnName(i));
+            }
+            
+            // Filter rows based on search text (case-insensitive)
+            for (int i = 0; i < model.getRowCount(); i++) {
+                boolean matchFound = false;
+                for (int j = 0; j < model.getColumnCount(); j++) {
+                    Object value = model.getValueAt(i, j);
+                    if (value != null && value.toString().toLowerCase().contains(searchText.toLowerCase())) {
+                        matchFound = true;
+                        break;
+                    }
+                }
+                if (matchFound) {
+                    Object[] row = new Object[model.getColumnCount()];
+                    for (int j = 0; j < model.getColumnCount(); j++) {
+                        row[j] = model.getValueAt(i, j);
+                    }
+                    filteredModel.addRow(row);
+                }
+            }
+            
+            jTable1.setModel(filteredModel);
+            System.out.println("Filtered table with search text: '" + searchText + "' - Found " + filteredModel.getRowCount() + " matches");
         }
     }
 
@@ -707,11 +921,38 @@ public class Service extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // DELETE functionality handled in constructor
+        // DELETE button - check if row is selected
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a service to delete.", "No Selection", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this service?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            // Get service details for database deletion
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            String citizenName = (String) model.getValueAt(selectedRow, 3); // NameOFCitizen column
+            String serviceName = (String) model.getValueAt(selectedRow, 1); // ServiceName column
+            
+            // Delete from database first
+            if (deleteServiceFromDatabase(citizenName, serviceName)) {
+                model.removeRow(selectedRow);
+                JOptionPane.showMessageDialog(this, "Service deleted successfully!");
+                refreshTableData(); // Refresh to show updated data
+            } else {
+                JOptionPane.showMessageDialog(this, "Failed to delete service from database!", "Database Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // UPDATE functionality handled in constructor
+        // UPDATE button - check if row is selected
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a service to update.", "No Selection", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        showUpdateServiceDialog(selectedRow);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
@@ -719,11 +960,14 @@ public class Service extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // REFRESH functionality handled in constructor
+        // REFRESH button - reload data from database
+        refreshTableData();
+        JOptionPane.showMessageDialog(this, "Table refreshed from database!");
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // ADD functionality handled in constructor
+        // ADD button functionality - open service form dialog
+        showAddServiceDialog();
     }//GEN-LAST:event_jButton5ActionPerformed
 
 
@@ -784,3 +1028,4 @@ public class Service extends javax.swing.JFrame {
     private java.awt.Panel panel2;
     // End of variables declaration//GEN-END:variables
 }
+

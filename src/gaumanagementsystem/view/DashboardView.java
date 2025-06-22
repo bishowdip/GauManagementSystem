@@ -17,6 +17,7 @@ public class DashboardView extends javax.swing.JFrame {
     private javax.swing.JButton logoutButton;
     private String userRole = "admin";
     private String currentUserId = null; // Add field to store current user ID
+    private String userEmail = null; // Add field to store current user email
     
     public DashboardView() {
         this("admin", null);
@@ -221,5 +222,13 @@ public class DashboardView extends javax.swing.JFrame {
 
     public String getCurrentUserId() {
         return currentUserId;
+    }
+    
+    public String getUserEmail() {
+        return userEmail;
+    }
+    
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 }

@@ -4,32 +4,44 @@
  */
 package gaumanagementsystem.database;
 import java.sql.*;
-import java.sql.Connection;
-
 
 /**
  *
  * @author bisho
  */
-    public interface Dbconnection {
+public interface Dbconnection {
     Connection openConnection();
     void closeConnection(Connection conn);
-   
+}
 
-public class DatabaseConnection {
-    private static final String URL = "jdbc:mysql://localhost:3306/Gaun_management";
+class DatabaseConnection implements Dbconnection {
+    private static final String URL = "jdbc:mysql://localhost:3306/gau_management";
     private static final String USER = "root";
-    private static final String PASSWORD = "";
+    private static final String PASSWORD = "Akg@nepal123";
    
-    public static Connection getConnection() throws SQLException {
+    @Override
+    public Connection openConnection() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             return DriverManager.getConnection(URL, USER, PASSWORD);
-        } catch (ClassNotFoundException e) {
-            throw new SQLException("Database driver not found", e);
+        } catch (ClassNotFoundException | SQLException e) {
+            System.err.println("Database connection error: " + e.getMessage());
+            e.printStackTrace();
+            return null;
         }
     }
-} 
+    
+    @Override
+    public void closeConnection(Connection conn) {
+        try {
+            if (conn != null && !conn.isClosed()) {
+                conn.close();
+            }
+        } catch (SQLException e) {
+            System.err.println("Error closing connection: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 }
 
     

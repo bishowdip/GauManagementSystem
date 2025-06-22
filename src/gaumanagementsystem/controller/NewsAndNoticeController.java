@@ -4,6 +4,7 @@
  */
 package gaumanagementsystem.controller;
 
+import gaumanagementsystem.dao.impl.NewsAndNoticeDAOImpl;
 import gaumanagementsystem.model.NewsAndNotice;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,50 +14,89 @@ import java.util.List;
  * @author bishodip
  */
 public class NewsAndNoticeController {
-    private final List<NewsAndNotice> dataList = new ArrayList<>();
+    private final NewsAndNoticeDAOImpl newsAndNoticeDAO;
 
     public NewsAndNoticeController() {
-        // No sample data - data should be loaded from database via DAO
+        this.newsAndNoticeDAO = new NewsAndNoticeDAOImpl();
     }
 
     public List<NewsAndNotice> getAll() {
-        return new ArrayList<>(dataList);
+        try {
+            List<NewsAndNotice> result = newsAndNoticeDAO.getAllNewsAndNotices();
+            System.out.println("Successfully loaded " + result.size() + " news/notices from database.");
+            return result;
+        } catch (Exception e) {
+            System.err.println("Error getting all news and notices: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
     }
 
-    public void add(NewsAndNotice notice) {
-        dataList.add(notice);
+    public boolean add(NewsAndNotice notice) {
+        try {
+            return newsAndNoticeDAO.createNewsAndNotice(notice);
+        } catch (Exception e) {
+            System.err.println("Error adding news/notice: " + e.getMessage());
+            return false;
+        }
     }
 
-    public void update(int index, NewsAndNotice notice) {
-        dataList.set(index, notice);
+    public boolean update(int id, NewsAndNotice notice) {
+        try {
+            return newsAndNoticeDAO.updateNewsAndNotice(notice);
+        } catch (Exception e) {
+            System.err.println("Error updating news/notice: " + e.getMessage());
+            return false;
+        }
     }
 
-    public void delete(int index) {
-        dataList.remove(index);
+    public boolean delete(int id) {
+        try {
+            return newsAndNoticeDAO.deleteNewsAndNotice(id);
+        } catch (Exception e) {
+            System.err.println("Error deleting news/notice: " + e.getMessage());
+            return false;
+        }
     }
 
     public List<NewsAndNotice> search(String query, String type) {
-        List<NewsAndNotice> result = new ArrayList<>();
-        for (NewsAndNotice notice : dataList) {
-            boolean matchesSearch = query.isEmpty();
-            boolean matchesType = type.isEmpty() || notice.getType().equalsIgnoreCase(type);
+        try {
+            List<NewsAndNotice> allNews = newsAndNoticeDAO.getAllNewsAndNotices();
+            List<NewsAndNotice> result = new ArrayList<>();
+            
+            for (NewsAndNotice notice : allNews) {
+                boolean matchesSearch = query.isEmpty();
+                boolean matchesType = type.isEmpty() || notice.getType().equalsIgnoreCase(type);
 
-            // Check if any field contains the search text
-            if (!query.isEmpty()) {
-                if (notice.getDate().toLowerCase().contains(query.toLowerCase()) ||
-                    notice.getAudience().toLowerCase().contains(query.toLowerCase()) ||
-                    notice.getSubject().toLowerCase().contains(query.toLowerCase()) ||
-                    notice.getDescription().toLowerCase().contains(query.toLowerCase()) ||
-                    notice.getExpiryDate().toLowerCase().contains(query.toLowerCase()) ||
-                    notice.getType().toLowerCase().contains(query.toLowerCase())) {
-                    matchesSearch = true;
+                // Check if any field contains the search text
+                if (!query.isEmpty()) {
+                    if (notice.getDate().toLowerCase().contains(query.toLowerCase()) ||
+                        notice.getAudience().toLowerCase().contains(query.toLowerCase()) ||
+                        notice.getSubject().toLowerCase().contains(query.toLowerCase()) ||
+                        notice.getDescription().toLowerCase().contains(query.toLowerCase()) ||
+                        notice.getExpiryDate().toLowerCase().contains(query.toLowerCase()) ||
+                        notice.getType().toLowerCase().contains(query.toLowerCase())) {
+                        matchesSearch = true;
+                    }
+                }
+
+                if (matchesSearch && matchesType) {
+                    result.add(notice);
                 }
             }
-
-            if (matchesSearch && matchesType) {
-                result.add(notice);
-            }
+            return result;
+        } catch (Exception e) {
+            System.err.println("Error searching news/notices: " + e.getMessage());
+            return new ArrayList<>();
         }
-        return result;
+    }
+    
+    public List<NewsAndNotice> getByType(String type) {
+        try {
+            return newsAndNoticeDAO.getByType(type);
+        } catch (Exception e) {
+            System.err.println("Error getting news/notices by type: " + e.getMessage());
+            return new ArrayList<>();
+        }
     }
 }

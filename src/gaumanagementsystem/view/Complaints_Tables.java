@@ -8,12 +8,18 @@ package gaumanagementsystem.view;
 
 import java.awt.Color;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerModel;
+import gaumanagementsystem.controller.ComplaintController;
+import gaumanagementsystem.model.Complaint;
+import java.util.List;
+import java.util.ArrayList;
+import java.sql.SQLException;
 
 /**
  *
@@ -25,6 +31,7 @@ public class Complaints_Tables extends javax.swing.JFrame {
     private String currentFilter = "All"; // Track current filter: "All", "Complaint", "Feedback"
     private String userRole = "admin"; // Store user role for navigation
     private String currentUserId = null; // Store current user ID for filtering
+    private ComplaintController complaintController; // Database controller
 
     /**
      * Creates new form Complaints_Tables
@@ -40,6 +47,7 @@ public class Complaints_Tables extends javax.swing.JFrame {
     public Complaints_Tables(String userRole, String currentUserId) {
         this.userRole = userRole; // Store the user role
         this.currentUserId = currentUserId; // Store the user ID
+        this.complaintController = new ComplaintController(); // Initialize database controller
         initComponents();
         
         // Make window fully responsive
@@ -83,10 +91,37 @@ public class Complaints_Tables extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Please select a complaint to delete.", "No Selection", JOptionPane.WARNING_MESSAGE);
                 return;
             }
+            
+            // For users, check if they can delete this complaint
+            if (!"admin".equalsIgnoreCase(userRole)) {
+                String category = (String) ComplaintTable1.getValueAt(selectedRow, 5); // Category column
+                String email = (String) ComplaintTable1.getValueAt(selectedRow, 3); // Email column
+                
+                // Users cannot delete feedback at all
+                if ("Feedback".equals(category)) {
+                    JOptionPane.showMessageDialog(this, "You cannot delete feedback entries. Feedback is read-only for users.", "Access Denied", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                
+                // Users can only delete their own complaints
+                if (!"Complaint".equals(category) || !email.equals(currentUserId)) {
+                    JOptionPane.showMessageDialog(this, "You can only delete your own complaints.", "Access Denied", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+            }
+            
+            // Get the complaint ID from the selected row
+            int complaintId = (Integer) ComplaintTable1.getValueAt(selectedRow, 0);
+            
             int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this complaint?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
-                ((javax.swing.table.DefaultTableModel) ComplaintTable1.getModel()).removeRow(selectedRow);
-                JOptionPane.showMessageDialog(this, "Complaint deleted successfully!");
+                boolean success = complaintController.deleteComplaint(complaintId);
+                if (success) {
+                    JOptionPane.showMessageDialog(this, "Complaint deleted successfully!");
+                    loadTableData(); // Refresh table from database
+                } else {
+                    JOptionPane.showMessageDialog(this, "Failed to delete complaint from database.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         
@@ -104,11 +139,19 @@ public class Complaints_Tables extends javax.swing.JFrame {
             // For users, check if they can edit this complaint
             if (!"admin".equalsIgnoreCase(userRole)) {
                 String category = (String) ComplaintTable1.getValueAt(selectedRow, 5); // Category column
-                if (!"Complaint".equals(category)) {
-                    JOptionPane.showMessageDialog(this, "You can only update your own complaints, not feedbacks.", "Access Denied", JOptionPane.WARNING_MESSAGE);
+                String email = (String) ComplaintTable1.getValueAt(selectedRow, 3); // Email column
+                
+                // Users cannot modify feedback at all
+                if ("Feedback".equals(category)) {
+                    JOptionPane.showMessageDialog(this, "You cannot modify feedback entries. Feedback is read-only for users.", "Access Denied", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
-                // Additional check: verify this complaint belongs to the current user (implement later with database)
+                
+                // Users can only modify their own complaints
+                if (!"Complaint".equals(category) || !email.equals(currentUserId)) {
+                    JOptionPane.showMessageDialog(this, "You can only update your own complaints.", "Access Denied", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
             }
             
             showComplaintForm(true, selectedRow);
@@ -119,28 +162,23 @@ public class Complaints_Tables extends javax.swing.JFrame {
         refreshButton.setForeground(Color.BLACK);
         refreshButton.setBounds(510, 480, 100, 30);
         refreshButton.addActionListener(e -> {
-            // Implement refresh functionality - clear table
-            javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) ComplaintTable1.getModel();
-            model.setRowCount(0); // Clear all rows
-            
-            // No sample data - data should be loaded from database via DAO
-            // Reset counter
-            idCounter.set(1);
-            
             // Reset filter to "All"
             currentFilter = "All";
             
-            JOptionPane.showMessageDialog(this, "Table refreshed!");
+            // Refresh data from database
+            loadTableData();
+            
+            JOptionPane.showMessageDialog(this, "Complaints table refreshed successfully!");
         });
 
         // Update button visibility for mixed access:
-        // - Users can ADD complaints and UPDATE their own complaints
-        // - Users can see all feedbacks but cannot edit them
-        // - Only admins can DELETE anything
+        // - Users can ADD complaints and UPDATE/DELETE their own complaints
+        // - Users can see all feedbacks but cannot edit/delete them
+        // - Admins have full access to everything
         boolean isAdmin = "admin".equalsIgnoreCase(userRole);
         addButton.setVisible(true);       // ADD - Visible for both (users can add complaints)
-        deleteButton.setVisible(isAdmin); // DELETE - Admin only
-        updateButton.setVisible(true);    // UPDATE - Visible for both (with restrictions for users)
+        deleteButton.setVisible(true);    // DELETE - Visible for both (with access control checks)
+        updateButton.setVisible(true);    // UPDATE - Visible for both (with access control checks)
         
         // Create responsive layout instead of absolute positioning
         setLayout(new java.awt.BorderLayout());
@@ -255,14 +293,65 @@ public class Complaints_Tables extends javax.swing.JFrame {
         
         add(buttonPanel, java.awt.BorderLayout.SOUTH);
         
-        // Add initial sample data
-        loadInitialData();
+        // Load data after all UI components are initialized and layout is complete
+        SwingUtilities.invokeLater(() -> {
+            loadTableData();
+        });
+    }
+
+    /**
+     * Load complaint data from database into the table
+     */
+    private void loadTableData() {
+        try {
+            javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) ComplaintTable1.getModel();
+            model.setRowCount(0); // Clear existing data
+            
+            List<Complaint> allComplaints = complaintController.getAllComplaints();
+            List<Complaint> filteredComplaints = new ArrayList<>();
+            
+            // Apply user-based filtering
+            if ("user".equalsIgnoreCase(userRole)) {
+                // For regular users: show their own complaints + all feedback (but not other users' complaints)
+                for (Complaint complaint : allComplaints) {
+                    if (currentUserId != null) {
+                        // Show if it's their own complaint (by email) OR if it's feedback (category = "Feedback")
+                        if (complaint.getEmail().equals(currentUserId) || "Feedback".equals(complaint.getCategory())) {
+                            filteredComplaints.add(complaint);
+                        }
+                    }
+                }
+                System.out.println("Loaded " + filteredComplaints.size() + " items for user: " + currentUserId + 
+                                 " (own complaints + all feedback)");
+            } else {
+                // For admin, show all complaints and feedback
+                filteredComplaints = allComplaints;
+                System.out.println("Loaded " + filteredComplaints.size() + " items for admin role");
+            }
+            
+            for (Complaint complaint : filteredComplaints) {
+                Object[] row = {
+                    complaint.getId(),
+                    complaint.getName(),
+                    complaint.getDate(),
+                    complaint.getEmail(),
+                    complaint.getDescription(),
+                    complaint.getCategory(),
+                    complaint.getStatus()
+                };
+                model.addRow(row);
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Error loading complaint data: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error loading data from database: " + e.getMessage(), 
+                                        "Database Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void loadInitialData() {
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) ComplaintTable1.getModel();
-        // No initial data - data should be loaded from database via DAO
-        // Table will be empty until real data is added
+        // This method is kept for backward compatibility but now calls loadTableData()
+        loadTableData();
     }
 
     /**
@@ -470,80 +559,117 @@ public class Complaints_Tables extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     private void filterTable() {
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) ComplaintTable1.getModel();
-        javax.swing.table.DefaultTableModel originalModel = new javax.swing.table.DefaultTableModel(
-            new String[]{"ID", "Name", "Date", "Email", "Description", "Category", "Status"}, 0
-        );
-        
-        // Get all data (you would normally get this from a database)
-        Object[][] allData = getAllTableData();
-        
-        // Clear current table
-        model.setRowCount(0);
-        
-        // Filter and add rows based on current filter
-        for (Object[] row : allData) {
-            String category = (String) row[5]; // Category is at index 5
+        try {
+            javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) ComplaintTable1.getModel();
+            model.setRowCount(0); // Clear current table
             
-            if (currentFilter.equals("All") || 
-                (currentFilter.equals("Complaint") && category.equals("Complaint")) ||
-                (currentFilter.equals("Feedback") && category.equals("Suggestion"))) { // Map "Feedback" to "Suggestion" category
+            List<Complaint> allComplaints;
+            
+            // Get filtered data from database based on current filter
+            if (currentFilter.equals("All")) {
+                allComplaints = complaintController.getAllComplaints();
+            } else if (currentFilter.equals("Complaint")) {
+                allComplaints = complaintController.getComplaintsByType("Complaint");
+            } else if (currentFilter.equals("Feedback")) {
+                allComplaints = complaintController.getComplaintsByType("Feedback");
+            } else {
+                allComplaints = complaintController.getAllComplaints();
+            }
+            
+            // Apply user-based access control filtering (same logic as loadTableData)
+            List<Complaint> filteredComplaints = new ArrayList<>();
+            
+            if ("user".equalsIgnoreCase(userRole)) {
+                // For regular users: show their own complaints + all feedback (but not other users' complaints)
+                for (Complaint complaint : allComplaints) {
+                    if (currentUserId != null) {
+                        // Show if it's their own complaint (by email) OR if it's feedback (category = "Feedback")
+                        if (complaint.getEmail().equals(currentUserId) || "Feedback".equals(complaint.getCategory())) {
+                            filteredComplaints.add(complaint);
+                        }
+                    }
+                }
+            } else {
+                // For admin, show all complaints and feedback
+                filteredComplaints = allComplaints;
+            }
+            
+            // Add filtered complaints to table
+            for (Complaint complaint : filteredComplaints) {
+                Object[] row = {
+                    complaint.getId(),
+                    complaint.getName(),
+                    complaint.getDate(),
+                    complaint.getEmail(),
+                    complaint.getDescription(),
+                    complaint.getCategory(),
+                    complaint.getStatus()
+                };
                 model.addRow(row);
             }
+            
+        } catch (Exception e) {
+            System.err.println("Error filtering table: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error filtering data: " + e.getMessage(), 
+                                        "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }
     
     private void performSearch(String searchText) {
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) ComplaintTable1.getModel();
-        
-        // Get all data
-        Object[][] allData = getAllTableData();
-        
-        // Clear current table
-        model.setRowCount(0);
-        
-        // If search text is empty, show filtered results based on current filter
-        if (searchText == null || searchText.trim().isEmpty()) {
-            filterTable();
-            return;
-        }
-        
-        // Convert search text to lowercase for case-insensitive search
-        String searchLower = searchText.toLowerCase().trim();
-        
-        // Search through all columns and filter by current category filter
-        for (Object[] row : allData) {
-            String category = (String) row[5]; // Category is at index 5
+        try {
+            javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) ComplaintTable1.getModel();
+            model.setRowCount(0); // Clear current table
             
-            // First check if row matches current filter
-            boolean matchesFilter = currentFilter.equals("All") || 
-                (currentFilter.equals("Complaint") && category.equals("Complaint")) ||
-                (currentFilter.equals("Feedback") && category.equals("Suggestion"));
-            
-            if (!matchesFilter) {
-                continue; // Skip if doesn't match current filter
+            // If search text is empty, show filtered results based on current filter
+            if (searchText == null || searchText.trim().isEmpty()) {
+                filterTable();
+                return;
             }
             
-            // Check if any field contains the search text
-            boolean matchesSearch = false;
-            for (int i = 0; i < row.length; i++) {
-                if (row[i] != null && row[i].toString().toLowerCase().contains(searchLower)) {
-                    matchesSearch = true;
-                    break;
+            // Get search results from database
+            List<Complaint> searchResults = complaintController.searchComplaints(searchText.trim());
+            
+            // Apply user-based access control and filter search results
+            for (Complaint complaint : searchResults) {
+                // Check user access control first
+                boolean hasAccess = false;
+                if ("user".equalsIgnoreCase(userRole)) {
+                    // For regular users: show their own complaints + all feedback
+                    if (currentUserId != null) {
+                        hasAccess = complaint.getEmail().equals(currentUserId) || "Feedback".equals(complaint.getCategory());
+                    }
+                } else {
+                    // For admin, show all
+                    hasAccess = true;
+                }
+                
+                // Then check if it matches the current filter
+                boolean matchesFilter = currentFilter.equals("All") || 
+                    (currentFilter.equals("Complaint") && complaint.getCategory().equals("Complaint")) ||
+                    (currentFilter.equals("Feedback") && complaint.getCategory().equals("Feedback"));
+                
+                if (hasAccess && matchesFilter) {
+                    Object[] row = {
+                        complaint.getId(),
+                        complaint.getName(),
+                        complaint.getDate(),
+                        complaint.getEmail(),
+                        complaint.getDescription(),
+                        complaint.getCategory(),
+                        complaint.getStatus()
+                    };
+                    model.addRow(row);
                 }
             }
             
-            if (matchesSearch) {
-                model.addRow(row);
-            }
+        } catch (Exception e) {
+            System.err.println("Error performing search: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error searching data: " + e.getMessage(), 
+                                        "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }
     
-    private Object[][] getAllTableData() {
-        // This method should get data from database only
-        // Return empty array - data will be loaded from database via DAO
-        return new Object[][] {};
-    }
+
 
     private void showComplaintForm(boolean isUpdate, int selectedRow) {
         // Create form fields with proper sizing
@@ -555,6 +681,11 @@ public class Complaints_Tables extends javax.swing.JFrame {
         emailField.setPreferredSize(new java.awt.Dimension(250, 25));
         emailField.setMinimumSize(new java.awt.Dimension(200, 25));
         
+        // Phone field removed as requested
+        
+        javax.swing.JSpinner wardSpinner = new javax.swing.JSpinner(new javax.swing.SpinnerNumberModel(1, 1, 10, 1));
+        wardSpinner.setPreferredSize(new java.awt.Dimension(250, 25));
+        
         javax.swing.JTextArea descriptionArea = new javax.swing.JTextArea(4, 25);
         descriptionArea.setLineWrap(true);
         descriptionArea.setWrapStyleWord(true);
@@ -562,13 +693,8 @@ public class Complaints_Tables extends javax.swing.JFrame {
         javax.swing.JScrollPane descScrollPane = new javax.swing.JScrollPane(descriptionArea);
         descScrollPane.setPreferredSize(new java.awt.Dimension(250, 80));
         
-        // Category dropdown - restrict for users
-        String[] categories;
-        if ("admin".equalsIgnoreCase(userRole)) {
-            categories = new String[]{"Complaint", "Suggestion", "General", "Infrastructure", "Service", "Other"};
-        } else {
-            categories = new String[]{"Complaint"}; // Users can only add complaints
-        }
+        // Category dropdown - only two options: Complaints and Feedbacks
+        String[] categories = {"Complaint", "Feedback"};
         javax.swing.JComboBox<String> categoryCombo = new javax.swing.JComboBox<>(categories);
         categoryCombo.setPreferredSize(new java.awt.Dimension(250, 25));
         
@@ -611,11 +737,24 @@ public class Complaints_Tables extends javax.swing.JFrame {
         if (isUpdate && selectedRow >= 0) {
             javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) ComplaintTable1.getModel();
             nameField.setText((String) model.getValueAt(selectedRow, 1)); // Name
-            dateField.setText((String) model.getValueAt(selectedRow, 2)); // Date
+            
+            // Handle date field - could be String or Date object
+            Object dateValue = model.getValueAt(selectedRow, 2);
+            if (dateValue instanceof java.sql.Date) {
+                dateField.setText(dateValue.toString()); // java.sql.Date.toString() returns yyyy-MM-dd format
+            } else if (dateValue instanceof String) {
+                dateField.setText((String) dateValue);
+            } else {
+                dateField.setText(sdf.format(new java.util.Date())); // Default to today
+            }
+            
             emailField.setText((String) model.getValueAt(selectedRow, 3)); // Email
             descriptionArea.setText((String) model.getValueAt(selectedRow, 4)); // Description
             categoryCombo.setSelectedItem((String) model.getValueAt(selectedRow, 5)); // Category
             statusCombo.setSelectedItem((String) model.getValueAt(selectedRow, 6)); // Status
+            
+            // Set default values for ward if not available in table
+            wardSpinner.setValue(1); // Default ward 1
         }
         
         // Create form panel with better layout
@@ -652,7 +791,18 @@ public class Complaints_Tables extends javax.swing.JFrame {
         gbc.weightx = 1.0;
         panel.add(emailField, gbc);
         
+        // Phone field removed from layout
+        
         gbc.gridx = 0; gbc.gridy = 3;
+        gbc.fill = java.awt.GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
+        panel.add(new javax.swing.JLabel("Ward:"), gbc);
+        gbc.gridx = 1;
+        gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        panel.add(wardSpinner, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 4;
         gbc.fill = java.awt.GridBagConstraints.NONE;
         gbc.weightx = 0.0;
         panel.add(new javax.swing.JLabel("Category:"), gbc);
@@ -661,7 +811,7 @@ public class Complaints_Tables extends javax.swing.JFrame {
         gbc.weightx = 1.0;
         panel.add(categoryCombo, gbc);
         
-        gbc.gridx = 0; gbc.gridy = 4;
+        gbc.gridx = 0; gbc.gridy = 5;
         gbc.fill = java.awt.GridBagConstraints.NONE;
         gbc.weightx = 0.0;
         panel.add(new javax.swing.JLabel("Status:"), gbc);
@@ -670,7 +820,7 @@ public class Complaints_Tables extends javax.swing.JFrame {
         gbc.weightx = 1.0;
         panel.add(statusCombo, gbc);
         
-        gbc.gridx = 0; gbc.gridy = 5;
+        gbc.gridx = 0; gbc.gridy = 6;
         gbc.fill = java.awt.GridBagConstraints.NONE;
         gbc.weightx = 0.0;
         gbc.anchor = java.awt.GridBagConstraints.NORTHWEST;
@@ -696,13 +846,74 @@ public class Complaints_Tables extends javax.swing.JFrame {
         javax.swing.JButton cancelButton = new javax.swing.JButton("Cancel");
         
         // Add button actions
-        final boolean[] dialogResult = {false};
         okButton.addActionListener(e -> {
-            dialogResult[0] = true;
-            dialog.dispose();
+            // Perform validation BEFORE closing dialog
+            String name = nameField.getText().trim();
+            String date = dateField.getText().trim();
+            String email = emailField.getText().trim();
+            String phone = ""; // Phone field removed, set to empty string
+            int ward = (Integer) wardSpinner.getValue();
+            String description = descriptionArea.getText().trim();
+            String category = (String) categoryCombo.getSelectedItem();
+            String status = (String) statusCombo.getSelectedItem();
+            
+            System.out.println("Form validation - Name: '" + name + "', Email: '" + email + "', Description: '" + description + "'");
+            System.out.println("Description field text area content: '" + descriptionArea.getText() + "'");
+            System.out.println("Description length: " + description.length());
+            
+            // Validation
+            if (name.isEmpty() || email.isEmpty() || description.isEmpty()) {
+                JOptionPane.showMessageDialog(dialog, "Name, Email, and Description are required fields!");
+                return; // Don't close dialog, let user fix the issue
+            }
+            
+            // Email validation
+            if (!email.contains("@") || !email.contains(".")) {
+                JOptionPane.showMessageDialog(dialog, "Please enter a valid email address!");
+                return; // Don't close dialog, let user fix the issue
+            }
+            
+            // If validation passes, process the form
+            try {
+                // Convert date string to SQL Date
+                java.sql.Date sqlDate = java.sql.Date.valueOf(date);
+                
+                if (isUpdate) {
+                    // Get the complaint ID from the selected row
+                    javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) ComplaintTable1.getModel();
+                    int complaintId = (Integer) model.getValueAt(selectedRow, 0);
+                    
+                    // Update complaint in database
+                    boolean success = complaintController.updateComplaint(complaintId, name, ward, phone, email, 
+                                                                        category, description, status, sqlDate, "");
+                    if (success) {
+                        JOptionPane.showMessageDialog(dialog, "Complaint updated successfully!");
+                        loadTableData(); // Refresh table from database
+                        dialog.dispose(); // Close dialog only on success
+                    } else {
+                        JOptionPane.showMessageDialog(dialog, "Failed to update complaint in database.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    // Add new complaint to database
+                    boolean success = complaintController.createComplaint(name, ward, phone, email, 
+                                                                        category, description, sqlDate);
+                    if (success) {
+                        JOptionPane.showMessageDialog(dialog, "Complaint added successfully!");
+                        loadTableData(); // Refresh table from database
+                        dialog.dispose(); // Close dialog only on success
+                    } else {
+                        JOptionPane.showMessageDialog(dialog, "Failed to add complaint to database.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            } catch (Exception ex) {
+                System.err.println("Error processing complaint form: " + ex.getMessage());
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(dialog, "Error processing complaint: " + ex.getMessage(), 
+                                            "Database Error", JOptionPane.ERROR_MESSAGE);
+            }
         });
+        
         cancelButton.addActionListener(e -> {
-            dialogResult[0] = false;
             dialog.dispose();
         });
         
@@ -710,50 +921,10 @@ public class Complaints_Tables extends javax.swing.JFrame {
         buttonPanel.add(cancelButton);
         dialog.add(buttonPanel, java.awt.BorderLayout.SOUTH);
         
-        // Set dialog size and position
-        dialog.setSize(400, 350);
+        // Set dialog size and position - make it larger to show all fields
+        dialog.setSize(450, 500);
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
-        
-        // Process result
-        if (dialogResult[0]) {
-            String name = nameField.getText().trim();
-            String date = dateField.getText().trim();
-            String email = emailField.getText().trim();
-            String description = descriptionArea.getText().trim();
-            String category = (String) categoryCombo.getSelectedItem();
-            String status = (String) statusCombo.getSelectedItem();
-            
-            // Validation
-            if (name.isEmpty() || email.isEmpty() || description.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Name, Email, and Description are required fields!");
-                return;
-            }
-            
-            // Email validation
-            if (!email.contains("@") || !email.contains(".")) {
-                JOptionPane.showMessageDialog(this, "Please enter a valid email address!");
-                return;
-            }
-            
-            javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) ComplaintTable1.getModel();
-            
-            if (isUpdate) {
-                // Update existing row (keep the same ID)
-                model.setValueAt(name, selectedRow, 1);
-                model.setValueAt(date, selectedRow, 2);
-                model.setValueAt(email, selectedRow, 3);
-                model.setValueAt(description, selectedRow, 4);
-                model.setValueAt(category, selectedRow, 5);
-                model.setValueAt(status, selectedRow, 6);
-                JOptionPane.showMessageDialog(this, "Complaint updated successfully!");
-            } else {
-                // Add new row with auto-generated ID
-                int newId = idCounter.getAndIncrement();
-                model.addRow(new Object[]{newId, name, date, email, description, category, status});
-                JOptionPane.showMessageDialog(this, "Complaint added successfully!");
-            }
-        }
     }
 
     private Date showCalendarDialog(String currentDate) {
