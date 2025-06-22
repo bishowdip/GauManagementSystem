@@ -201,16 +201,30 @@ public class DashboardController {
             );
             
             if (confirm == JOptionPane.YES_OPTION) {
-                view.dispose();
-                System.out.println("User logged out successfully.");
+                System.out.println("User confirmed logout. Navigating to login screen...");
                 
-                // Optionally show login view here
-                // LoginView loginView = new LoginView();
-                // loginView.setVisible(true);
+                // Close current dashboard view
+                view.dispose();
+                
+                // Open login view
+                gaumanagementsystem.view.LoginView loginView = new gaumanagementsystem.view.LoginView();
+                loginView.setVisible(true);
+                
+                System.out.println("User logged out successfully. Login screen displayed.");
+            } else {
+                System.out.println("User cancelled logout.");
             }
         } catch (Exception e) {
             System.err.println("Error during logout: " + e.getMessage());
             e.printStackTrace();
+            
+            // Show error message to user
+            JOptionPane.showMessageDialog(
+                view,
+                "An error occurred during logout. Please try again.\nError: " + e.getMessage(),
+                "Logout Error",
+                JOptionPane.ERROR_MESSAGE
+            );
         }
     }
     

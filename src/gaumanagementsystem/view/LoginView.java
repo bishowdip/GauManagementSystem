@@ -8,6 +8,7 @@ import java.awt.event.*;
 public class LoginView extends javax.swing.JFrame {
     private javax.swing.JButton loginButton;
     private javax.swing.JButton showButton;
+    private javax.swing.JLabel welcomeLabel;
     private javax.swing.JLabel titleLabel;
     private javax.swing.JLabel emailLabel;
     private javax.swing.JLabel passwordLabel;
@@ -28,6 +29,7 @@ public class LoginView extends javax.swing.JFrame {
     }
 
     private void initComponents() {
+        welcomeLabel = new JLabel("Welcome to Gau Management System");
         titleLabel = new JLabel("Enter your credentials to login");
         emailLabel = new JLabel("Email");
         passwordLabel = new JLabel("Password");
@@ -42,17 +44,23 @@ public class LoginView extends javax.swing.JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(null);
 
-        // Set bounds
-        titleLabel.setBounds(100, 30, 300, 25);
-        emailLabel.setBounds(50, 80, 100, 25);
-        emailField.setBounds(150, 80, 150, 25);
-        passwordLabel.setBounds(50, 120, 100, 25);
-        passwordField.setBounds(150, 120, 150, 25);
-        showButton.setBounds(310, 120, 70, 25);
-        forgotLabel.setBounds(150, 150, 200, 25);
-        loginButton.setBounds(150, 180, 150, 30);
-        noAccountLabel.setBounds(100, 220, 150, 25);
-        registerLabel.setBounds(250, 220, 100, 25);
+        // Set bounds with increased spacing to accommodate welcome text
+        welcomeLabel.setBounds(80, 20, 350, 35);
+        titleLabel.setBounds(100, 70, 300, 25);
+        emailLabel.setBounds(50, 120, 100, 25);
+        emailField.setBounds(150, 120, 150, 25);
+        passwordLabel.setBounds(50, 160, 100, 25);
+        passwordField.setBounds(150, 160, 150, 25);
+        showButton.setBounds(310, 160, 70, 25);
+        forgotLabel.setBounds(150, 190, 200, 25);
+        loginButton.setBounds(150, 220, 150, 30);
+        noAccountLabel.setBounds(100, 260, 150, 25);
+        registerLabel.setBounds(250, 260, 100, 25);
+
+        // Styling welcome label
+        welcomeLabel.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 18));
+        welcomeLabel.setForeground(new java.awt.Color(0, 102, 51));
+        welcomeLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
         // Styling register label
         registerLabel.setForeground(new java.awt.Color(51, 153, 255));
@@ -97,13 +105,33 @@ public class LoginView extends javax.swing.JFrame {
             public void mouseExited(MouseEvent e) {}
         });
         
+        forgotLabel.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                new ForgotPasswordView().setVisible(true);
+                dispose();
+            }
+            
+            @Override
+            public void mousePressed(MouseEvent e) {}
+            
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+            
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+            
+            @Override
+            public void mouseExited(MouseEvent e) {}
+        });
+        
 
         // Add components
-        add(titleLabel); add(emailLabel); add(emailField); add(passwordLabel);
+        add(welcomeLabel); add(titleLabel); add(emailLabel); add(emailField); add(passwordLabel);
         add(passwordField); add(showButton); add(forgotLabel); add(loginButton);
         add(noAccountLabel); add(registerLabel);
 
-        setSize(450, 320);
+        setSize(450, 360);
     }
 
     private void loginAction(ActionEvent evt) {

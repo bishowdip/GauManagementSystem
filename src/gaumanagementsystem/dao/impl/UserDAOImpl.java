@@ -3,6 +3,7 @@ package gaumanagementsystem.dao.impl;
 import gaumanagementsystem.dao.UserDAO;
 import gaumanagementsystem.database.MySqlConnection;
 import gaumanagementsystem.model.User;
+import gaumanagementsystem.util.PasswordUtil;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,17 +51,35 @@ public class UserDAOImpl implements UserDAO {
     
     @Override
     public User authenticateUser(String email, String password) {
-        String sql = "SELECT * FROM users WHERE email = ? AND fpassword = ?";
+        String sql = "SELECT * FROM users WHERE email = ?";
         
         try (Connection conn = dbConnection.openConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
             stmt.setString(1, email);
-            stmt.setString(2, password);
             
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return mapResultSetToUser(rs);
+                User user = mapResultSetToUser(rs);
+                String storedPassword = user.getPassword();
+                
+                // Check if stored password is hashed or plain text
+                if (PasswordUtil.isPasswordHashed(storedPassword)) {
+                    // Verify against hashed password
+                    if (PasswordUtil.verifyPassword(password, storedPassword)) {
+                        return user;
+                    }
+                } else {
+                    // Legacy plain text password - verify and upgrade to hashed
+                    if (password.equals(storedPassword)) {
+                        // Upgrade to hashed password
+                        String hashedPassword = PasswordUtil.hashPassword(password);
+                        updatePasswordHash(user.getId(), hashedPassword);
+                        user.setPassword(hashedPassword);
+                        System.out.println("Password upgraded to secure hash for user: " + email);
+                        return user;
+                    }
+                }
             }
             return null;
             
@@ -175,18 +194,27 @@ public class UserDAOImpl implements UserDAO {
     
     @Override
     public boolean updatePassword(int userId, String newPassword) {
+        // Hash the new password before storing
+        String hashedPassword = PasswordUtil.hashPassword(newPassword);
+        return updatePasswordHash(userId, hashedPassword);
+    }
+    
+    /**
+     * Internal method to update password hash directly (used for password upgrades)
+     */
+    private boolean updatePasswordHash(int userId, String hashedPassword) {
         String sql = "UPDATE users SET fpassword = ? WHERE id = ?";
         
         try (Connection conn = dbConnection.openConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
-            stmt.setString(1, newPassword);
+            stmt.setString(1, hashedPassword);
             stmt.setInt(2, userId);
             
             return stmt.executeUpdate() > 0;
             
         } catch (SQLException e) {
-            System.err.println("Error updating password: " + e.getMessage());
+            System.err.println("Error updating password hash: " + e.getMessage());
             return false;
         }
     }
