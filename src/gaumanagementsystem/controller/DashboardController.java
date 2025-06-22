@@ -111,7 +111,7 @@ public class DashboardController {
         try {
             System.out.println("Opening News & Notice module...");
             gaumanagementsystem.view.NewsAndNotice newsView = 
-                new gaumanagementsystem.view.NewsAndNotice(userRole);
+                new gaumanagementsystem.view.NewsAndNotice(userRole, currentUserId);
             newsView.setVisible(true);
             view.dispose();
         } catch (Exception e) {

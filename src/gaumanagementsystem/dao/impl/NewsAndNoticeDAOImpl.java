@@ -33,14 +33,79 @@ public class NewsAndNoticeDAOImpl implements NewsAndNoticeDAO {
                     "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
                     ")";
         
-        try (Connection conn = dbConnection.openConnection();
-             Statement stmt = conn.createStatement()) {
+        Connection conn = null;
+        Statement stmt = null;
+        try {
+            conn = dbConnection.openConnection();
+            if (conn == null) {
+                System.err.println("Failed to establish database connection for table creation");
+                return;
+            }
             
+            stmt = conn.createStatement();
             stmt.executeUpdate(sql);
             System.out.println("News and Notice table ready.");
             
+            // Insert sample data if table is empty
+            insertSampleDataIfEmpty();
+            
         } catch (SQLException e) {
             System.err.println("Error creating news_and_notice table: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+                if (conn != null) dbConnection.closeConnection(conn);
+            } catch (SQLException e) {
+                System.err.println("Error closing resources: " + e.getMessage());
+            }
+        }
+    }
+    
+    private void insertSampleDataIfEmpty() {
+        // Check if table has any data
+        String countSql = "SELECT COUNT(*) as count FROM news_and_notice";
+        
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        
+        try {
+            conn = dbConnection.openConnection();
+            if (conn == null) {
+                System.err.println("Failed to establish database connection for sample data insertion");
+                return;
+            }
+            
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(countSql);
+            
+            if (rs.next() && rs.getInt("count") == 0) {
+                System.out.println("News and Notice table is empty, inserting sample data...");
+                
+                // Insert sample data
+                String insertSql = "INSERT INTO news_and_notice (date, audience, subject, description, expiry_date, type) VALUES " +
+                                  "('2024-01-15', 'Local Citizens/Residents', 'Community Meeting Notice', 'Monthly community meeting scheduled for next week to discuss local development projects.', '2024-02-15', 'Notice'), " +
+                                  "('2024-01-10', 'Students', 'School Enrollment Open', 'New academic year enrollment is now open for all local schools. Please visit your nearest school office.', '2024-03-01', 'News'), " +
+                                  "('2024-01-05', 'Local Businesses and Entrepreneurs', 'Business License Renewal', 'Annual business license renewal period has started. Submit your applications before the deadline.', '2024-02-28', 'Notice')";
+                
+                stmt.executeUpdate(insertSql);
+                System.out.println("Sample data inserted successfully.");
+            } else {
+                System.out.println("News and Notice table already contains " + rs.getInt("count") + " records.");
+            }
+            
+        } catch (SQLException e) {
+            System.err.println("Error inserting sample data: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+                if (conn != null) dbConnection.closeConnection(conn);
+            } catch (SQLException e) {
+                System.err.println("Error closing resources: " + e.getMessage());
+            }
         }
     }
     
@@ -49,9 +114,17 @@ public class NewsAndNoticeDAOImpl implements NewsAndNoticeDAO {
         String sql = "INSERT INTO news_and_notice (date, audience, subject, description, expiry_date, type) " +
                     "VALUES (?, ?, ?, ?, ?, ?)";
         
-        try (Connection conn = dbConnection.openConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        
+        try {
+            conn = dbConnection.openConnection();
+            if (conn == null) {
+                System.err.println("Failed to establish database connection for creating news/notice");
+                return false;
+            }
             
+            stmt = conn.prepareStatement(sql);
             stmt.setString(1, newsAndNotice.getDate());
             stmt.setString(2, newsAndNotice.getAudience());
             stmt.setString(3, newsAndNotice.getSubject());
@@ -64,6 +137,14 @@ public class NewsAndNoticeDAOImpl implements NewsAndNoticeDAO {
             
         } catch (SQLException e) {
             System.err.println("Error creating news/notice: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+                if (conn != null) dbConnection.closeConnection(conn);
+            } catch (SQLException e) {
+                System.err.println("Error closing resources: " + e.getMessage());
+            }
         }
         
         return false;
@@ -73,11 +154,20 @@ public class NewsAndNoticeDAOImpl implements NewsAndNoticeDAO {
     public Optional<NewsAndNotice> findById(int id) {
         String sql = "SELECT * FROM news_and_notice WHERE id = ?";
         
-        try (Connection conn = dbConnection.openConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        
+        try {
+            conn = dbConnection.openConnection();
+            if (conn == null) {
+                System.err.println("Failed to establish database connection for finding news/notice by ID");
+                return Optional.empty();
+            }
             
+            stmt = conn.prepareStatement(sql);
             stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             
             if (rs.next()) {
                 NewsAndNotice newsAndNotice = mapResultSetToNewsAndNotice(rs);
@@ -86,6 +176,15 @@ public class NewsAndNoticeDAOImpl implements NewsAndNoticeDAO {
             
         } catch (SQLException e) {
             System.err.println("Error finding news/notice by ID: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+                if (conn != null) dbConnection.closeConnection(conn);
+            } catch (SQLException e) {
+                System.err.println("Error closing resources: " + e.getMessage());
+            }
         }
         
         return Optional.empty();
@@ -96,16 +195,37 @@ public class NewsAndNoticeDAOImpl implements NewsAndNoticeDAO {
         String sql = "SELECT * FROM news_and_notice ORDER BY created_at DESC";
         List<NewsAndNotice> newsAndNotices = new ArrayList<>();
         
-        try (Connection conn = dbConnection.openConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        
+        try {
+            conn = dbConnection.openConnection();
+            if (conn == null) {
+                System.err.println("Failed to establish database connection for getting all news and notices");
+                return newsAndNotices;
+            }
+            
+            stmt = conn.prepareStatement(sql);
+            rs = stmt.executeQuery();
             
             while (rs.next()) {
                 newsAndNotices.add(mapResultSetToNewsAndNotice(rs));
             }
             
+            System.out.println("Successfully retrieved " + newsAndNotices.size() + " news/notices from database");
+            
         } catch (SQLException e) {
             System.err.println("Error getting all news and notices: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+                if (conn != null) dbConnection.closeConnection(conn);
+            } catch (SQLException e) {
+                System.err.println("Error closing resources: " + e.getMessage());
+            }
         }
         
         return newsAndNotices;
@@ -116,11 +236,20 @@ public class NewsAndNoticeDAOImpl implements NewsAndNoticeDAO {
         String sql = "SELECT * FROM news_and_notice WHERE type = ? ORDER BY created_at DESC";
         List<NewsAndNotice> newsAndNotices = new ArrayList<>();
         
-        try (Connection conn = dbConnection.openConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        
+        try {
+            conn = dbConnection.openConnection();
+            if (conn == null) {
+                System.err.println("Failed to establish database connection for getting news/notices by type");
+                return newsAndNotices;
+            }
             
+            stmt = conn.prepareStatement(sql);
             stmt.setString(1, type);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             
             while (rs.next()) {
                 newsAndNotices.add(mapResultSetToNewsAndNotice(rs));
@@ -128,6 +257,15 @@ public class NewsAndNoticeDAOImpl implements NewsAndNoticeDAO {
             
         } catch (SQLException e) {
             System.err.println("Error getting news/notices by type: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+                if (conn != null) dbConnection.closeConnection(conn);
+            } catch (SQLException e) {
+                System.err.println("Error closing resources: " + e.getMessage());
+            }
         }
         
         return newsAndNotices;
@@ -138,9 +276,17 @@ public class NewsAndNoticeDAOImpl implements NewsAndNoticeDAO {
         // For simplicity, we'll identify by subject since we don't have ID in model
         String sql = "UPDATE news_and_notice SET date = ?, audience = ?, description = ?, expiry_date = ?, type = ? WHERE subject = ?";
         
-        try (Connection conn = dbConnection.openConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        
+        try {
+            conn = dbConnection.openConnection();
+            if (conn == null) {
+                System.err.println("Failed to establish database connection for updating news/notice");
+                return false;
+            }
             
+            stmt = conn.prepareStatement(sql);
             stmt.setString(1, newsAndNotice.getDate());
             stmt.setString(2, newsAndNotice.getAudience());
             stmt.setString(3, newsAndNotice.getDescription());
@@ -152,6 +298,14 @@ public class NewsAndNoticeDAOImpl implements NewsAndNoticeDAO {
             
         } catch (SQLException e) {
             System.err.println("Error updating news/notice: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+                if (conn != null) dbConnection.closeConnection(conn);
+            } catch (SQLException e) {
+                System.err.println("Error closing resources: " + e.getMessage());
+            }
         }
         
         return false;
@@ -161,14 +315,30 @@ public class NewsAndNoticeDAOImpl implements NewsAndNoticeDAO {
     public boolean deleteNewsAndNotice(int id) {
         String sql = "DELETE FROM news_and_notice WHERE id = ?";
         
-        try (Connection conn = dbConnection.openConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        
+        try {
+            conn = dbConnection.openConnection();
+            if (conn == null) {
+                System.err.println("Failed to establish database connection for deleting news/notice");
+                return false;
+            }
             
+            stmt = conn.prepareStatement(sql);
             stmt.setInt(1, id);
             return stmt.executeUpdate() > 0;
             
         } catch (SQLException e) {
             System.err.println("Error deleting news/notice: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+                if (conn != null) dbConnection.closeConnection(conn);
+            } catch (SQLException e) {
+                System.err.println("Error closing resources: " + e.getMessage());
+            }
         }
         
         return false;
@@ -178,11 +348,20 @@ public class NewsAndNoticeDAOImpl implements NewsAndNoticeDAO {
     public int getIdBySubject(String subject) {
         String sql = "SELECT id FROM news_and_notice WHERE subject = ? LIMIT 1";
         
-        try (Connection conn = dbConnection.openConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        
+        try {
+            conn = dbConnection.openConnection();
+            if (conn == null) {
+                System.err.println("Failed to establish database connection for getting ID by subject");
+                return -1;
+            }
             
+            stmt = conn.prepareStatement(sql);
             stmt.setString(1, subject);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             
             if (rs.next()) {
                 return rs.getInt("id");
@@ -190,6 +369,15 @@ public class NewsAndNoticeDAOImpl implements NewsAndNoticeDAO {
             
         } catch (SQLException e) {
             System.err.println("Error getting ID by subject: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+                if (conn != null) dbConnection.closeConnection(conn);
+            } catch (SQLException e) {
+                System.err.println("Error closing resources: " + e.getMessage());
+            }
         }
         
         return -1;

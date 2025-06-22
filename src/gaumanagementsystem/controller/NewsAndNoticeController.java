@@ -22,9 +22,12 @@ public class NewsAndNoticeController {
 
     public List<NewsAndNotice> getAll() {
         try {
-            return newsAndNoticeDAO.getAllNewsAndNotices();
+            List<NewsAndNotice> result = newsAndNoticeDAO.getAllNewsAndNotices();
+            System.out.println("Successfully loaded " + result.size() + " news/notices from database.");
+            return result;
         } catch (Exception e) {
             System.err.println("Error getting all news and notices: " + e.getMessage());
+            e.printStackTrace();
             return new ArrayList<>();
         }
     }

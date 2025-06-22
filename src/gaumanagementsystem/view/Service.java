@@ -92,33 +92,8 @@ public class Service extends javax.swing.JFrame {
         // Add search functionality to match News and Notice
         addSearchFunctionality();
 
-        // Add functional button listeners with row selection validation
-        jButton2.addActionListener(e -> {
-            // DELETE button - check if row is selected
-            int selectedRow = jTable1.getSelectedRow();
-            if (selectedRow == -1) {
-                JOptionPane.showMessageDialog(this, "Please select a service to delete.", "No Selection", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-            int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this service?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
-            if (confirm == JOptionPane.YES_OPTION) {
-                ((javax.swing.table.DefaultTableModel) jTable1.getModel()).removeRow(selectedRow);
-                JOptionPane.showMessageDialog(this, "Service deleted successfully!");
-            }
-        });
-        
-        // UPDATE button handler is in generated code section (jButton3ActionPerformed)
-        
-        jButton4.addActionListener(e -> {
-            // REFRESH button - reload data from database
-            refreshTableData();
-            JOptionPane.showMessageDialog(this, "Table refreshed from database!");
-        });
-        
-        jButton5.addActionListener(e -> {
-            // ADD button functionality - open service form dialog
-            showAddServiceDialog();
-        });
+        // Remove duplicate event handlers - they are already handled in the generated code section
+        // The generated code section handles all button actions properly
 
         // jLabel2 and jLabel3 are no longer used since we removed Services/Requests labels
     }
@@ -202,7 +177,7 @@ public class Service extends javax.swing.JFrame {
             String description = descriptionArea.getText().trim();
             String status = (String) statusCombo.getSelectedItem();
 
-            if (serviceName.isEmpty() || citizenName.isEmpty() || ward.isEmpty()) {
+            if (serviceName == null || serviceName.isEmpty() || citizenName.isEmpty() || ward.isEmpty()) {
                 JOptionPane.showMessageDialog(this, 
                     "Please fill in all required fields (Service Name, Citizen Name, Ward).", 
                     "Validation Error", 
@@ -319,7 +294,7 @@ public class Service extends javax.swing.JFrame {
             String description = descriptionArea.getText().trim();
             String status = (String) statusCombo.getSelectedItem();
 
-            if (serviceName.isEmpty() || citizenName.isEmpty() || ward.isEmpty()) {
+            if (serviceName == null || serviceName.isEmpty() || citizenName.isEmpty() || ward.isEmpty()) {
                 JOptionPane.showMessageDialog(this, 
                     "Please fill in all required fields (Service Name, Citizen Name, Ward).", 
                     "Validation Error", 
@@ -393,6 +368,52 @@ public class Service extends javax.swing.JFrame {
 
         } catch (SQLException e) {
             System.err.println("Database error: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+                if (conn != null) dbConnection.closeConnection(conn);
+            } catch (SQLException e) {
+                System.err.println("Error closing database resources: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Delete service from database
+     */
+    private boolean deleteServiceFromDatabase(String citizenName, String serviceName) {
+        MySqlConnection dbConnection = new MySqlConnection();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        
+        try {
+            conn = dbConnection.openConnection();
+            if (conn == null) {
+                System.err.println("Failed to establish database connection");
+                return false;
+            }
+
+            // Delete the service record using citizen name and service name as identifiers
+            String sql = "DELETE FROM services WHERE name_of_citizen = ? AND service_name = ?";
+            
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, citizenName);
+            stmt.setString(2, serviceName);
+
+            int rowsAffected = stmt.executeUpdate();
+            
+            if (rowsAffected > 0) {
+                System.out.println("Service deleted successfully from database. Rows affected: " + rowsAffected);
+                return true;
+            } else {
+                System.err.println("No service found to delete with citizen: " + citizenName + " and service: " + serviceName);
+                return false;
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Database error during delete: " + e.getMessage());
             e.printStackTrace();
             return false;
         } finally {
@@ -900,7 +921,28 @@ public class Service extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // DELETE functionality handled in constructor
+        // DELETE button - check if row is selected
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a service to delete.", "No Selection", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this service?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            // Get service details for database deletion
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            String citizenName = (String) model.getValueAt(selectedRow, 3); // NameOFCitizen column
+            String serviceName = (String) model.getValueAt(selectedRow, 1); // ServiceName column
+            
+            // Delete from database first
+            if (deleteServiceFromDatabase(citizenName, serviceName)) {
+                model.removeRow(selectedRow);
+                JOptionPane.showMessageDialog(this, "Service deleted successfully!");
+                refreshTableData(); // Refresh to show updated data
+            } else {
+                JOptionPane.showMessageDialog(this, "Failed to delete service from database!", "Database Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -918,11 +960,14 @@ public class Service extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // REFRESH functionality handled in constructor
+        // REFRESH button - reload data from database
+        refreshTableData();
+        JOptionPane.showMessageDialog(this, "Table refreshed from database!");
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // ADD functionality handled in constructor
+        // ADD button functionality - open service form dialog
+        showAddServiceDialog();
     }//GEN-LAST:event_jButton5ActionPerformed
 
 

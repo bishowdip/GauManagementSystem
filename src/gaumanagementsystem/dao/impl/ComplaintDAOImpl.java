@@ -22,34 +22,61 @@ public class ComplaintDAOImpl implements ComplaintDAO {
     
     @Override
     public boolean createComplaint(Complaint complaint) {
-        String sql = "INSERT INTO complaints (name, ward, phone, category, " +
-                    "description, status, date, feedback) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO complaints (name, date, email, description, category, " +
+                    "status, feedback, ward, phone) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
-        try (Connection conn = dbConnection.openConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet generatedKeys = null;
+        
+        try {
+            conn = dbConnection.openConnection();
+            if (conn == null) {
+                System.err.println("Failed to establish database connection for creating complaint");
+                return false;
+            }
             
+            stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, complaint.getName());
-            stmt.setInt(2, complaint.getWard());
-            stmt.setString(3, complaint.getPhone());
-            stmt.setString(4, complaint.getCategory());
-            stmt.setString(5, complaint.getDescription());
-            stmt.setString(6, complaint.getStatus());
-            stmt.setDate(7, complaint.getDate());
-            stmt.setString(8, complaint.getFeedback());
+            stmt.setDate(2, complaint.getDate());
+            stmt.setString(3, complaint.getEmail());
+            stmt.setString(4, complaint.getDescription());
+            stmt.setString(5, complaint.getCategory() != null ? complaint.getCategory() : "Complaint");
+            stmt.setString(6, complaint.getStatus() != null ? complaint.getStatus() : "Pending");
+            stmt.setString(7, complaint.getFeedback());
+            
+            // Handle ward - use null if 0 or negative
+            if (complaint.getWard() > 0) {
+                stmt.setInt(8, complaint.getWard());
+            } else {
+                stmt.setNull(8, java.sql.Types.INTEGER);
+            }
+            
+            stmt.setString(9, complaint.getPhone());
             
             int rowsAffected = stmt.executeUpdate();
             
             if (rowsAffected > 0) {
-                ResultSet generatedKeys = stmt.getGeneratedKeys();
+                generatedKeys = stmt.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     complaint.setId(generatedKeys.getInt(1));
                 }
+                System.out.println("Complaint created successfully with ID: " + complaint.getId());
                 return true;
             }
             
         } catch (SQLException e) {
             System.err.println("Error creating complaint: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (generatedKeys != null) generatedKeys.close();
+                if (stmt != null) stmt.close();
+                if (conn != null) dbConnection.closeConnection(conn);
+            } catch (SQLException e) {
+                System.err.println("Error closing resources: " + e.getMessage());
+            }
         }
         
         return false;
@@ -57,13 +84,22 @@ public class ComplaintDAOImpl implements ComplaintDAO {
     
     @Override
     public Optional<Complaint> findById(int complaintId) {
-        String sql = "SELECT * FROM complaints WHERE complaint_id = ?";
+        String sql = "SELECT * FROM complaints WHERE id = ?";
         
-        try (Connection conn = dbConnection.openConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        
+        try {
+            conn = dbConnection.openConnection();
+            if (conn == null) {
+                System.err.println("Failed to establish database connection for finding complaint by ID");
+                return Optional.empty();
+            }
             
+            stmt = conn.prepareStatement(sql);
             stmt.setInt(1, complaintId);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             
             if (rs.next()) {
                 Complaint complaint = mapResultSetToComplaint(rs);
@@ -72,6 +108,15 @@ public class ComplaintDAOImpl implements ComplaintDAO {
             
         } catch (SQLException e) {
             System.err.println("Error finding complaint by ID: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+                if (conn != null) dbConnection.closeConnection(conn);
+            } catch (SQLException e) {
+                System.err.println("Error closing resources: " + e.getMessage());
+            }
         }
         
         return Optional.empty();
@@ -79,19 +124,40 @@ public class ComplaintDAOImpl implements ComplaintDAO {
     
     @Override
     public List<Complaint> getAllComplaints() {
-        String sql = "SELECT * FROM complaints ORDER BY submitted_date DESC";
+        String sql = "SELECT * FROM complaints ORDER BY date DESC";
         List<Complaint> complaints = new ArrayList<>();
         
-        try (Connection conn = dbConnection.openConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        
+        try {
+            conn = dbConnection.openConnection();
+            if (conn == null) {
+                System.err.println("Failed to establish database connection for getting all complaints");
+                return complaints;
+            }
+            
+            stmt = conn.prepareStatement(sql);
+            rs = stmt.executeQuery();
             
             while (rs.next()) {
                 complaints.add(mapResultSetToComplaint(rs));
             }
             
+            System.out.println("Successfully retrieved " + complaints.size() + " complaints from database");
+            
         } catch (SQLException e) {
             System.err.println("Error getting all complaints: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+                if (conn != null) dbConnection.closeConnection(conn);
+            } catch (SQLException e) {
+                System.err.println("Error closing resources: " + e.getMessage());
+            }
         }
         
         return complaints;
@@ -99,14 +165,23 @@ public class ComplaintDAOImpl implements ComplaintDAO {
     
     @Override
     public List<Complaint> getComplaintsByType(String type) {
-        String sql = "SELECT * FROM complaints WHERE complaint_type = ? ORDER BY submitted_date DESC";
+        String sql = "SELECT * FROM complaints WHERE category = ? ORDER BY date DESC";
         List<Complaint> complaints = new ArrayList<>();
         
-        try (Connection conn = dbConnection.openConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        
+        try {
+            conn = dbConnection.openConnection();
+            if (conn == null) {
+                System.err.println("Failed to establish database connection for getting complaints by type");
+                return complaints;
+            }
             
+            stmt = conn.prepareStatement(sql);
             stmt.setString(1, type);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             
             while (rs.next()) {
                 complaints.add(mapResultSetToComplaint(rs));
@@ -114,6 +189,15 @@ public class ComplaintDAOImpl implements ComplaintDAO {
             
         } catch (SQLException e) {
             System.err.println("Error getting complaints by type: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+                if (conn != null) dbConnection.closeConnection(conn);
+            } catch (SQLException e) {
+                System.err.println("Error closing resources: " + e.getMessage());
+            }
         }
         
         return complaints;
@@ -121,7 +205,7 @@ public class ComplaintDAOImpl implements ComplaintDAO {
     
     @Override
     public List<Complaint> getComplaintsByStatus(String status) {
-        String sql = "SELECT * FROM complaints WHERE status = ? ORDER BY submitted_date DESC";
+        String sql = "SELECT * FROM complaints WHERE status = ? ORDER BY date DESC";
         List<Complaint> complaints = new ArrayList<>();
         
         try (Connection conn = dbConnection.openConnection();
@@ -143,7 +227,9 @@ public class ComplaintDAOImpl implements ComplaintDAO {
     
     @Override
     public List<Complaint> getComplaintsByPriority(String priority) {
-        String sql = "SELECT * FROM complaints WHERE priority = ? ORDER BY submitted_date DESC";
+        // Since priority column doesn't exist in our schema, return empty list
+        // or we could use status as a proxy for priority
+        String sql = "SELECT * FROM complaints WHERE status = ? ORDER BY date DESC";
         List<Complaint> complaints = new ArrayList<>();
         
         try (Connection conn = dbConnection.openConnection();
@@ -165,7 +251,7 @@ public class ComplaintDAOImpl implements ComplaintDAO {
     
     @Override
     public List<Complaint> getComplaintsByWard(int ward) {
-        String sql = "SELECT * FROM complaints WHERE ward = ? ORDER BY submitted_date DESC";
+        String sql = "SELECT * FROM complaints WHERE ward = ? ORDER BY date DESC";
         List<Complaint> complaints = new ArrayList<>();
         
         try (Connection conn = dbConnection.openConnection();
@@ -187,7 +273,7 @@ public class ComplaintDAOImpl implements ComplaintDAO {
     
     @Override
     public List<Complaint> getComplaintsByCitizen(String citizenName) {
-        String sql = "SELECT * FROM complaints WHERE citizen_name LIKE ? ORDER BY submitted_date DESC";
+        String sql = "SELECT * FROM complaints WHERE name LIKE ? ORDER BY date DESC";
         List<Complaint> complaints = new ArrayList<>();
         
         try (Connection conn = dbConnection.openConnection();
@@ -209,7 +295,7 @@ public class ComplaintDAOImpl implements ComplaintDAO {
     
     @Override
     public List<Complaint> searchBySubject(String subject) {
-        String sql = "SELECT * FROM complaints WHERE subject LIKE ? ORDER BY submitted_date DESC";
+        String sql = "SELECT * FROM complaints WHERE description LIKE ? ORDER BY date DESC";
         List<Complaint> complaints = new ArrayList<>();
         
         try (Connection conn = dbConnection.openConnection();
@@ -231,7 +317,7 @@ public class ComplaintDAOImpl implements ComplaintDAO {
     
     @Override
     public List<Complaint> searchByDescription(String description) {
-        String sql = "SELECT * FROM complaints WHERE description LIKE ? ORDER BY submitted_date DESC";
+        String sql = "SELECT * FROM complaints WHERE description LIKE ? ORDER BY date DESC";
         List<Complaint> complaints = new ArrayList<>();
         
         try (Connection conn = dbConnection.openConnection();
@@ -253,7 +339,7 @@ public class ComplaintDAOImpl implements ComplaintDAO {
     
     @Override
     public List<Complaint> getComplaintsByDateRange(Date startDate, Date endDate) {
-        String sql = "SELECT * FROM complaints WHERE submitted_date BETWEEN ? AND ? ORDER BY submitted_date DESC";
+        String sql = "SELECT * FROM complaints WHERE date BETWEEN ? AND ? ORDER BY date DESC";
         List<Complaint> complaints = new ArrayList<>();
         
         try (Connection conn = dbConnection.openConnection();
@@ -276,26 +362,39 @@ public class ComplaintDAOImpl implements ComplaintDAO {
     
     @Override
     public boolean updateComplaint(Complaint complaint) {
-        String sql = "UPDATE complaints SET name = ?, ward = ?, phone = ?, " +
-                    "category = ?, description = ?, status = ?, " +
-                    "feedback = ? WHERE id = ?";
+        String sql = "UPDATE complaints SET name = ?, date = ?, email = ?, description = ?, " +
+                    "category = ?, status = ?, feedback = ?, ward = ?, phone = ? WHERE id = ?";
         
         try (Connection conn = dbConnection.openConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
             stmt.setString(1, complaint.getName());
-            stmt.setInt(2, complaint.getWard());
-            stmt.setString(3, complaint.getPhone());
-            stmt.setString(4, complaint.getCategory());
-            stmt.setString(5, complaint.getDescription());
+            stmt.setDate(2, complaint.getDate());
+            stmt.setString(3, complaint.getEmail());
+            stmt.setString(4, complaint.getDescription());
+            stmt.setString(5, complaint.getCategory());
             stmt.setString(6, complaint.getStatus());
             stmt.setString(7, complaint.getFeedback());
-            stmt.setInt(8, complaint.getId());
             
-            return stmt.executeUpdate() > 0;
+            // Handle ward - use null if 0 or negative
+            if (complaint.getWard() > 0) {
+                stmt.setInt(8, complaint.getWard());
+            } else {
+                stmt.setNull(8, java.sql.Types.INTEGER);
+            }
+            
+            stmt.setString(9, complaint.getPhone());
+            stmt.setInt(10, complaint.getId());
+            
+            boolean success = stmt.executeUpdate() > 0;
+            if (success) {
+                System.out.println("Complaint updated successfully with ID: " + complaint.getId());
+            }
+            return success;
             
         } catch (SQLException e) {
             System.err.println("Error updating complaint: " + e.getMessage());
+            e.printStackTrace(); // Add stack trace for debugging
         }
         
         return false;
@@ -303,7 +402,7 @@ public class ComplaintDAOImpl implements ComplaintDAO {
     
     @Override
     public boolean updateComplaintStatus(int complaintId, String newStatus) {
-        String sql = "UPDATE complaints SET status = ? WHERE complaint_id = ?";
+        String sql = "UPDATE complaints SET status = ? WHERE id = ?";
         
         try (Connection conn = dbConnection.openConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -322,7 +421,8 @@ public class ComplaintDAOImpl implements ComplaintDAO {
     
     @Override
     public boolean updateComplaintPriority(int complaintId, String newPriority) {
-        String sql = "UPDATE complaints SET priority = ? WHERE complaint_id = ?";
+        // Since priority column doesn't exist, we'll use status as proxy
+        String sql = "UPDATE complaints SET status = ? WHERE id = ?";
         
         try (Connection conn = dbConnection.openConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -341,7 +441,8 @@ public class ComplaintDAOImpl implements ComplaintDAO {
     
     @Override
     public boolean addComplaintResponse(int complaintId, String response) {
-        String sql = "UPDATE complaints SET response = ?, status = 'Resolved' WHERE complaint_id = ?";
+        // Since response column doesn't exist, we'll use feedback column
+        String sql = "UPDATE complaints SET feedback = ?, status = 'Resolved' WHERE id = ?";
         
         try (Connection conn = dbConnection.openConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -360,16 +461,32 @@ public class ComplaintDAOImpl implements ComplaintDAO {
     
     @Override
     public boolean deleteComplaint(int complaintId) {
-        String sql = "DELETE FROM complaints WHERE complaint_id = ?";
+        String sql = "DELETE FROM complaints WHERE id = ?";
         
-        try (Connection conn = dbConnection.openConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        
+        try {
+            conn = dbConnection.openConnection();
+            if (conn == null) {
+                System.err.println("Failed to establish database connection for deleting complaint");
+                return false;
+            }
             
+            stmt = conn.prepareStatement(sql);
             stmt.setInt(1, complaintId);
             return stmt.executeUpdate() > 0;
             
         } catch (SQLException e) {
             System.err.println("Error deleting complaint: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+                if (conn != null) dbConnection.closeConnection(conn);
+            } catch (SQLException e) {
+                System.err.println("Error closing resources: " + e.getMessage());
+            }
         }
         
         return false;
@@ -396,7 +513,7 @@ public class ComplaintDAOImpl implements ComplaintDAO {
     
     @Override
     public int getComplaintCountByType(String type) {
-        String sql = "SELECT COUNT(*) FROM complaints WHERE complaint_type = ?";
+        String sql = "SELECT COUNT(*) FROM complaints WHERE category = ?";
         
         try (Connection conn = dbConnection.openConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -438,7 +555,8 @@ public class ComplaintDAOImpl implements ComplaintDAO {
     
     @Override
     public int getComplaintCountByPriority(String priority) {
-        String sql = "SELECT COUNT(*) FROM complaints WHERE priority = ?";
+        // Since priority column doesn't exist, use status as proxy
+        String sql = "SELECT COUNT(*) FROM complaints WHERE status = ?";
         
         try (Connection conn = dbConnection.openConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -480,7 +598,7 @@ public class ComplaintDAOImpl implements ComplaintDAO {
     
     @Override
     public double getAverageResolutionTime() {
-        String sql = "SELECT AVG(DATEDIFF(NOW(), submitted_date)) FROM complaints WHERE status = 'Resolved'";
+        String sql = "SELECT AVG(DATEDIFF(NOW(), date)) FROM complaints WHERE status = 'Resolved'";
         
         try (Connection conn = dbConnection.openConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -500,7 +618,7 @@ public class ComplaintDAOImpl implements ComplaintDAO {
     @Override
     public List<Complaint> getComplaintsPendingForDays(int days) {
         String sql = "SELECT * FROM complaints WHERE status = 'Pending' AND " +
-                    "DATEDIFF(NOW(), submitted_date) > ? ORDER BY submitted_date ASC";
+                    "DATEDIFF(NOW(), date) > ? ORDER BY date ASC";
         List<Complaint> complaints = new ArrayList<>();
         
         try (Connection conn = dbConnection.openConnection();
@@ -525,18 +643,43 @@ public class ComplaintDAOImpl implements ComplaintDAO {
      */
     private Complaint mapResultSetToComplaint(ResultSet rs) throws SQLException {
         Complaint complaint = new Complaint();
+        
+        // Required fields
         complaint.setId(rs.getInt("id"));
         complaint.setName(rs.getString("name"));
-        complaint.setWard(rs.getInt("ward"));
-        complaint.setPhone(rs.getString("phone"));
-        complaint.setCategory(rs.getString("category"));
-        complaint.setDescription(rs.getString("description"));
-        complaint.setStatus(rs.getString("status"));
         complaint.setDate(rs.getDate("date"));
-        complaint.setFeedback(rs.getString("feedback"));
         complaint.setEmail(rs.getString("email"));
-        complaint.setCreatedAt(rs.getTimestamp("created_at"));
-        complaint.setUpdatedAt(rs.getTimestamp("updated_at"));
+        complaint.setDescription(rs.getString("description"));
+        complaint.setCategory(rs.getString("category"));
+        complaint.setStatus(rs.getString("status"));
+        
+        // Optional fields - handle null values properly
+        complaint.setFeedback(rs.getString("feedback"));
+        
+        // Ward can be null in the database
+        int ward = rs.getInt("ward");
+        if (rs.wasNull()) {
+            complaint.setWard(0); // Default to 0 if null
+        } else {
+            complaint.setWard(ward);
+        }
+        
+        // Phone can be null
+        complaint.setPhone(rs.getString("phone"));
+        
+        // Timestamp fields
+        try {
+            complaint.setCreatedAt(rs.getTimestamp("created_at"));
+        } catch (SQLException e) {
+            complaint.setCreatedAt(null);
+        }
+        
+        try {
+            complaint.setUpdatedAt(rs.getTimestamp("updated_at"));
+        } catch (SQLException e) {
+            complaint.setUpdatedAt(null);
+        }
+        
         return complaint;
     }
 } 

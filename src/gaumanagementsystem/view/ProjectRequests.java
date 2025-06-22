@@ -543,7 +543,10 @@ public class ProjectRequests extends JFrame {
         };
         JComboBox<String> categoryComboBox = new JComboBox<>(categories);
         JTextField descriptionField = new JTextField();
-        JTextField statusField = new JTextField();
+        // Status dropdown with predefined options
+        String[] statusOptions = {"Pending", "In Progress", "Completed", "Planned"};
+        JComboBox<String> statusComboBox = new JComboBox<>(statusOptions);
+        statusComboBox.setSelectedIndex(0); // Default to "Pending"
         JTextField budgetField = new JTextField();
 
         JPanel panel = new JPanel(new java.awt.GridLayout(0, 1));
@@ -562,7 +565,7 @@ public class ProjectRequests extends JFrame {
         panel.add(new JLabel("Description:"));
         panel.add(descriptionField);
         panel.add(new JLabel("Status:"));
-        panel.add(statusField);
+        panel.add(statusComboBox);
         panel.add(new JLabel("Budget:"));
         panel.add(budgetField);
 
@@ -577,7 +580,7 @@ public class ProjectRequests extends JFrame {
                 (String) categoryComboBox.getSelectedItem(),
                 expectedEndDateField.getText(),
                 descriptionField.getText(),
-                statusField.getText(),
+                (String) statusComboBox.getSelectedItem(),
                 budgetField.getText()
             };
             
@@ -596,7 +599,7 @@ public class ProjectRequests extends JFrame {
                 projectRequest.setWard(Integer.parseInt(wardField.getText().trim()));
                 projectRequest.setExpectedToEnd(java.sql.Date.valueOf(expectedEndDateField.getText().trim()));
                 projectRequest.setDescription(descriptionField.getText().trim());
-                projectRequest.setStatus(statusField.getText().trim());
+                projectRequest.setStatus((String) statusComboBox.getSelectedItem());
                 projectRequest.setBudget(new BigDecimal(budgetField.getText().trim()));
                 projectRequest.setCategory((String) categoryComboBox.getSelectedItem());
                 projectRequest.setPriority("Medium"); // Default priority

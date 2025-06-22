@@ -9,7 +9,9 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JButton;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.SwingUtilities;
 import java.util.List;
+import java.util.ArrayList;
 import gaumanagementsystem.controller.NewsAndNoticeController;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -41,6 +43,10 @@ public class NewsAndNotice extends javax.swing.JFrame {
     }
 
     public NewsAndNotice(String userRole) {
+        this(userRole, null); // Call the main constructor with null currentUserId
+    }
+
+    public NewsAndNotice(String userRole, String currentUserId) {
         this.userRole = userRole; // Store the user role
         initComponents();
         setTitle("News and Notice - Hamro Smart Gaun");
@@ -68,8 +74,6 @@ public class NewsAndNotice extends javax.swing.JFrame {
         
         // Ensure emoji is visible in header
         setupEmojiFont();
-        
-        loadTableData();
 
         // Hide add, delete, update buttons for non-admin users
         boolean isAdmin = "admin".equalsIgnoreCase(userRole);
@@ -360,7 +364,7 @@ public class NewsAndNotice extends javax.swing.JFrame {
         // REFRESH button
         jButton4.addActionListener(e -> {
             loadTableData();
-            JOptionPane.showMessageDialog(this, "Table refreshed successfully!");
+            JOptionPane.showMessageDialog(this, "Data refreshed from database!");
         });
 
         // SEARCH filter (single search field)
@@ -373,19 +377,53 @@ public class NewsAndNotice extends javax.swing.JFrame {
             public void removeUpdate(javax.swing.event.DocumentEvent e) { filterTable(getSearchText(), currentTypeFilter); }
             public void changedUpdate(javax.swing.event.DocumentEvent e) { filterTable(getSearchText(), currentTypeFilter); }
         });
+        
+        // Load data after all UI components are initialized and layout is complete
+        SwingUtilities.invokeLater(() -> {
+            loadTableData();
+        });
     }
 
     private void loadTableData() {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0);
+        
         try {
             List<gaumanagementsystem.model.NewsAndNotice> allNews = controller.getAll();
-            for (gaumanagementsystem.model.NewsAndNotice notice : allNews) {
+            List<gaumanagementsystem.model.NewsAndNotice> filteredNews = new ArrayList<>();
+            
+            // Apply user-based filtering
+            if ("user".equalsIgnoreCase(userRole)) {
+                // For regular users, show news/notices relevant to citizens
+                for (gaumanagementsystem.model.NewsAndNotice notice : allNews) {
+                    String audience = notice.getAudience();
+                    // Show if audience includes general public or citizens
+                    if (audience.toLowerCase().contains("local citizens") || 
+                        audience.toLowerCase().contains("residents") ||
+                        audience.toLowerCase().contains("students") ||
+                        audience.toLowerCase().contains("educational") ||
+                        audience.toLowerCase().contains("health")) {
+                        filteredNews.add(notice);
+                    }
+                }
+                System.out.println("Loaded " + filteredNews.size() + " relevant news/notices for user role.");
+            } else {
+                // For admin, show all news/notices
+                filteredNews = allNews;
+                System.out.println("Loaded " + filteredNews.size() + " news/notices for admin role.");
+            }
+            
+            // Add rows to table
+            for (gaumanagementsystem.model.NewsAndNotice notice : filteredNews) {
                 model.addRow(notice.toTableRow());
             }
-            System.out.println("Successfully loaded " + allNews.size() + " news/notices from database.");
+            
+            // Force table to refresh
+            model.fireTableDataChanged();
+            
         } catch (Exception e) {
             System.err.println("Error loading news/notices from database: " + e.getMessage());
+            e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error loading data from database: " + e.getMessage(), 
                                         "Database Error", JOptionPane.ERROR_MESSAGE);
         }
