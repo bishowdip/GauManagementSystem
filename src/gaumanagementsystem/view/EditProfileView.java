@@ -408,10 +408,36 @@ public class EditProfileView extends javax.swing.JFrame {
         return upload;
     }
 
+    /**
+     * Constructor with user email pre-filling for new user profiles
+     */
+    public EditProfileView(String role, String citizenId, boolean isEditMode, String userEmail) {
+        this(role, citizenId, isEditMode);
+        this.userEmail = userEmail;
+        
+        // Pre-fill email if provided (for new user profiles)
+        if (!isEditMode && userEmail != null && !userEmail.trim().isEmpty()) {
+            email.setText(userEmail);
+            email.setEditable(false); // Make email non-editable for users
+        }
+    }
+
+    /**
+     * Set user email for pre-filling (can be called after constructor)
+     */
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+        if (email != null && !isEditMode && userEmail != null && !userEmail.trim().isEmpty()) {
+            email.setText(userEmail);
+            email.setEditable(false); // Make email non-editable for users
+        }
+    }
+
     private String selectedImagePath = null; // To store the uploaded image path
     private String role = "admin";
     private String userCitizenId = null;
     private boolean isEditMode = false;
+    private String userEmail = null; // Store user email for pre-filling
 
     public EditProfileView(String role, String citizenId, boolean isEditMode) {
         this();
@@ -468,6 +494,12 @@ public class EditProfileView extends javax.swing.JFrame {
             buttonGroup1.clearSelection();
             ProfileImageLabel.setIcon(null);
             selectedImagePath = null;
+        }
+        
+        // Pre-fill email if provided (for new user profiles)
+        if (!isEditMode && userEmail != null && !userEmail.trim().isEmpty()) {
+            email.setText(userEmail);
+            email.setEditable(false); // Make email non-editable for users
         }
         // Add action listeners for buttons
         save.addActionListener(new java.awt.event.ActionListener() {
@@ -542,9 +574,12 @@ public class EditProfileView extends javax.swing.JFrame {
     private void backtoprofileActionPerformed(java.awt.event.ActionEvent evt) {
         // Handle role-based navigation for back button
         if ("user".equalsIgnoreCase(role)) {
-            // For user role, go back to dashboard with their user ID
+            // For user role, go back to dashboard with their user ID and email
             gaumanagementsystem.view.DashboardView dashboard = 
                 new gaumanagementsystem.view.DashboardView(role, userCitizenId);
+            if (userEmail != null) {
+                dashboard.setUserEmail(userEmail);
+            }
             dashboard.setVisible(true);
             this.dispose();
         } else {

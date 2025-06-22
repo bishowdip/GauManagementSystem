@@ -331,17 +331,10 @@ public class ProfileView extends javax.swing.JFrame {
     }//GEN-LAST:event_dateofbirthActionPerformed
 
     private void addCalendarButton() {
-        // Create calendar button
-        calendarButton = new JButton("📅");
-        calendarButton.setFont(new java.awt.Font("Arial", 0, 12));
-        calendarButton.setBounds(516, 304, 30, 22); // Position next to date field
-        calendarButton.setToolTipText("Select Date");
-        
-        // Add action listener
-        calendarButton.addActionListener(e -> openDatePicker());
-        
-        // Add to content pane
-        getContentPane().add(calendarButton);
+        // Skip adding calendar button to avoid NetBeans layout issues
+        // The ProfileView is primarily for viewing data, so calendar functionality is not essential
+        // Users can edit dates in the EditProfileView if needed
+        System.out.println("Calendar button skipped for ProfileView - date editing available in EditProfileView");
     }
     
     private void openDatePicker() {

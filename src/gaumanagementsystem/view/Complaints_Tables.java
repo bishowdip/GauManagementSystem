@@ -48,6 +48,7 @@ public class Complaints_Tables extends javax.swing.JFrame {
         this.userRole = userRole; // Store the user role
         this.currentUserId = currentUserId; // Store the user ID
         this.complaintController = new ComplaintController(); // Initialize database controller
+        System.out.println("Complaints_Tables initialized for " + userRole + " with identifier: " + currentUserId);
         initComponents();
         
         // Make window fully responsive
@@ -92,20 +93,15 @@ public class Complaints_Tables extends javax.swing.JFrame {
                 return;
             }
             
-            // For users, check if they can delete this complaint
+            // For users, check if they can delete this complaint/feedback
             if (!"admin".equalsIgnoreCase(userRole)) {
                 String category = (String) ComplaintTable1.getValueAt(selectedRow, 5); // Category column
                 String email = (String) ComplaintTable1.getValueAt(selectedRow, 3); // Email column
                 
-                // Users cannot delete feedback at all
-                if ("Feedback".equals(category)) {
-                    JOptionPane.showMessageDialog(this, "You cannot delete feedback entries. Feedback is read-only for users.", "Access Denied", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-                
-                // Users can only delete their own complaints
-                if (!"Complaint".equals(category) || !email.equals(currentUserId)) {
-                    JOptionPane.showMessageDialog(this, "You can only delete your own complaints.", "Access Denied", JOptionPane.WARNING_MESSAGE);
+                // Users can only delete their own entries (both complaints and feedback)
+                if (!email.equals(currentUserId)) {
+                    String itemType = "Feedback".equals(category) ? "feedback" : "complaint";
+                    JOptionPane.showMessageDialog(this, "You can only delete your own " + itemType + " entries.", "Access Denied", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
             }
@@ -136,20 +132,15 @@ public class Complaints_Tables extends javax.swing.JFrame {
                 return;
             }
             
-            // For users, check if they can edit this complaint
+            // For users, check if they can edit this complaint/feedback
             if (!"admin".equalsIgnoreCase(userRole)) {
                 String category = (String) ComplaintTable1.getValueAt(selectedRow, 5); // Category column
                 String email = (String) ComplaintTable1.getValueAt(selectedRow, 3); // Email column
                 
-                // Users cannot modify feedback at all
-                if ("Feedback".equals(category)) {
-                    JOptionPane.showMessageDialog(this, "You cannot modify feedback entries. Feedback is read-only for users.", "Access Denied", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-                
-                // Users can only modify their own complaints
-                if (!"Complaint".equals(category) || !email.equals(currentUserId)) {
-                    JOptionPane.showMessageDialog(this, "You can only update your own complaints.", "Access Denied", JOptionPane.WARNING_MESSAGE);
+                // Users can only modify their own entries (both complaints and feedback)
+                if (!email.equals(currentUserId)) {
+                    String itemType = "Feedback".equals(category) ? "feedback" : "complaint";
+                    JOptionPane.showMessageDialog(this, "You can only update your own " + itemType + " entries.", "Access Denied", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
             }
@@ -171,12 +162,13 @@ public class Complaints_Tables extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Complaints table refreshed successfully!");
         });
 
-        // Update button visibility for mixed access:
-        // - Users can ADD complaints and UPDATE/DELETE their own complaints
-        // - Users can see all feedbacks but cannot edit/delete them
+        // Update button visibility for role-based access:
+        // - Users can ADD complaints and feedback, UPDATE/DELETE their own entries
+        // - Users can see all feedback but can only modify their own
+        // - Users can see only their own complaints and modify them
         // - Admins have full access to everything
         boolean isAdmin = "admin".equalsIgnoreCase(userRole);
-        addButton.setVisible(true);       // ADD - Visible for both (users can add complaints)
+        addButton.setVisible(true);       // ADD - Visible for both (users can add complaints and feedback)
         deleteButton.setVisible(true);    // DELETE - Visible for both (with access control checks)
         updateButton.setVisible(true);    // UPDATE - Visible for both (with access control checks)
         
@@ -311,6 +303,7 @@ public class Complaints_Tables extends javax.swing.JFrame {
             List<Complaint> filteredComplaints = new ArrayList<>();
             
             // Apply user-based filtering
+            System.out.println("Loading data for userRole=" + userRole + ", currentUserId=" + currentUserId);
             if ("user".equalsIgnoreCase(userRole)) {
                 // For regular users: show their own complaints + all feedback (but not other users' complaints)
                 for (Complaint complaint : allComplaints) {
@@ -540,7 +533,19 @@ public class Complaints_Tables extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Complaints_Tables().setVisible(true);
+                // Check for command line arguments: userRole and currentUserId
+                String userRole = "admin"; // Default to admin
+                String currentUserId = null; // Default to null
+                
+                if (args.length >= 1) {
+                    userRole = args[0];
+                }
+                if (args.length >= 2) {
+                    currentUserId = args[1];
+                }
+                
+                System.out.println("Starting Complaints_Tables with userRole=" + userRole + ", currentUserId=" + currentUserId);
+                new Complaints_Tables(userRole, currentUserId).setVisible(true);
             }
         });
     }
@@ -733,6 +738,24 @@ public class Complaints_Tables extends javax.swing.JFrame {
             }
         });
         
+        // Pre-fill email for users and make it read-only for non-admin users
+        if (!"admin".equalsIgnoreCase(userRole) && currentUserId != null && !currentUserId.trim().isEmpty()) {
+            System.out.println("DEBUG: Pre-filling email field with: '" + currentUserId + "'");
+            emailField.setText(currentUserId);
+            emailField.setEditable(false);
+            emailField.setBackground(new java.awt.Color(240, 240, 240)); // Light gray to indicate read-only
+            emailField.setToolTipText("Email is automatically filled and cannot be changed for users");
+            
+            // Make sure the text is visible
+            emailField.setForeground(java.awt.Color.BLACK);
+            emailField.setCaretPosition(0); // Set cursor to beginning
+        } else {
+            System.out.println("DEBUG: Not pre-filling email field. userRole='" + userRole + "', currentUserId='" + currentUserId + "'");
+            emailField.setEditable(true);
+            emailField.setBackground(java.awt.Color.WHITE);
+            emailField.setToolTipText("Enter your email address");
+        }
+        
         // If updating, populate fields with existing data
         if (isUpdate && selectedRow >= 0) {
             javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) ComplaintTable1.getModel();
@@ -832,7 +855,7 @@ public class Complaints_Tables extends javax.swing.JFrame {
         panel.add(descScrollPane, gbc);
         
         // Show dialog with larger size
-        String title = isUpdate ? "Update Complaint" : "Add New Complaint";
+        String title = isUpdate ? "Update Entry" : "Add New Entry";
         
         // Create a custom dialog for better control
         javax.swing.JDialog dialog = new javax.swing.JDialog(this, title, true);
@@ -887,22 +910,26 @@ public class Complaints_Tables extends javax.swing.JFrame {
                     boolean success = complaintController.updateComplaint(complaintId, name, ward, phone, email, 
                                                                         category, description, status, sqlDate, "");
                     if (success) {
-                        JOptionPane.showMessageDialog(dialog, "Complaint updated successfully!");
+                        String itemType = "Feedback".equals(category) ? "Feedback" : "Complaint";
+                        JOptionPane.showMessageDialog(dialog, itemType + " updated successfully!");
                         loadTableData(); // Refresh table from database
                         dialog.dispose(); // Close dialog only on success
                     } else {
-                        JOptionPane.showMessageDialog(dialog, "Failed to update complaint in database.", "Error", JOptionPane.ERROR_MESSAGE);
+                        String itemType = "Feedback".equals(category) ? "feedback" : "complaint";
+                        JOptionPane.showMessageDialog(dialog, "Failed to update " + itemType + " in database.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } else {
                     // Add new complaint to database
                     boolean success = complaintController.createComplaint(name, ward, phone, email, 
                                                                         category, description, sqlDate);
                     if (success) {
-                        JOptionPane.showMessageDialog(dialog, "Complaint added successfully!");
+                        String itemType = "Feedback".equals(category) ? "Feedback" : "Complaint";
+                        JOptionPane.showMessageDialog(dialog, itemType + " added successfully!");
                         loadTableData(); // Refresh table from database
                         dialog.dispose(); // Close dialog only on success
                     } else {
-                        JOptionPane.showMessageDialog(dialog, "Failed to add complaint to database.", "Error", JOptionPane.ERROR_MESSAGE);
+                        String itemType = "Feedback".equals(category) ? "feedback" : "complaint";
+                        JOptionPane.showMessageDialog(dialog, "Failed to add " + itemType + " to database.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             } catch (Exception ex) {

@@ -230,5 +230,6 @@ public class DashboardView extends javax.swing.JFrame {
     
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
+        System.out.println("Dashboard email set to: " + userEmail);
     }
 }

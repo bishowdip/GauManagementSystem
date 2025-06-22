@@ -80,8 +80,22 @@ public class DashboardController {
     private void openComplaintsModule() {
         try {
             System.out.println("Opening Complaints module...");
+            
+            // For user role, use email as the identifier for filtering
+            String userIdentifier = currentUserId;
+            if ("user".equalsIgnoreCase(userRole)) {
+                String userEmail = view.getUserEmail();
+                System.out.println("Email retrieved from dashboard: " + userEmail);
+                if (userEmail != null && !userEmail.trim().isEmpty()) {
+                    userIdentifier = userEmail;
+                    System.out.println("Using email as user identifier: " + userEmail);
+                } else {
+                    System.out.println("No email found, using currentUserId: " + currentUserId);
+                }
+            }
+            
             gaumanagementsystem.view.Complaints_Tables complaintsTableView = 
-                new gaumanagementsystem.view.Complaints_Tables(userRole, currentUserId);
+                new gaumanagementsystem.view.Complaints_Tables(userRole, userIdentifier);
             complaintsTableView.setVisible(true);
             view.dispose();
         } catch (Exception e) {
@@ -148,11 +162,11 @@ public class DashboardController {
                     System.out.println("Fallback: Searching for profile with ID: " + currentUserId);
                 }
                 
-                // If profile found, open ProfileView with existing data
+                // If profile found, open EditProfileView with existing data for viewing/editing
                 if (existingProfile != null) {
                     System.out.println("Found existing profile for user: " + existingProfile.getName());
-                    gaumanagementsystem.view.ProfileView profileView = 
-                        new gaumanagementsystem.view.ProfileView(existingProfile.getCitizenId(), true, userRole);
+                    gaumanagementsystem.view.EditProfileView profileView = 
+                        new gaumanagementsystem.view.EditProfileView(userRole, existingProfile.getCitizenId(), true, userEmail);
                     profileView.setVisible(true);
                 } else {
                     // No existing profile found, open EditProfileView to create new profile
@@ -165,9 +179,7 @@ public class DashboardController {
                         javax.swing.JOptionPane.INFORMATION_MESSAGE
                     );
                     gaumanagementsystem.view.EditProfileView editProfileView = 
-                        new gaumanagementsystem.view.EditProfileView("user", currentUserId, false);
-                    // TODO: Pre-fill the email field with the logged-in user's email
-                    // editProfileView.setUserEmail(userEmail);
+                        new gaumanagementsystem.view.EditProfileView("user", currentUserId, false, userEmail);
                     editProfileView.setVisible(true);
                 }
             } else {

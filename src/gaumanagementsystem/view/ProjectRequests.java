@@ -393,7 +393,9 @@ public class ProjectRequests extends JFrame {
             }
         });
         jTable1.setGridColor(new java.awt.Color(102, 51, 255));
-        jTable1.setSelectionBackground(new java.awt.Color(255, 255, 255));
+        // Fix the white selection background that hides row data
+        jTable1.setSelectionBackground(new java.awt.Color(173, 216, 230)); // Light blue selection
+        jTable1.setSelectionForeground(new java.awt.Color(0, 0, 0)); // Black text for selected rows
         jTable1.setShowGrid(true);
         
         // Make table responsive
